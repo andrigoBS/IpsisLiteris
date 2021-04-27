@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1082.0" prefWidth="1920.0"
+      xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1">
+    <fx:include source="topBar/topBar.fxml" />
+    <fx:include source="hotBar/hotBar.fxml" />
+    <SplitPane dividerPositions="0.625242718446602" orientation="VERTICAL" prefHeight="1032.0" prefWidth="985.0">
+        <VBox.margin>
+            <Insets />
+        </VBox.margin>
+        <fx:include source="scrollEditor/scrollEditor.fxml" />
+        <fx:include source="resultView/resultView.fxml" />
+      <padding>
+         <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+      </padding>
+    </SplitPane>
+</VBox>

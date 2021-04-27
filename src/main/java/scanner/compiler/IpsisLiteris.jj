@@ -1,0 +1,199 @@
+options {
+    STATIC = false;
+}
+
+PARSER_BEGIN(IpsisLiteris)
+package compiladores.scanner.compiler.build;
+
+import java.util.LinkedList;
+import java.util.List;
+
+public class IpsisLiteris {
+
+    private List<AnalyserResult> result;
+
+    public static void main (String[] args) throws ParseException, TokenMgrError {
+        IpsisLiteris parser = new IpsisLiteris(System.in);
+        parser.result = parser.Start();
+        for (AnalyserResult analyser : parser.result) {
+            System.out.println(analyser);
+        }
+    }
+
+    public static class AnalyserResult {
+
+        public final String token;
+        public final int line;
+        public final int column;
+        public final String type;
+        public final int id;
+        public final boolean error;
+        public final String errorMsg;
+
+        private AnalyserResult (Token t, boolean error, String errorMsg) {
+            token = t.image;
+            line = t.beginLine;
+            column = t.beginColumn;
+            type = IpsisLiterisConstants.tokenImage[t.kind];
+            id = t.kind;
+            this.error = error;
+            this.errorMsg = errorMsg;
+        }
+
+        public AnalyserResult (Token t) { this(t, false, ""); }
+
+        public static AnalyserResult error (Token t, String msg) {
+            return new AnalyserResult(t, true, msg);
+        }
+
+        @Override
+        public String toString() {
+            if (!error) return token + " " + line + " " + column + " " + type + " " + id;
+            return errorMsg + " at line: " + line + " at column: " + column;
+        }
+    }
+}
+
+PARSER_END(IpsisLiteris)
+
+// Ignorados
+SKIP: {"\n" | "\r" | "\r\n" | " " | "\t" | "\f" }
+SKIP : {
+    ":{" : COMMENT                     |
+    <COMMENT_LINE: ":_" <LINE> >       |
+    <HEADER: ":-" <LINE> >             |
+    <#LINE: (~["\n", "\r" ])* ("\n" | "\r" | "\n\r")?  >
+}
+<COMMENT> SKIP : {
+    "}:" : DEFAULT
+}
+<COMMENT> MORE : {
+    <~[]>
+}
+
+// Palavras reservadas
+TOKEN : {
+    <DEF: ("program")  > | <DATA_DEF: ("define"){1}>               |
+    <IS: ("is"){1} > | <EXE: ("execute"){1}> | <MAIN_DEF: ("execute"){1}> |
+
+    <VAR: ("variable"){1} > | <CONST: ("not"){1}> | <SET: ("set"){1} > |
+    <TO: ("to"){1} > | <SYSCALL: "set" | "get" >  |
+
+    <TYPE: "natural" | "real" | "char" | "boolean"> | <BOOL: "true" | "false" > |
+
+    <LOOP: "while" | "loop" | "do" > | <IF: ("verify"){1} >
+}
+
+// Símbolos
+TOKEN : {
+    // Agregadores
+    <OPEN_CURLY: ("{"){1} > | <CLOSE_CURLY: ("}"){1} >   |
+    <OPEN_PARENT: ("("){1} > | <CLOSE_PARENT: (")"){1} > |
+    <OPEN_SQUARE: ("["){1} > | <CLOSE_SQUARE: ("]"){1} > |
+
+    // Comparadores
+    <EQUAL: ("=="){1} > | <N_EQUAL: ("!="){1} > | <GREATER: (">"){1} >  |
+    <LOWER: ("<"){1} > | <LOW_EQ: (">="){1} > | <GREAT_EQ: ("<="){1} >  |
+
+    // Operadores Aritméticos
+    <PLUS: ("+"){1} > | <MINUS: ("-"){1} > | <TIMES: ("*"){1} >         |
+    <DIVIDE: ("/"){1} > | <POWER: ("**"){1} > | <INT_DIVIDE: ("%"){1} > |
+    <MOD: ("%%"){1} > |
+
+    // Operadores Lógicos
+    <AND: ("&"){1} > | <OR: ("|"){1} > | <NOT: ("!"){1} > |
+
+    // Simbolos especiais
+    <DELIMITER: ("."){1} > | <SEPARATOR: (","){1} >
+
+}
+
+// Identificadores
+TOKEN : {
+    <IDENTIFIER: ("_" | <LETTER>) (<LETTER>)* (<DPATH> | <UPATH> )? > |
+
+    <#DPATH: <DIGIT> ((<LETTER>)* "_" (<LETTER>)* <DIGIT> | (<LETTER>)+ <DIGIT> )*
+                     ((<LETTER>)+ | "_")+ > |
+
+    <#UPATH: "_" ((<LETTER>)* <DIGIT> (<LETTER>)* "_" | (<DIGIT>)? (<LETTER>)+ ("_")?)* > |
+
+    <#LETTER: ["A" - "Z"] | ["a" - "z"]>
+
+}
+
+// Constantes numéricas
+TOKEN: {
+    <INTEGER: <NUMS> (<DIGIT>)? >                        |
+    <FLOAT: <INTEGER> (<DIGIT>)? (<DIGIT>)? "." <NUMS> > |
+    <#DIGIT: ["0" - "9"] >                               |
+    <#NUMS: <DIGIT> (<DIGIT>)? >
+}
+
+// Constantes literais
+TOKEN : {
+    <LITERAL: <SIMPLE_Q_STRING> | <DOUBLE_Q_STRING> >        |
+    <#SIMPLE_Q_STRING: "'" (~["'"] | <ESCAPE_SQ> )* "'">     |
+    <#DOUBLE_Q_STRING: "\"" (~["\""] | <ESCAPE_DQ> )* "\"" > |
+    <#ESCAPE_DQ: "\\" "\"">                                     |
+    <#ESCAPE_SQ: "\\" "'">
+}
+
+List<AnalyserResult> Start():
+{
+   List<AnalyserResult> result = new LinkedList<>();
+   AnalyserResult input;
+}
+{
+    (
+       input = token()
+       {
+           result.add(input);
+       }
+    )*
+    <EOF>
+    {return result;}
+
+}
+
+AnalyserResult token():
+{
+    Token t;
+    String msg = "";
+}
+{
+    (
+    t = <FLOAT> | t = <INTEGER> | t = <LITERAL> |
+
+    t = <OPEN_CURLY> | t = <CLOSE_CURLY> |
+    t = <OPEN_SQUARE> | t = <CLOSE_SQUARE> |
+    t = <OPEN_PARENT> | t = <CLOSE_PARENT> |
+
+    t = <EQUAL> | t = <N_EQUAL> | t = <GREATER> |
+    t = <LOWER> | t = <GREAT_EQ> | t = <LOW_EQ> |
+
+    t = <PLUS> | t = <MINUS> | t = <TIMES>        |
+    t = <DIVIDE> | t = <POWER> | t = <INT_DIVIDE> |
+    t = <MOD> |
+
+    t = <AND> | t = <OR> | t = <NOT> |
+
+    t = <DELIMITER> | t = <SEPARATOR> |
+
+    t = <IDENTIFIER> |
+
+    t = <LOOP> | t = <TYPE> | t = <IF> | t = <DEF> |
+    t = <DATA_DEF> | t = <MAIN_DEF> | t = <BOOL>   |
+    t = <EXE> | t = <IS> | t = <SET> | t = <CONST> |
+    t = <SYSCALL> | t = <TO> | t = <VAR>
+    )
+    {return new AnalyserResult(t);} |
+     (
+      t = <(~[])> { msg = "INVALID TOKEN"; }
+     )
+     { return AnalyserResult.error(t, msg); }
+}
+
+
+
+
+

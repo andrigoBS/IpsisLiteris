@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+
+<SplitPane dividerPositions="0.0381" prefHeight="586.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/14"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="scanner.controller.scrollEditor.ScrollEditorController">
+    <opaqueInsets>
+        <Insets />
+    </opaqueInsets>
+    <TextArea fx:id="counter" editable="false" onDragDetected="#updateWriterScrollBar" onDragDropped="#updateWriterScrollBar" onMouseDragged="#updateWriterScrollBar" onScroll="#updateWriterScrollBar" onScrollFinished="#updateWriterScrollBar" onScrollStarted="#updateWriterScrollBar" onZoom="#updateWriterScrollBar" onZoomFinished="#updateWriterScrollBar" onZoomStarted="#updateWriterScrollBar" prefHeight="584.0" prefWidth="61.0" />
+    <TextArea fx:id="writer" onDragDetected="#updateCounterScrollBar" onDragDropped="#updateCounterScrollBar" onKeyPressed="#updateTextCursor" onKeyTyped="#onTextChange" onMouseClicked="#updateTextCursor" onMouseDragged="#updateCounterScrollBar" onScroll="#updateCounterScrollBar" onScrollFinished="#updateCounterScrollBar" onScrollStarted="#updateCounterScrollBar" onZoom="#updateCounterScrollBar" onZoomFinished="#updateCounterScrollBar" onZoomStarted="#updateCounterScrollBar" prefHeight="584.0" prefWidth="1800.0" />
+</SplitPane>
