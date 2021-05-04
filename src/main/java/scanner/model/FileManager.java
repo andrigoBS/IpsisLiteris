@@ -3,9 +3,9 @@ package scanner.model;
 import java.io.*;
 
 public class FileManager {
-    public static final String DEFAULT_FILE_NAME = "java/scanner/files/main.ipsli";
+    public static final String DEFAULT_FILE_NAME = "../main.ipsli";
 
-    public static final String DEFAULT_DIRECTORY = "java/scanner/files";
+    public static final String DEFAULT_DIRECTORY = "../";
 
     private String fileName;
 
@@ -50,8 +50,8 @@ public class FileManager {
 
     public File getCurrentDirectory(){
         String directory = fileName == null?
-                           DEFAULT_DIRECTORY.replace("/","\\") :
-                           fileName.substring(0, fileName.lastIndexOf("\\"));
+                           DEFAULT_DIRECTORY :
+                           fileName.substring(0, fileName.lastIndexOf("/"));
         return new File(directory);
     }
 
