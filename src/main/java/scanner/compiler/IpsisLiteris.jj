@@ -1,9 +1,11 @@
 options {
     STATIC = false;
+    IGNORE_CASE = true;
+    OUTPUT_DIRECTORY = "src/main/java/scanner/compiler/build";
 }
 
 PARSER_BEGIN(IpsisLiteris)
-package compiladores.scanner.compiler.build;
+package scanner.compiler.build;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -61,14 +63,26 @@ SKIP: {"\n" | "\r" | "\r\n" | " " | "\t" | "\f" }
 SKIP : {
     ":{" : COMMENT                     |
     <COMMENT_LINE: ":_" <LINE> >       |
-    <HEADER: ":-" <LINE> >             |
-    <#LINE: (~["\n", "\r" ])* ("\n" | "\r" | "\n\r")?  >
+    <#LINE: (~["\n", "\r"])* ("\n" | "\r" | "\n\r" | "\r\n")  >
 }
 <COMMENT> SKIP : {
     "}:" : DEFAULT
 }
 <COMMENT> MORE : {
     <~[]>
+}
+
+// Header
+TOKEN : {
+    <HEADER_TOKEN: ":-">: HEADER
+}
+
+<HEADER> MORE : {
+    <~["\n", "\r"]>
+}
+
+<HEADER> SKIP : {
+    <("\n" | "\r" | "\n\r" | "\r\n")> : DEFAULT
 }
 
 // Palavras reservadas
@@ -86,25 +100,23 @@ TOKEN : {
 
 // Símbolos
 TOKEN : {
-    // Agregadores
-    <OPEN_CURLY: ("{"){1} > | <CLOSE_CURLY: ("}"){1} >   |
-    <OPEN_PARENT: ("("){1} > | <CLOSE_PARENT: (")"){1} > |
-    <OPEN_SQUARE: ("["){1} > | <CLOSE_SQUARE: ("]"){1} > |
 
-    // Comparadores
-    <EQUAL: ("=="){1} > | <N_EQUAL: ("!="){1} > | <GREATER: (">"){1} >  |
-    <LOWER: ("<"){1} > | <LOW_EQ: (">="){1} > | <GREAT_EQ: ("<="){1} >  |
+    <SPECIAL_SYMBOL:
+        // Agregadores
+        "{" | "}" | "(" | ")" | "[" | "]" |
 
-    // Operadores Aritméticos
-    <PLUS: ("+"){1} > | <MINUS: ("-"){1} > | <TIMES: ("*"){1} >         |
-    <DIVIDE: ("/"){1} > | <POWER: ("**"){1} > | <INT_DIVIDE: ("%"){1} > |
-    <MOD: ("%%"){1} > |
+        // Comparadores
+        "==" | "!=" | ">" | "<" | ">=" | "<=" |
 
-    // Operadores Lógicos
-    <AND: ("&"){1} > | <OR: ("|"){1} > | <NOT: ("!"){1} > |
+        // Op. Aritméticos
+        "+" | "-" | "*" | "/" | "%" | "**" | "%%" |
 
-    // Simbolos especiais
-    <DELIMITER: ("."){1} > | <SEPARATOR: (","){1} >
+        // Op. Lógicos
+        "&" | "|" | "!"
+
+        // Especiais
+        "." | ","
+    >
 
 }
 
@@ -164,9 +176,7 @@ AnalyserResult token():
     (
     t = <FLOAT> | t = <INTEGER> | t = <LITERAL> |
 
-    t = <OPEN_CURLY> | t = <CLOSE_CURLY> |
-    t = <OPEN_SQUARE> | t = <CLOSE_SQUARE> |
-    t = <OPEN_PARENT> | t = <CLOSE_PARENT> |
+    t = <SPECIAL_SYMBOL> |
 
     t = <EQUAL> | t = <N_EQUAL> | t = <GREATER> |
     t = <LOWER> | t = <GREAT_EQ> | t = <LOW_EQ> |
@@ -184,12 +194,10 @@ AnalyserResult token():
     t = <LOOP> | t = <TYPE> | t = <IF> | t = <DEF> |
     t = <DATA_DEF> | t = <MAIN_DEF> | t = <BOOL>   |
     t = <EXE> | t = <IS> | t = <SET> | t = <CONST> |
-    t = <SYSCALL> | t = <TO> | t = <VAR>
+    t = <SYSCALL> | t = <TO> | t = <VAR> | t = <HEADER_TOKEN>
     )
     {return new AnalyserResult(t);} |
-     (
-      t = <(~[])> { msg = "INVALID TOKEN"; }
-     )
+     t = <(~[])> { msg = "TOKEN INVÁLIDO"; }
      { return AnalyserResult.error(t, msg); }
 }
 

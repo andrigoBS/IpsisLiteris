@@ -13,116 +13,120 @@ public interface IpsisLiterisConstants {
   /** RegularExpression Id. */
   int COMMENT_LINE = 8;
   /** RegularExpression Id. */
-  int HEADER = 9;
+  int LINE = 9;
   /** RegularExpression Id. */
-  int LINE = 10;
+  int DEF = 14;
   /** RegularExpression Id. */
-  int DEF = 13;
+  int DATA_DEF = 15;
   /** RegularExpression Id. */
-  int DATA_DEF = 14;
+  int IS = 16;
   /** RegularExpression Id. */
-  int IS = 15;
+  int EXE = 17;
   /** RegularExpression Id. */
-  int EXE = 16;
+  int MAIN_DEF = 18;
   /** RegularExpression Id. */
-  int MAIN_DEF = 17;
+  int VAR = 19;
   /** RegularExpression Id. */
-  int VAR = 18;
+  int CONST = 20;
   /** RegularExpression Id. */
-  int CONST = 19;
+  int SET = 21;
   /** RegularExpression Id. */
-  int SET = 20;
+  int TO = 22;
   /** RegularExpression Id. */
-  int TO = 21;
+  int SYSCALL = 23;
   /** RegularExpression Id. */
-  int SYSCALL = 22;
+  int TYPE = 24;
   /** RegularExpression Id. */
-  int TYPE = 23;
+  int BOOL = 25;
   /** RegularExpression Id. */
-  int BOOL = 24;
+  int LOOP = 26;
   /** RegularExpression Id. */
-  int LOOP = 25;
+  int IF = 27;
   /** RegularExpression Id. */
-  int IF = 26;
+  int SPECIAL_SYMBOL = 28;
   /** RegularExpression Id. */
-  int OPEN_CURLY = 27;
+  int HEADER_TOKEN = 29;
   /** RegularExpression Id. */
-  int CLOSE_CURLY = 28;
+  int OPEN_CURLY = 30;
   /** RegularExpression Id. */
-  int OPEN_PARENT = 29;
+  int CLOSE_CURLY = 31;
   /** RegularExpression Id. */
-  int CLOSE_PARENT = 30;
+  int OPEN_PARENT = 32;
   /** RegularExpression Id. */
-  int OPEN_SQUARE = 31;
+  int CLOSE_PARENT = 33;
   /** RegularExpression Id. */
-  int CLOSE_SQUARE = 32;
+  int OPEN_SQUARE = 34;
   /** RegularExpression Id. */
-  int EQUAL = 33;
+  int CLOSE_SQUARE = 35;
   /** RegularExpression Id. */
-  int N_EQUAL = 34;
+  int EQUAL = 36;
   /** RegularExpression Id. */
-  int GREATER = 35;
+  int N_EQUAL = 37;
   /** RegularExpression Id. */
-  int LOWER = 36;
+  int GREATER = 38;
   /** RegularExpression Id. */
-  int LOW_EQ = 37;
+  int LOWER = 39;
   /** RegularExpression Id. */
-  int GREAT_EQ = 38;
+  int LOW_EQ = 40;
   /** RegularExpression Id. */
-  int PLUS = 39;
+  int GREAT_EQ = 41;
   /** RegularExpression Id. */
-  int MINUS = 40;
+  int PLUS = 42;
   /** RegularExpression Id. */
-  int TIMES = 41;
+  int MINUS = 43;
   /** RegularExpression Id. */
-  int DIVIDE = 42;
+  int TIMES = 44;
   /** RegularExpression Id. */
-  int POWER = 43;
+  int DIVIDE = 45;
   /** RegularExpression Id. */
-  int INT_DIVIDE = 44;
+  int POWER = 46;
   /** RegularExpression Id. */
-  int MOD = 45;
+  int INT_DIVIDE = 47;
   /** RegularExpression Id. */
-  int AND = 46;
+  int MOD = 48;
   /** RegularExpression Id. */
-  int OR = 47;
+  int AND = 49;
   /** RegularExpression Id. */
-  int NOT = 48;
+  int OR = 50;
   /** RegularExpression Id. */
-  int DELIMITER = 49;
+  int NOT = 51;
   /** RegularExpression Id. */
-  int SEPARATOR = 50;
+  int DELIMITER = 52;
   /** RegularExpression Id. */
-  int IDENTIFIER = 51;
+  int SEPARATOR = 53;
   /** RegularExpression Id. */
-  int DPATH = 52;
+  int IDENTIFIER = 54;
   /** RegularExpression Id. */
-  int UPATH = 53;
+  int DPATH = 55;
   /** RegularExpression Id. */
-  int LETTER = 54;
+  int UPATH = 56;
   /** RegularExpression Id. */
-  int INTEGER = 55;
+  int LETTER = 57;
   /** RegularExpression Id. */
-  int FLOAT = 56;
+  int INTEGER = 58;
   /** RegularExpression Id. */
-  int DIGIT = 57;
+  int FLOAT = 59;
   /** RegularExpression Id. */
-  int NUMS = 58;
+  int DIGIT = 60;
   /** RegularExpression Id. */
-  int LITERAL = 59;
+  int NUMS = 61;
   /** RegularExpression Id. */
-  int SIMPLE_Q_STRING = 60;
+  int LITERAL = 62;
   /** RegularExpression Id. */
-  int DOUBLE_Q_STRING = 61;
+  int SIMPLE_Q_STRING = 63;
   /** RegularExpression Id. */
-  int ESCAPE_DQ = 62;
+  int DOUBLE_Q_STRING = 64;
   /** RegularExpression Id. */
-  int ESCAPE_SQ = 63;
+  int ESCAPE_DQ = 65;
+  /** RegularExpression Id. */
+  int ESCAPE_SQ = 66;
 
   /** Lexical state. */
   int DEFAULT = 0;
   /** Lexical state. */
   int COMMENT = 1;
+  /** Lexical state. */
+  int HEADER = 2;
 
   /** Literal token values. */
   String[] tokenImage = {
@@ -135,10 +139,11 @@ public interface IpsisLiterisConstants {
     "\"\\f\"",
     "\":{\"",
     "<COMMENT_LINE>",
-    "<HEADER>",
     "<LINE>",
     "\"}:\"",
+    "<token of kind 11>",
     "<token of kind 12>",
+    "<token of kind 13>",
     "\"program\"",
     "<DATA_DEF>",
     "<IS>",
@@ -153,6 +158,8 @@ public interface IpsisLiterisConstants {
     "<BOOL>",
     "<LOOP>",
     "<IF>",
+    "<SPECIAL_SYMBOL>",
+    "\":-\"",
     "<OPEN_CURLY>",
     "<CLOSE_CURLY>",
     "<OPEN_PARENT>",
@@ -190,7 +197,7 @@ public interface IpsisLiterisConstants {
     "<DOUBLE_Q_STRING>",
     "<ESCAPE_DQ>",
     "<ESCAPE_SQ>",
-    "<token of kind 64>",
+    "<token of kind 67>",
   };
 
 }
