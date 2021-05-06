@@ -21,6 +21,10 @@ public class CodeEditor {
         return fileManager.getCurrentDirectory();
     }
 
+    public String getFileOnlyName(){
+        return fileManager.getFileOnlyName();
+    }
+
     public void newFile(){
         fileManager.newFile();
     }

@@ -1,6 +1,7 @@
 package scanner.controller.topBar;
 
 import scanner.controller.AbstractController;
+import scanner.controller.Main;
 import scanner.controller.dialog.Dialog;
 import scanner.controller.resultView.ResultController;
 import scanner.controller.scrollEditor.ScrollEditorController;
@@ -17,6 +18,7 @@ public class TopBarController extends AbstractController{
             getScrollEditorController().loadText("");
         }
         getResultController().clear();
+        Main.resetFileTile();
     }
 
     public void openFile(){
@@ -27,6 +29,7 @@ public class TopBarController extends AbstractController{
                     String text = getCodeEditor().open(path);
                     getScrollEditorController().loadText(text);
                     getResultController().clear();
+                    Main.setFileTitle(getCodeEditor().getFileOnlyName());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -42,6 +45,7 @@ public class TopBarController extends AbstractController{
             }else{
                 saveAsFile();
             }
+            Main.setFileTitle(getCodeEditor().getFileOnlyName());
         } catch (Exception e) {
             e.printStackTrace();
             dialog.saveError();
@@ -53,6 +57,7 @@ public class TopBarController extends AbstractController{
             String path = dialog.fileSaver(getCodeEditor().getCurrentDirectory());
             if(path != null){
                 getCodeEditor().save(path);
+                Main.setFileTitle(getCodeEditor().getFileOnlyName());
             }
         } catch (Exception e) {
             e.printStackTrace();

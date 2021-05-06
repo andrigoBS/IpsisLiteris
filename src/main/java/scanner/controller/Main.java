@@ -4,12 +4,21 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+    private static Stage STAGE;
+
     public static void main(String[] args) {
         launch(args);
     }
+
+    public static void setFileTitle(String fileTitle){
+        STAGE.setTitle("Ipsis literis (Compilador 2021/01) - "+fileTitle);
+    }
+
+    public static void resetFileTile(){ setFileTitle("Arquivo não salvo"); }
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -19,7 +28,13 @@ public class Main extends Application {
 
         Scene scene = new Scene(root, 700, 700);
 
-        stage.setTitle("Compilador 2021/01 - Ipsis literis");
+        STAGE = stage;
+        resetFileTile();
+
+        Image image = new Image(getClass().getResource("/icons/icon.png").toExternalForm());
+
+        stage.getIcons().add(image);
+
         stage.setScene(scene);
         stage.show();
     }

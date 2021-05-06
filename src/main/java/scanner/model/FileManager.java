@@ -4,7 +4,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class FileManager {
-    private String currentPath = "../any.ipsli/";
+    private String currentPath = "./any.ipsli/";
 
     private String fileName;
 
@@ -51,6 +51,10 @@ public class FileManager {
 
     public File getCurrentDirectory(){
         return new File(currentPath).getParentFile();
+    }
+
+    public String getFileOnlyName(){
+        return new File(fileName).getName();
     }
 
     public InputStream getFileInputStream() {
