@@ -90,7 +90,8 @@ public final class Dialog {
 
     private enum ChooserType implements ChooserTypeExecute{
         SAVE(": Salvar arquivo",
-                new FileChooser.ExtensionFilter("Text Files", "*.ipsli")
+                new FileChooser.ExtensionFilter("Ipsis Literis File", "*.ipsli", "*,il"),
+                new FileChooser.ExtensionFilter("Text File", "*.txt")
         ){
             @Override
             public File execute(FileChooser fileChooser) {
@@ -98,8 +99,8 @@ public final class Dialog {
             }
         },
         OPEN(": Abrir arquivo",
-                new FileChooser.ExtensionFilter("Text Files", "*.txt", "*.ipsli"),
-                new FileChooser.ExtensionFilter("All Files", "*.*")
+                new FileChooser.ExtensionFilter("Ipsis Literis File", "*.ipsli"),
+                new FileChooser.ExtensionFilter("Text File", "*.txt")
         ){
             @Override
             public File execute(FileChooser fileChooser) {
