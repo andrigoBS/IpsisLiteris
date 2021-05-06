@@ -54,6 +54,7 @@
         </dependency>
         <!--  End of ugly hack, but it works!  -->
     </dependencies>
+
     <build>
         <plugins>
             <plugin>

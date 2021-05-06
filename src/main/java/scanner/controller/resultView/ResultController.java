@@ -13,6 +13,7 @@ public class ResultController extends AbstractController {
     private Label rowColView;
 
     public void setText(String text){
+        textView.clear();
         textView.setText(text);
     }
 
