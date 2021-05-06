@@ -6,6 +6,8 @@ import scanner.controller.resultView.ResultController;
 import scanner.controller.scrollEditor.ScrollEditorController;
 import javafx.application.Platform;
 
+import java.io.IOException;
+
 public class TopBarController extends AbstractController{
     private final Dialog dialog = new Dialog();
 
@@ -14,6 +16,7 @@ public class TopBarController extends AbstractController{
             getCodeEditor().newFile();
             getScrollEditorController().loadText("");
         }
+        getResultController().clear();
     }
 
     public void openFile(){
@@ -23,6 +26,7 @@ public class TopBarController extends AbstractController{
                 if(path != null){
                     String text = getCodeEditor().open(path);
                     getScrollEditorController().loadText(text);
+                    getResultController().clear();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -75,12 +79,16 @@ public class TopBarController extends AbstractController{
     }
 
     public void compile(){
-        if(getCodeEditor().isSaved()){
-            String result = getCodeEditor().compile();
-            getResultController().setText(result);
-        }else{
-            dialog.compileError();
+        if(getCodeEditor().hasFileName()){
+            try {
+                getCodeEditor().save();
+            } catch (IOException e) {
+                e.printStackTrace();
+                dialog.saveError();
+            }
         }
+        String result = getCodeEditor().compile();
+        getResultController().setText(result);
     }
 
     public void execute(){

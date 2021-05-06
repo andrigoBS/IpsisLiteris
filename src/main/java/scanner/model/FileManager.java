@@ -1,11 +1,10 @@
 package scanner.model;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class FileManager {
-    public static final String DEFAULT_FILE_NAME = "../main.ipsli";
-
-    public static final String DEFAULT_DIRECTORY = "../";
+    private String currentPath = "../any.ipsli/";
 
     private String fileName;
 
@@ -29,6 +28,7 @@ public class FileManager {
         out.close();
         isSaved = true;
         this.fileName = fileName;
+        this.currentPath = fileName;
     }
 
     public void save() throws IOException{
@@ -46,17 +46,15 @@ public class FileManager {
         text = builder.toString();
         isSaved = true;
         this.fileName = fileName;
+        this.currentPath = fileName;
     }
 
     public File getCurrentDirectory(){
-        String directory = fileName == null?
-                           DEFAULT_DIRECTORY :
-                           fileName.substring(0, fileName.lastIndexOf("/"));
-        return new File(directory);
+        return new File(currentPath).getParentFile();
     }
 
-    public InputStream getFileInputStream() throws FileNotFoundException {
-        return new FileInputStream(fileName);
+    public InputStream getFileInputStream() {
+        return new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
     }
 
     public boolean hasFileName(){

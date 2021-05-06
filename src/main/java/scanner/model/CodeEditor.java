@@ -79,7 +79,7 @@ public class CodeEditor {
 
             }
             return message.toString();
-        } catch (FileNotFoundException | ParseException e) {
+        } catch (ParseException e) {
             e.printStackTrace();
             return e.getMessage();
         }
