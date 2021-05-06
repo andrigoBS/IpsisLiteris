@@ -1,9 +1,11 @@
 options {
     STATIC = false;
+    IGNORE_CASE = true;
+    OUTPUT_DIRECTORY = "src/main/java/scanner/compiler/build";
 }
 
 PARSER_BEGIN(IpsisLiteris)
-package compiladores.scanner.compiler.build;
+package scanner.compiler.build;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -61,8 +63,7 @@ SKIP: {"\n" | "\r" | "\r\n" | " " | "\t" | "\f" }
 SKIP : {
     ":{" : COMMENT                     |
     <COMMENT_LINE: ":_" <LINE> >       |
-    <HEADER: ":-" <LINE> >             |
-    <#LINE: (~["\n", "\r" ])* ("\n" | "\r" | "\n\r")?  >
+    <#LINE: (~["\n", "\r"])* ("\n" | "\r" | "\n\r" | "\r\n")  >
 }
 <COMMENT> SKIP : {
     "}:" : DEFAULT
@@ -73,44 +74,45 @@ SKIP : {
 
 // Palavras reservadas
 TOKEN : {
-    <DEF: ("program")  > | <DATA_DEF: ("define"){1}>               |
-    <IS: ("is"){1} > | <EXE: ("execute"){1}> | <MAIN_DEF: ("execute"){1}> |
+    <DEF: ("program"){1} > | <DATA_DEF: ("define"){1} > |
+    <IS: ("is"){1} > | <EXE: ("execute"){1}> |
 
-    <VAR: ("variable"){1} > | <CONST: ("not"){1}> | <SET: ("set"){1} > |
-    <TO: ("to"){1} > | <SYSCALL: "set" | "get" >  |
+    <VAR: ("variable"){1} > | <NOT_VAR: ("not"){1}> | <SET: ("set"){1} > |
+    <TO: ("to"){1} > | <GET: ("get"){1} >  |
 
-    <TYPE: "natural" | "real" | "char" | "boolean"> | <BOOL: "true" | "false" > |
+    <NAT: ("natural"){1} > |  <REAL: ("real"){1} > | < CHAR: ("char"){1} > |
+    <BOOL: ("boolean"){1} > | <TRUE: ("true"){1} > | <FALSE: ("false"){1} > |
 
-    <LOOP: "while" | "loop" | "do" > | <IF: ("verify"){1} >
+    <WHILE: ("while"){1} > | <LOOP: ("loop"){1} > | <DO: ("do"){1} > |
+    <IF: ("verify"){1} >
 }
 
 // Símbolos
 TOKEN : {
-    // Agregadores
-    <OPEN_CURLY: ("{"){1} > | <CLOSE_CURLY: ("}"){1} >   |
-    <OPEN_PARENT: ("("){1} > | <CLOSE_PARENT: (")"){1} > |
-    <OPEN_SQUARE: ("["){1} > | <CLOSE_SQUARE: ("]"){1} > |
 
-    // Comparadores
-    <EQUAL: ("=="){1} > | <N_EQUAL: ("!="){1} > | <GREATER: (">"){1} >  |
-    <LOWER: ("<"){1} > | <LOW_EQ: (">="){1} > | <GREAT_EQ: ("<="){1} >  |
+    <SPECIAL_SYMBOL:
+        // Agregadores
+        "{" | "}" | "(" | ")" | "[" | "]" |
 
-    // Operadores Aritméticos
-    <PLUS: ("+"){1} > | <MINUS: ("-"){1} > | <TIMES: ("*"){1} >         |
-    <DIVIDE: ("/"){1} > | <POWER: ("**"){1} > | <INT_DIVIDE: ("%"){1} > |
-    <MOD: ("%%"){1} > |
+        // Comparadores
+        "==" | "!=" | ">" | "<" | ">=" | "<=" |
 
-    // Operadores Lógicos
-    <AND: ("&"){1} > | <OR: ("|"){1} > | <NOT: ("!"){1} > |
+        // Op. Aritméticos
+        "+" | "-" | "*" | "/" | "%" | "**" | "%%" |
 
-    // Simbolos especiais
-    <DELIMITER: ("."){1} > | <SEPARATOR: (","){1} >
+        // Op. Lógicos
+        "&" | "|" | "!"
+
+        // Especiais
+        "." | "," | ":-"
+    >
 
 }
 
 // Identificadores
 TOKEN : {
-    <IDENTIFIER: ("_" | <LETTER>) (<LETTER>)* (<DPATH> | <UPATH> )? > |
+    <IDENTIFIER: (("_" | <LETTER>) (<LETTER>)* (<DPATH>)? ) |
+                 (("_")? (<LETTER>)+ (<UPATH>))> |
 
     <#DPATH: <DIGIT> ((<LETTER>)* "_" (<LETTER>)* <DIGIT> | (<LETTER>)+ <DIGIT> )*
                      ((<LETTER>)+ | "_")+ > |
@@ -158,38 +160,23 @@ List<AnalyserResult> Start():
 AnalyserResult token():
 {
     Token t;
-    String msg = "";
+    String msg;
 }
 {
     (
     t = <FLOAT> | t = <INTEGER> | t = <LITERAL> |
 
-    t = <OPEN_CURLY> | t = <CLOSE_CURLY> |
-    t = <OPEN_SQUARE> | t = <CLOSE_SQUARE> |
-    t = <OPEN_PARENT> | t = <CLOSE_PARENT> |
-
-    t = <EQUAL> | t = <N_EQUAL> | t = <GREATER> |
-    t = <LOWER> | t = <GREAT_EQ> | t = <LOW_EQ> |
-
-    t = <PLUS> | t = <MINUS> | t = <TIMES>        |
-    t = <DIVIDE> | t = <POWER> | t = <INT_DIVIDE> |
-    t = <MOD> |
-
-    t = <AND> | t = <OR> | t = <NOT> |
-
-    t = <DELIMITER> | t = <SEPARATOR> |
+    t = <SPECIAL_SYMBOL> |
 
     t = <IDENTIFIER> |
 
-    t = <LOOP> | t = <TYPE> | t = <IF> | t = <DEF> |
-    t = <DATA_DEF> | t = <MAIN_DEF> | t = <BOOL>   |
-    t = <EXE> | t = <IS> | t = <SET> | t = <CONST> |
-    t = <SYSCALL> | t = <TO> | t = <VAR>
+    t = <LOOP> | t = <NAT> | t = <REAL> | t = <IF> | t = <DEF> |
+    t = <DATA_DEF> | t = <BOOL> | t = <EXE> | t = <IS> |
+    t = <SET> | t = <NOT_VAR> | t = <GET> | t = <TO> | t = <VAR> |
+    t = <TRUE> | t = <FALSE> | t = <WHILE> | t = <DO> | t = <CHAR>
     )
     {return new AnalyserResult(t);} |
-     (
-      t = <(~[])> { msg = "INVALID TOKEN"; }
-     )
+     t = <(~[])> { msg = "TOKEN INVALIDO"; }
      { return AnalyserResult.error(t, msg); }
 }
 
