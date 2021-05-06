@@ -59,41 +59,27 @@ public class IpsisLiteris implements IpsisLiterisConstants {
       case DATA_DEF:
       case IS:
       case EXE:
-      case MAIN_DEF:
       case VAR:
-      case CONST:
+      case NOT_VAR:
       case SET:
       case TO:
-      case SYSCALL:
-      case TYPE:
+      case GET:
+      case NAT:
+      case REAL:
+      case CHAR:
       case BOOL:
+      case TRUE:
+      case FALSE:
+      case WHILE:
       case LOOP:
+      case DO:
       case IF:
       case SPECIAL_SYMBOL:
-      case HEADER_TOKEN:
-      case EQUAL:
-      case N_EQUAL:
-      case GREATER:
-      case LOWER:
-      case LOW_EQ:
-      case GREAT_EQ:
-      case PLUS:
-      case MINUS:
-      case TIMES:
-      case DIVIDE:
-      case POWER:
-      case INT_DIVIDE:
-      case MOD:
-      case AND:
-      case OR:
-      case NOT:
-      case DELIMITER:
-      case SEPARATOR:
       case IDENTIFIER:
       case INTEGER:
       case FLOAT:
       case LITERAL:
-      case 67:{
+      case 45:{
         ;
         break;
         }
@@ -110,42 +96,28 @@ result.add(input);
 }
 
   final public AnalyserResult token() throws ParseException {Token t;
-    String msg = "";
+    String msg;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case DEF:
     case DATA_DEF:
     case IS:
     case EXE:
-    case MAIN_DEF:
     case VAR:
-    case CONST:
+    case NOT_VAR:
     case SET:
     case TO:
-    case SYSCALL:
-    case TYPE:
+    case GET:
+    case NAT:
+    case REAL:
+    case CHAR:
     case BOOL:
+    case TRUE:
+    case FALSE:
+    case WHILE:
     case LOOP:
+    case DO:
     case IF:
     case SPECIAL_SYMBOL:
-    case HEADER_TOKEN:
-    case EQUAL:
-    case N_EQUAL:
-    case GREATER:
-    case LOWER:
-    case LOW_EQ:
-    case GREAT_EQ:
-    case PLUS:
-    case MINUS:
-    case TIMES:
-    case DIVIDE:
-    case POWER:
-    case INT_DIVIDE:
-    case MOD:
-    case AND:
-    case OR:
-    case NOT:
-    case DELIMITER:
-    case SEPARATOR:
     case IDENTIFIER:
     case INTEGER:
     case FLOAT:
@@ -167,78 +139,6 @@ result.add(input);
         t = jj_consume_token(SPECIAL_SYMBOL);
         break;
         }
-      case EQUAL:{
-        t = jj_consume_token(EQUAL);
-        break;
-        }
-      case N_EQUAL:{
-        t = jj_consume_token(N_EQUAL);
-        break;
-        }
-      case GREATER:{
-        t = jj_consume_token(GREATER);
-        break;
-        }
-      case LOWER:{
-        t = jj_consume_token(LOWER);
-        break;
-        }
-      case GREAT_EQ:{
-        t = jj_consume_token(GREAT_EQ);
-        break;
-        }
-      case LOW_EQ:{
-        t = jj_consume_token(LOW_EQ);
-        break;
-        }
-      case PLUS:{
-        t = jj_consume_token(PLUS);
-        break;
-        }
-      case MINUS:{
-        t = jj_consume_token(MINUS);
-        break;
-        }
-      case TIMES:{
-        t = jj_consume_token(TIMES);
-        break;
-        }
-      case DIVIDE:{
-        t = jj_consume_token(DIVIDE);
-        break;
-        }
-      case POWER:{
-        t = jj_consume_token(POWER);
-        break;
-        }
-      case INT_DIVIDE:{
-        t = jj_consume_token(INT_DIVIDE);
-        break;
-        }
-      case MOD:{
-        t = jj_consume_token(MOD);
-        break;
-        }
-      case AND:{
-        t = jj_consume_token(AND);
-        break;
-        }
-      case OR:{
-        t = jj_consume_token(OR);
-        break;
-        }
-      case NOT:{
-        t = jj_consume_token(NOT);
-        break;
-        }
-      case DELIMITER:{
-        t = jj_consume_token(DELIMITER);
-        break;
-        }
-      case SEPARATOR:{
-        t = jj_consume_token(SEPARATOR);
-        break;
-        }
       case IDENTIFIER:{
         t = jj_consume_token(IDENTIFIER);
         break;
@@ -247,8 +147,12 @@ result.add(input);
         t = jj_consume_token(LOOP);
         break;
         }
-      case TYPE:{
-        t = jj_consume_token(TYPE);
+      case NAT:{
+        t = jj_consume_token(NAT);
+        break;
+        }
+      case REAL:{
+        t = jj_consume_token(REAL);
         break;
         }
       case IF:{
@@ -261,10 +165,6 @@ result.add(input);
         }
       case DATA_DEF:{
         t = jj_consume_token(DATA_DEF);
-        break;
-        }
-      case MAIN_DEF:{
-        t = jj_consume_token(MAIN_DEF);
         break;
         }
       case BOOL:{
@@ -283,12 +183,12 @@ result.add(input);
         t = jj_consume_token(SET);
         break;
         }
-      case CONST:{
-        t = jj_consume_token(CONST);
+      case NOT_VAR:{
+        t = jj_consume_token(NOT_VAR);
         break;
         }
-      case SYSCALL:{
-        t = jj_consume_token(SYSCALL);
+      case GET:{
+        t = jj_consume_token(GET);
         break;
         }
       case TO:{
@@ -299,8 +199,24 @@ result.add(input);
         t = jj_consume_token(VAR);
         break;
         }
-      case HEADER_TOKEN:{
-        t = jj_consume_token(HEADER_TOKEN);
+      case TRUE:{
+        t = jj_consume_token(TRUE);
+        break;
+        }
+      case FALSE:{
+        t = jj_consume_token(FALSE);
+        break;
+        }
+      case WHILE:{
+        t = jj_consume_token(WHILE);
+        break;
+        }
+      case DO:{
+        t = jj_consume_token(DO);
+        break;
+        }
+      case CHAR:{
+        t = jj_consume_token(CHAR);
         break;
         }
       default:
@@ -311,9 +227,9 @@ result.add(input);
 {if ("" != null) return new AnalyserResult(t);}
       break;
       }
-    case 67:{
-      t = jj_consume_token(67);
-msg = "TOKEN INV\u00c3\ufffdLIDO";
+    case 45:{
+      t = jj_consume_token(45);
+msg = "TOKEN INVALIDO";
 {if ("" != null) return AnalyserResult.error(t, msg);}
       break;
       }
@@ -337,20 +253,15 @@ msg = "TOKEN INV\u00c3\ufffdLIDO";
   final private int[] jj_la1 = new int[3];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
-  static private int[] jj_la1_2;
   static {
 	   jj_la1_init_0();
 	   jj_la1_init_1();
-	   jj_la1_init_2();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x3fffc000,0x3fffc000,0x3fffc000,};
+	   jj_la1_0 = new int[] {0xfffff000,0xfffff000,0xfffff000,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x4c7ffff0,0x4c7ffff0,0x4c7ffff0,};
-	}
-	private static void jj_la1_init_2() {
-	   jj_la1_2 = new int[] {0x8,0x0,0x8,};
+	   jj_la1_1 = new int[] {0x2131,0x131,0x2131,};
 	}
 
   /** Constructor with InputStream. */
@@ -475,7 +386,7 @@ msg = "TOKEN INV\u00c3\ufffdLIDO";
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[68];
+	 boolean[] la1tokens = new boolean[46];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
@@ -489,13 +400,10 @@ msg = "TOKEN INV\u00c3\ufffdLIDO";
 		   if ((jj_la1_1[i] & (1<<j)) != 0) {
 			 la1tokens[32+j] = true;
 		   }
-		   if ((jj_la1_2[i] & (1<<j)) != 0) {
-			 la1tokens[64+j] = true;
-		   }
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 68; i++) {
+	 for (int i = 0; i < 46; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

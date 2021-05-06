@@ -72,30 +72,19 @@ SKIP : {
     <~[]>
 }
 
-// Header
-TOKEN : {
-    <HEADER_TOKEN: ":-">: HEADER
-}
-
-<HEADER> MORE : {
-    <~["\n", "\r"]>
-}
-
-<HEADER> SKIP : {
-    <("\n" | "\r" | "\n\r" | "\r\n")> : DEFAULT
-}
-
 // Palavras reservadas
 TOKEN : {
-    <DEF: ("program")  > | <DATA_DEF: ("define"){1}>               |
-    <IS: ("is"){1} > | <EXE: ("execute"){1}> | <MAIN_DEF: ("execute"){1}> |
+    <DEF: ("program"){1} > | <DATA_DEF: ("define"){1} > |
+    <IS: ("is"){1} > | <EXE: ("execute"){1}> |
 
-    <VAR: ("variable"){1} > | <CONST: ("not"){1}> | <SET: ("set"){1} > |
-    <TO: ("to"){1} > | <SYSCALL: "set" | "get" >  |
+    <VAR: ("variable"){1} > | <NOT_VAR: ("not"){1}> | <SET: ("set"){1} > |
+    <TO: ("to"){1} > | <GET: ("get"){1} >  |
 
-    <TYPE: "natural" | "real" | "char" | "boolean"> | <BOOL: "true" | "false" > |
+    <NAT: ("natural"){1} > |  <REAL: ("real"){1} > | < CHAR: ("char"){1} > |
+    <BOOL: ("boolean"){1} > | <TRUE: ("true"){1} > | <FALSE: ("false"){1} > |
 
-    <LOOP: "while" | "loop" | "do" > | <IF: ("verify"){1} >
+    <WHILE: ("while"){1} > | <LOOP: ("loop"){1} > | <DO: ("do"){1} > |
+    <IF: ("verify"){1} >
 }
 
 // Símbolos
@@ -115,14 +104,15 @@ TOKEN : {
         "&" | "|" | "!"
 
         // Especiais
-        "." | ","
+        "." | "," | ":-"
     >
 
 }
 
 // Identificadores
 TOKEN : {
-    <IDENTIFIER: ("_" | <LETTER>) (<LETTER>)* (<DPATH> | <UPATH> )? > |
+    <IDENTIFIER: (("_" | <LETTER>) (<LETTER>)* (<DPATH>)? ) |
+                 (("_")? (<LETTER>)+ (<UPATH>))> |
 
     <#DPATH: <DIGIT> ((<LETTER>)* "_" (<LETTER>)* <DIGIT> | (<LETTER>)+ <DIGIT> )*
                      ((<LETTER>)+ | "_")+ > |
@@ -170,7 +160,7 @@ List<AnalyserResult> Start():
 AnalyserResult token():
 {
     Token t;
-    String msg = "";
+    String msg;
 }
 {
     (
@@ -178,26 +168,15 @@ AnalyserResult token():
 
     t = <SPECIAL_SYMBOL> |
 
-    t = <EQUAL> | t = <N_EQUAL> | t = <GREATER> |
-    t = <LOWER> | t = <GREAT_EQ> | t = <LOW_EQ> |
-
-    t = <PLUS> | t = <MINUS> | t = <TIMES>        |
-    t = <DIVIDE> | t = <POWER> | t = <INT_DIVIDE> |
-    t = <MOD> |
-
-    t = <AND> | t = <OR> | t = <NOT> |
-
-    t = <DELIMITER> | t = <SEPARATOR> |
-
     t = <IDENTIFIER> |
 
-    t = <LOOP> | t = <TYPE> | t = <IF> | t = <DEF> |
-    t = <DATA_DEF> | t = <MAIN_DEF> | t = <BOOL>   |
-    t = <EXE> | t = <IS> | t = <SET> | t = <CONST> |
-    t = <SYSCALL> | t = <TO> | t = <VAR> | t = <HEADER_TOKEN>
+    t = <LOOP> | t = <NAT> | t = <REAL> | t = <IF> | t = <DEF> |
+    t = <DATA_DEF> | t = <BOOL> | t = <EXE> | t = <IS> |
+    t = <SET> | t = <NOT_VAR> | t = <GET> | t = <TO> | t = <VAR> |
+    t = <TRUE> | t = <FALSE> | t = <WHILE> | t = <DO> | t = <CHAR>
     )
     {return new AnalyserResult(t);} |
-     t = <(~[])> { msg = "TOKEN INVÁLIDO"; }
+     t = <(~[])> { msg = "TOKEN INVALIDO"; }
      { return AnalyserResult.error(t, msg); }
 }
 

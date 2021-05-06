@@ -15,118 +15,76 @@ public interface IpsisLiterisConstants {
   /** RegularExpression Id. */
   int LINE = 9;
   /** RegularExpression Id. */
-  int DEF = 14;
+  int DEF = 12;
   /** RegularExpression Id. */
-  int DATA_DEF = 15;
+  int DATA_DEF = 13;
   /** RegularExpression Id. */
-  int IS = 16;
+  int IS = 14;
   /** RegularExpression Id. */
-  int EXE = 17;
+  int EXE = 15;
   /** RegularExpression Id. */
-  int MAIN_DEF = 18;
+  int VAR = 16;
   /** RegularExpression Id. */
-  int VAR = 19;
+  int NOT_VAR = 17;
   /** RegularExpression Id. */
-  int CONST = 20;
+  int SET = 18;
   /** RegularExpression Id. */
-  int SET = 21;
+  int TO = 19;
   /** RegularExpression Id. */
-  int TO = 22;
+  int GET = 20;
   /** RegularExpression Id. */
-  int SYSCALL = 23;
+  int NAT = 21;
   /** RegularExpression Id. */
-  int TYPE = 24;
+  int REAL = 22;
   /** RegularExpression Id. */
-  int BOOL = 25;
+  int CHAR = 23;
   /** RegularExpression Id. */
-  int LOOP = 26;
+  int BOOL = 24;
   /** RegularExpression Id. */
-  int IF = 27;
+  int TRUE = 25;
   /** RegularExpression Id. */
-  int SPECIAL_SYMBOL = 28;
+  int FALSE = 26;
   /** RegularExpression Id. */
-  int HEADER_TOKEN = 29;
+  int WHILE = 27;
   /** RegularExpression Id. */
-  int OPEN_CURLY = 30;
+  int LOOP = 28;
   /** RegularExpression Id. */
-  int CLOSE_CURLY = 31;
+  int DO = 29;
   /** RegularExpression Id. */
-  int OPEN_PARENT = 32;
+  int IF = 30;
   /** RegularExpression Id. */
-  int CLOSE_PARENT = 33;
+  int SPECIAL_SYMBOL = 31;
   /** RegularExpression Id. */
-  int OPEN_SQUARE = 34;
+  int IDENTIFIER = 32;
   /** RegularExpression Id. */
-  int CLOSE_SQUARE = 35;
+  int DPATH = 33;
   /** RegularExpression Id. */
-  int EQUAL = 36;
+  int UPATH = 34;
   /** RegularExpression Id. */
-  int N_EQUAL = 37;
+  int LETTER = 35;
   /** RegularExpression Id. */
-  int GREATER = 38;
+  int INTEGER = 36;
   /** RegularExpression Id. */
-  int LOWER = 39;
+  int FLOAT = 37;
   /** RegularExpression Id. */
-  int LOW_EQ = 40;
+  int DIGIT = 38;
   /** RegularExpression Id. */
-  int GREAT_EQ = 41;
+  int NUMS = 39;
   /** RegularExpression Id. */
-  int PLUS = 42;
+  int LITERAL = 40;
   /** RegularExpression Id. */
-  int MINUS = 43;
+  int SIMPLE_Q_STRING = 41;
   /** RegularExpression Id. */
-  int TIMES = 44;
+  int DOUBLE_Q_STRING = 42;
   /** RegularExpression Id. */
-  int DIVIDE = 45;
+  int ESCAPE_DQ = 43;
   /** RegularExpression Id. */
-  int POWER = 46;
-  /** RegularExpression Id. */
-  int INT_DIVIDE = 47;
-  /** RegularExpression Id. */
-  int MOD = 48;
-  /** RegularExpression Id. */
-  int AND = 49;
-  /** RegularExpression Id. */
-  int OR = 50;
-  /** RegularExpression Id. */
-  int NOT = 51;
-  /** RegularExpression Id. */
-  int DELIMITER = 52;
-  /** RegularExpression Id. */
-  int SEPARATOR = 53;
-  /** RegularExpression Id. */
-  int IDENTIFIER = 54;
-  /** RegularExpression Id. */
-  int DPATH = 55;
-  /** RegularExpression Id. */
-  int UPATH = 56;
-  /** RegularExpression Id. */
-  int LETTER = 57;
-  /** RegularExpression Id. */
-  int INTEGER = 58;
-  /** RegularExpression Id. */
-  int FLOAT = 59;
-  /** RegularExpression Id. */
-  int DIGIT = 60;
-  /** RegularExpression Id. */
-  int NUMS = 61;
-  /** RegularExpression Id. */
-  int LITERAL = 62;
-  /** RegularExpression Id. */
-  int SIMPLE_Q_STRING = 63;
-  /** RegularExpression Id. */
-  int DOUBLE_Q_STRING = 64;
-  /** RegularExpression Id. */
-  int ESCAPE_DQ = 65;
-  /** RegularExpression Id. */
-  int ESCAPE_SQ = 66;
+  int ESCAPE_SQ = 44;
 
   /** Lexical state. */
   int DEFAULT = 0;
   /** Lexical state. */
   int COMMENT = 1;
-  /** Lexical state. */
-  int HEADER = 2;
 
   /** Literal token values. */
   String[] tokenImage = {
@@ -142,48 +100,26 @@ public interface IpsisLiterisConstants {
     "<LINE>",
     "\"}:\"",
     "<token of kind 11>",
-    "<token of kind 12>",
-    "<token of kind 13>",
-    "\"program\"",
+    "<DEF>",
     "<DATA_DEF>",
     "<IS>",
     "<EXE>",
-    "<MAIN_DEF>",
     "<VAR>",
-    "<CONST>",
+    "<NOT_VAR>",
     "<SET>",
     "<TO>",
-    "<SYSCALL>",
-    "<TYPE>",
+    "<GET>",
+    "<NAT>",
+    "<REAL>",
+    "<CHAR>",
     "<BOOL>",
+    "<TRUE>",
+    "<FALSE>",
+    "<WHILE>",
     "<LOOP>",
+    "<DO>",
     "<IF>",
     "<SPECIAL_SYMBOL>",
-    "\":-\"",
-    "<OPEN_CURLY>",
-    "<CLOSE_CURLY>",
-    "<OPEN_PARENT>",
-    "<CLOSE_PARENT>",
-    "<OPEN_SQUARE>",
-    "<CLOSE_SQUARE>",
-    "<EQUAL>",
-    "<N_EQUAL>",
-    "<GREATER>",
-    "<LOWER>",
-    "<LOW_EQ>",
-    "<GREAT_EQ>",
-    "<PLUS>",
-    "<MINUS>",
-    "<TIMES>",
-    "<DIVIDE>",
-    "<POWER>",
-    "<INT_DIVIDE>",
-    "<MOD>",
-    "<AND>",
-    "<OR>",
-    "<NOT>",
-    "<DELIMITER>",
-    "<SEPARATOR>",
     "<IDENTIFIER>",
     "<DPATH>",
     "<UPATH>",
@@ -197,7 +133,7 @@ public interface IpsisLiterisConstants {
     "<DOUBLE_Q_STRING>",
     "<ESCAPE_DQ>",
     "<ESCAPE_SQ>",
-    "<token of kind 67>",
+    "<token of kind 45>",
   };
 
 }
