@@ -7,7 +7,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class FileManager {
-//    private String currentPath = "./any.ipsli/";
+    //private String currentPath = "./any.ipsli/";
 
     private String currentPath = "./src/test/files/any.ipsli";
 
