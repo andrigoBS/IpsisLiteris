@@ -140,7 +140,18 @@ TOKEN : {
     <#ESCAPE_SQ: "\\" "'">
 }
 
-List<AnalyserResult> Start():
+//Analisador Sintático
+
+void Program():
+{}
+{
+    <DEF>
+    (":-" )
+}
+
+// Analisador Léxico
+
+List<AnalyserResult> Lexic():
 {
    List<AnalyserResult> result = new LinkedList<>();
    AnalyserResult input;
