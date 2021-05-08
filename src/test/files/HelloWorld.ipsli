@@ -1,0 +1,10 @@
+:- "Hello World"
+program{
+	define{
+		not variable
+		char is helloWorld "Hello World".
+	}
+	execute{
+		put{helloWorld}.
+	}
+}

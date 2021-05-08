@@ -17,6 +17,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.github.qsy7.java.dependencies</groupId>
+            <artifactId>lombok</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
             <version>0.10.6</version>

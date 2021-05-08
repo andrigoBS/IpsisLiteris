@@ -12,45 +12,36 @@ import java.util.List;
 
 public class IpsisLiteris {
 
-    private List<AnalyserResult> result;
+    private List<AnalyserError> result = new LinkedList<>();
 
     public static void main (String[] args) throws ParseException, TokenMgrError {
         IpsisLiteris parser = new IpsisLiteris(System.in);
-        parser.result = parser.Start();
-        for (AnalyserResult analyser : parser.result) {
+        parser.Program();
+        /*for (AnalyserResult analyser : parser.result) {
             System.out.println(analyser);
-        }
+        }*/
     }
 
-    public static class AnalyserResult {
+    public static class AnalyserError {
 
         public final String token;
         public final int line;
         public final int column;
         public final String type;
         public final int id;
-        public final boolean error;
         public final String errorMsg;
 
-        private AnalyserResult (Token t, boolean error, String errorMsg) {
+        private AnalyserError (Token t, String errorMsg) {
             token = t.image;
             line = t.beginLine;
             column = t.beginColumn;
             type = IpsisLiterisConstants.tokenImage[t.kind];
             id = t.kind;
-            this.error = error;
             this.errorMsg = errorMsg;
-        }
-
-        public AnalyserResult (Token t) { this(t, false, ""); }
-
-        public static AnalyserResult error (Token t, String msg) {
-            return new AnalyserResult(t, true, msg);
         }
 
         @Override
         public String toString() {
-            if (!error) return token + " " + line + " " + column + " " + type + " " + id;
             return errorMsg + " at line: " + line + " at column: " + column;
         }
     }
@@ -78,7 +69,7 @@ TOKEN : {
     <IS: ("is"){1} > | <EXE: ("execute"){1}> |
 
     <VAR: ("variable"){1} > | <NOT_VAR: ("not"){1}> | <SET: ("set"){1} > |
-    <TO: ("to"){1} > | <GET: ("get"){1} >  |
+    <TO: ("to"){1} > | <GET: ("get"){1} >  | <PUT: ("put"){1}> |
 
     <NAT: ("natural"){1} > |  <REAL: ("real"){1} > | < CHAR: ("char"){1} > |
     <BOOL: ("boolean"){1} > | <TRUE: ("true"){1} > | <FALSE: ("false"){1} > |
@@ -89,23 +80,25 @@ TOKEN : {
 
 // Símbolos
 TOKEN : {
+    // Agregadores
+    <OPEN_CURLY: ("{"){1} > | <CLOSE_CURLY: ("}"){1} >   |
+    <OPEN_PARENT: ("("){1} > | <CLOSE_PARENT: (")"){1} > |
+    <OPEN_SQUARE: ("["){1} > | <CLOSE_SQUARE: ("]"){1} > |
 
-    <SPECIAL_SYMBOL:
-        // Agregadores
-        "{" | "}" | "(" | ")" | "[" | "]" |
+    // Comparadores
+    <EQUAL: ("=="){1} > | <N_EQUAL: ("!="){1} > | <GREATER: (">"){1} >  |
+    <LOWER: ("<"){1} > | <LOW_EQ: (">="){1} > | <GREAT_EQ: ("<="){1} >  |
 
-        // Comparadores
-        "==" | "!=" | ">" | "<" | ">=" | "<=" |
+    // Operadores Aritméticos
+    <PLUS: ("+"){1} > | <MINUS: ("-"){1} > | <TIMES: ("*"){1} >         |
+    <DIVIDE: ("/"){1} > | <POWER: ("**"){1} > | <INT_DIVIDE: ("%"){1} > |
+    <MOD: ("%%"){1} > |
 
-        // Op. Aritméticos
-        "+" | "-" | "*" | "/" | "%" | "**" | "%%" |
+    // Operadores Lógicos
+    <AND: ("&"){1} > | <OR: ("|"){1} > | <NOT: ("!"){1} > |
 
-        // Op. Lógicos
-        "&" | "|" | "!"
-
-        // Especiais
-        "." | "," | ":-"
-    >
+    // Simbolos especiais
+    <DELIMITER: ("."){1} > | <SEPARATOR: (","){1} > | <HEADER_DEF: (":-"){1}>
 
 }
 
@@ -142,16 +135,200 @@ TOKEN : {
 
 //Analisador Sintático
 
-void Program():
+void Program ():
 {}
 {
-    <DEF>
-    (":-" )
+    (<HEADER_DEF> <LITERAL>)?
+    <DEF> <OPEN_CURLY>
+    VarDeclaration()
+    ProgMain()
+    <CLOSE_CURLY>
+    (<IDENTIFIER>)?
 }
+
+void VarDeclaration ():
+{}
+{
+    (<DATA_DEF> <OPEN_CURLY>
+    VarField()
+    <CLOSE_CURLY>)?
+}
+
+void VarField ():
+{}
+{
+    ConstDef() (VarDef())? | VarDef() (ConstDef())?
+}
+
+void ConstDef ():
+{}
+{
+    <NOT_VAR> <VAR> Type() <IS> (IdList() Constants() <DELIMITER>)+
+}
+
+void VarDef():
+{}
+{
+    <VAR> (Type() <IS> IdList() <DELIMITER>)+
+}
+
+void ProgMain ():
+{}
+{
+    <EXE> <OPEN_CURLY> CommandList() |
+    {
+        result.add(new AnalyserError(getToken(1), "ErRo"));
+        System.out.println(result);
+    }
+}
+
+void Command ():
+{}
+{
+    While() | DoWhile() | Read() | Print() | Select() | Attribution()
+}
+
+void Attribution ():
+{}
+{
+    <SET> Expression() <TO> IdList()
+}
+
+void Select ():
+{}
+{
+    <IF> Expression() <IS> (
+        IsTrue() (IsFalse())? | IsFalse() (IsTrue())?
+    )
+}
+
+void IsTrue ():
+{}
+{
+    <TRUE> <OPEN_CURLY> CommandList() <CLOSE_CURLY>
+}
+
+void IsFalse ():
+{}
+{
+    <FALSE> <OPEN_CURLY> CommandList() <CLOSE_CURLY>
+}
+
+void Print ():
+{}
+{
+    <PUT> <OPEN_CURLY> Value() <CLOSE_CURLY>
+}
+
+void Read ():
+{}
+{
+    <GET> <OPEN_CURLY> IdList() <CLOSE_CURLY>
+}
+
+void DoWhile ():
+{}
+{
+    <LOOP> <OPEN_CURLY> CommandList() <CLOSE_CURLY> <WHILE> Expression() <IS> <TRUE>
+}
+
+void While ():
+{}
+{
+    <WHILE> Expression() <IS> <TRUE> <DO> <OPEN_CURLY> CommandList() <CLOSE_CURLY>
+}
+
+// Sintático Úteis
+
+void Constants ():
+{}
+{
+    <LITERAL> | <INTEGER> | <FLOAT> | <TRUE> | <FALSE>
+}
+
+void Value():
+{}
+{
+    <IDENTIFIER> (<OPEN_SQUARE> <INTEGER> <CLOSE_SQUARE>)? | Constants()
+}
+
+void Type():
+{}
+{
+    <NAT> | <REAL> | <CHAR> | <BOOL>
+}
+
+void IdList():
+{}
+{
+    <IDENTIFIER> (<SEPARATOR> <IDENTIFIER>)*
+}
+
+void CommandList ():
+{}
+{
+    (Command() <DELIMITER>)+
+}
+
+void Expression ():
+{}
+{
+    ExpLogicAritmetic() (Comparator() ExpLogicAritmetic())?
+}
+
+void ExpLogicAritmetic ():
+{}
+{
+    Element2() (LowPriorityOperator() Element2())*
+}
+
+void Element2 ():
+{}
+{
+    Element1() (MediumPriorityOperator() Element1())*
+}
+
+void Element1 ():
+{}
+{
+     Element() ( <POWER> Element())*
+}
+
+void Element ():
+{}
+{
+    Value() | ParentesisExp() | <NOT> ParentesisExp()
+}
+
+void ParentesisExp ():
+{}
+{
+    <OPEN_PARENT> Expression() <CLOSE_PARENT>
+}
+
+void Comparator ():
+{}
+{
+    <EQUAL> | <N_EQUAL> | <LOWER> | <GREATER> | <LOW_EQ> | <GREAT_EQ>
+}
+
+void LowPriorityOperator ():
+{}
+{
+    <PLUS> | <MINUS> | <OR>
+}
+
+void MediumPriorityOperator ():
+{}
+{
+    <TIMES> | <DIVIDE> | <INT_DIVIDE> | <MOD> | <AND>
+}
+
+
 
 // Analisador Léxico
 
-List<AnalyserResult> Lexic():
+/*List<AnalyserResult> Lexic():
 {
    List<AnalyserResult> result = new LinkedList<>();
    AnalyserResult input;
@@ -177,8 +354,6 @@ AnalyserResult token():
     (
     t = <FLOAT> | t = <INTEGER> | t = <LITERAL> |
 
-    t = <SPECIAL_SYMBOL> |
-
     t = <IDENTIFIER> |
 
     t = <LOOP> | t = <NAT> | t = <REAL> | t = <IF> | t = <DEF> |
@@ -189,7 +364,7 @@ AnalyserResult token():
     {return new AnalyserResult(t);} |
      t = <(~[])> { msg = "TOKEN INVALIDO"; }
      { return AnalyserResult.error(t, msg); }
-}
+}*/
 
 
 

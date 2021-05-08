@@ -33,53 +33,103 @@ public interface IpsisLiterisConstants {
   /** RegularExpression Id. */
   int GET = 20;
   /** RegularExpression Id. */
-  int NAT = 21;
+  int PUT = 21;
   /** RegularExpression Id. */
-  int REAL = 22;
+  int NAT = 22;
   /** RegularExpression Id. */
-  int CHAR = 23;
+  int REAL = 23;
   /** RegularExpression Id. */
-  int BOOL = 24;
+  int CHAR = 24;
   /** RegularExpression Id. */
-  int TRUE = 25;
+  int BOOL = 25;
   /** RegularExpression Id. */
-  int FALSE = 26;
+  int TRUE = 26;
   /** RegularExpression Id. */
-  int WHILE = 27;
+  int FALSE = 27;
   /** RegularExpression Id. */
-  int LOOP = 28;
+  int WHILE = 28;
   /** RegularExpression Id. */
-  int DO = 29;
+  int LOOP = 29;
   /** RegularExpression Id. */
-  int IF = 30;
+  int DO = 30;
   /** RegularExpression Id. */
-  int SPECIAL_SYMBOL = 31;
+  int IF = 31;
   /** RegularExpression Id. */
-  int IDENTIFIER = 32;
+  int OPEN_CURLY = 32;
   /** RegularExpression Id. */
-  int DPATH = 33;
+  int CLOSE_CURLY = 33;
   /** RegularExpression Id. */
-  int UPATH = 34;
+  int OPEN_PARENT = 34;
   /** RegularExpression Id. */
-  int LETTER = 35;
+  int CLOSE_PARENT = 35;
   /** RegularExpression Id. */
-  int INTEGER = 36;
+  int OPEN_SQUARE = 36;
   /** RegularExpression Id. */
-  int FLOAT = 37;
+  int CLOSE_SQUARE = 37;
   /** RegularExpression Id. */
-  int DIGIT = 38;
+  int EQUAL = 38;
   /** RegularExpression Id. */
-  int NUMS = 39;
+  int N_EQUAL = 39;
   /** RegularExpression Id. */
-  int LITERAL = 40;
+  int GREATER = 40;
   /** RegularExpression Id. */
-  int SIMPLE_Q_STRING = 41;
+  int LOWER = 41;
   /** RegularExpression Id. */
-  int DOUBLE_Q_STRING = 42;
+  int LOW_EQ = 42;
   /** RegularExpression Id. */
-  int ESCAPE_DQ = 43;
+  int GREAT_EQ = 43;
   /** RegularExpression Id. */
-  int ESCAPE_SQ = 44;
+  int PLUS = 44;
+  /** RegularExpression Id. */
+  int MINUS = 45;
+  /** RegularExpression Id. */
+  int TIMES = 46;
+  /** RegularExpression Id. */
+  int DIVIDE = 47;
+  /** RegularExpression Id. */
+  int POWER = 48;
+  /** RegularExpression Id. */
+  int INT_DIVIDE = 49;
+  /** RegularExpression Id. */
+  int MOD = 50;
+  /** RegularExpression Id. */
+  int AND = 51;
+  /** RegularExpression Id. */
+  int OR = 52;
+  /** RegularExpression Id. */
+  int NOT = 53;
+  /** RegularExpression Id. */
+  int DELIMITER = 54;
+  /** RegularExpression Id. */
+  int SEPARATOR = 55;
+  /** RegularExpression Id. */
+  int HEADER_DEF = 56;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 57;
+  /** RegularExpression Id. */
+  int DPATH = 58;
+  /** RegularExpression Id. */
+  int UPATH = 59;
+  /** RegularExpression Id. */
+  int LETTER = 60;
+  /** RegularExpression Id. */
+  int INTEGER = 61;
+  /** RegularExpression Id. */
+  int FLOAT = 62;
+  /** RegularExpression Id. */
+  int DIGIT = 63;
+  /** RegularExpression Id. */
+  int NUMS = 64;
+  /** RegularExpression Id. */
+  int LITERAL = 65;
+  /** RegularExpression Id. */
+  int SIMPLE_Q_STRING = 66;
+  /** RegularExpression Id. */
+  int DOUBLE_Q_STRING = 67;
+  /** RegularExpression Id. */
+  int ESCAPE_DQ = 68;
+  /** RegularExpression Id. */
+  int ESCAPE_SQ = 69;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -109,6 +159,7 @@ public interface IpsisLiterisConstants {
     "<SET>",
     "<TO>",
     "<GET>",
+    "<PUT>",
     "<NAT>",
     "<REAL>",
     "<CHAR>",
@@ -119,7 +170,31 @@ public interface IpsisLiterisConstants {
     "<LOOP>",
     "<DO>",
     "<IF>",
-    "<SPECIAL_SYMBOL>",
+    "<OPEN_CURLY>",
+    "<CLOSE_CURLY>",
+    "<OPEN_PARENT>",
+    "<CLOSE_PARENT>",
+    "<OPEN_SQUARE>",
+    "<CLOSE_SQUARE>",
+    "<EQUAL>",
+    "<N_EQUAL>",
+    "<GREATER>",
+    "<LOWER>",
+    "<LOW_EQ>",
+    "<GREAT_EQ>",
+    "<PLUS>",
+    "<MINUS>",
+    "<TIMES>",
+    "<DIVIDE>",
+    "<POWER>",
+    "<INT_DIVIDE>",
+    "<MOD>",
+    "<AND>",
+    "<OR>",
+    "<NOT>",
+    "<DELIMITER>",
+    "<SEPARATOR>",
+    "<HEADER_DEF>",
     "<IDENTIFIER>",
     "<DPATH>",
     "<UPATH>",
@@ -133,7 +208,6 @@ public interface IpsisLiterisConstants {
     "<DOUBLE_Q_STRING>",
     "<ESCAPE_DQ>",
     "<ESCAPE_SQ>",
-    "<token of kind 45>",
   };
 
 }

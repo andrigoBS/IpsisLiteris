@@ -52,8 +52,10 @@ public class CodeEditor {
 
     public String compile(){
         try {
+            String message = "FUNFO";
             IpsisLiteris parser = new IpsisLiteris(fileManager.getFileInputStream());
-            List<IpsisLiteris.AnalyserResult> result = parser.Start();
+            parser.Program();
+            /*List<IpsisLiteris.AnalyserResult> result = parser.Program();
             StringBuilder message = new StringBuilder();
             for (IpsisLiteris.AnalyserResult analyser : result) {
                 if(analyser.error){
@@ -81,7 +83,7 @@ public class CodeEditor {
                            .append("\n");
                 }
 
-            }
+            }*/
             return message.toString();
         } catch (ParseException e) {
             e.printStackTrace();

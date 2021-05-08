@@ -1,13 +1,19 @@
 package scanner.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class FileManager {
-    private String currentPath = "./any.ipsli/";
+//    private String currentPath = "./any.ipsli/";
+
+    private String currentPath = "./src/test/files/any.ipsli";
 
     private String fileName;
 
+    @Getter @Setter
     private String text;
 
     private boolean isSaved;
@@ -66,15 +72,6 @@ public class FileManager {
     }
 
     public boolean isSaved() {
-        return isSaved;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-        isSaved = false;
+        return isSaved || text.trim().isEmpty();
     }
 }
