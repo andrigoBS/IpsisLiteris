@@ -51,6 +51,10 @@ public final class Dialog {
         errorAlert("Você deve salvar o arquivo antes", ": Erro ao compilar");
     }
 
+    public void savedAlert(){
+        infoAlert("Arquivo salvo com sucesso!!", ": Arquivo salvo");
+    }
+
     private String fileChooser(File openDirectory, ChooserType type){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(openDirectory);
@@ -78,6 +82,18 @@ public final class Dialog {
 
     private void errorAlert(String msg, String title) {
         Alert dialog = new Alert(Alert.AlertType.ERROR);
+        dialog.setHeaderText(null);
+        dialog.setContentText(msg);
+        dialog.setTitle(primaryTitle+title);
+        Optional<ButtonType> option = dialog.showAndWait();
+    }
+
+    private void infoAlert(String msg, String title) {
+        infoAlert(msg, title, Alert.AlertType.INFORMATION);
+    }
+
+    private void infoAlert(String msg, String title, Alert.AlertType type) {
+        Alert dialog = new Alert(type);
         dialog.setHeaderText(null);
         dialog.setContentText(msg);
         dialog.setTitle(primaryTitle+title);
