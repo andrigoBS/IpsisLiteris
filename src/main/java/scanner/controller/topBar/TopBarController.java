@@ -42,10 +42,11 @@ public class TopBarController extends AbstractController{
         try {
             if(getCodeEditor().hasFileName()){
                 getCodeEditor().save();
-            }else{
+                Main.setFileTitle(getCodeEditor().getFileOnlyName());
+                dialog.savedAlert();
+            }else {
                 saveAsFile();
             }
-            Main.setFileTitle(getCodeEditor().getFileOnlyName());
         } catch (Exception e) {
             e.printStackTrace();
             dialog.saveError();
@@ -58,6 +59,7 @@ public class TopBarController extends AbstractController{
             if(path != null){
                 getCodeEditor().save(path);
                 Main.setFileTitle(getCodeEditor().getFileOnlyName());
+                dialog.savedAlert();
             }
         } catch (Exception e) {
             e.printStackTrace();
