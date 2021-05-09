@@ -131,9 +131,11 @@ public interface IpsisLiterisConstants {
   /** RegularExpression Id. */
   int ESCAPE_SQ = 69;
   /** RegularExpression Id. */
-  int NOT_TOKENS = 70;
+  int INVALID_TOKEN = 70;
   /** RegularExpression Id. */
-  int INVALID_COLON = 71;
+  int NOT_TOKENS = 71;
+  /** RegularExpression Id. */
+  int INVALID_COLON = 72;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -212,6 +214,7 @@ public interface IpsisLiterisConstants {
     "<DOUBLE_Q_STRING>",
     "<ESCAPE_DQ>",
     "<ESCAPE_SQ>",
+    "<INVALID_TOKEN>",
     "<NOT_TOKENS>",
     "<INVALID_COLON>",
   };

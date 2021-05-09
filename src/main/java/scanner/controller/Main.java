@@ -27,7 +27,7 @@ public class Main extends Application {
         Parent root = fxmlLoader.load();
 
         Scene scene = new Scene(root, 700, 700);
-
+        root.setStyle("-fx-tab-size: 4");
         STAGE = stage;
         resetFileTile();
 

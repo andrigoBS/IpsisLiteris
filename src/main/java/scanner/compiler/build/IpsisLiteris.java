@@ -5,20 +5,13 @@ package scanner.compiler.build;
 import java.util.LinkedList;
 import java.util.List;
 
-import lombok.Getter;
+import lombok.Getter;import scanner.compiler.errors.AnalyserError;import scanner.compiler.errors.ErrorMessage;import scanner.compiler.errors.Log;import scanner.compiler.errors.TypeError;import javax.lang.model.type.ErrorType;
 
 public class IpsisLiteris implements IpsisLiterisConstants {
-
-    @Getter
-    private List<AnalyserError> result = new LinkedList<>();
 
     public static void main (String[] args) throws ParseException, TokenMgrError {
         IpsisLiteris parser = new IpsisLiteris(System.in);
         parser.Program();
-        System.out.println(parser.getResult());
-        /*for (AnalyserResult analyser : parser.result) {
-            System.out.println(analyser);
-        }*/
     }
 
     private void skipUntil(int type) {
@@ -26,31 +19,6 @@ public class IpsisLiteris implements IpsisLiterisConstants {
         while (t.kind != type) {
             getNextToken();
             t = getToken(1);
-        }
-    }
-
-
-    public static class AnalyserError {
-
-        public final String token;
-        public final int line;
-        public final int column;
-        public final String type;
-        public final int id;
-        public final String errorMsg;
-
-        private AnalyserError (Token t, String errorMsg) {
-            token = t.image;
-            line = t.beginLine;
-            column = t.beginColumn;
-            type = IpsisLiterisConstants.tokenImage[t.kind];
-            id = t.kind;
-            this.errorMsg = errorMsg;
-        }
-
-        @Override
-        public String toString() {
-            return errorMsg + " at line: " + line + " at column: " + column;
         }
     }
 
@@ -67,26 +35,23 @@ void Program() throws ParseException {
       jj_la1[0] = jj_gen;
       ;
     }
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case DEF:{
+    try {
       jj_consume_token(DEF);
       jj_consume_token(OPEN_CURLY);
-      VarDeclaration();
-      ProgMain();
-      jj_consume_token(CLOSE_CURLY);
-      break;
-      }
-    default:
-      jj_la1[1] = jj_gen;
-result.add(new AnalyserError(getToken(1), "Definicao de programa (program {...}) esperada"));
+    } catch (ParseException e) {
+Token t = getToken(1);
+        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
     }
+    VarDeclaration();
+    ProgMain();
+    jj_consume_token(CLOSE_CURLY);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case IDENTIFIER:{
       jj_consume_token(IDENTIFIER);
       break;
       }
     default:
-      jj_la1[2] = jj_gen;
+      jj_la1[1] = jj_gen;
       ;
     }
 }
@@ -102,11 +67,11 @@ result.add(new AnalyserError(getToken(1), "Definicao de programa (program {...})
         break;
         }
       default:
-        jj_la1[3] = jj_gen;
+        jj_la1[2] = jj_gen;
         ;
       }
     } catch (ParseException e) {
-result.add(new AnalyserError(getToken(1), "Definicao de variaveis ou constantes esperada"));
+Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
         skipUntil(EXE);
     }
 }
@@ -121,7 +86,7 @@ result.add(new AnalyserError(getToken(1), "Definicao de variaveis ou constantes 
         break;
         }
       default:
-        jj_la1[4] = jj_gen;
+        jj_la1[3] = jj_gen;
         ;
       }
       break;
@@ -134,13 +99,13 @@ result.add(new AnalyserError(getToken(1), "Definicao de variaveis ou constantes 
         break;
         }
       default:
-        jj_la1[5] = jj_gen;
+        jj_la1[4] = jj_gen;
         ;
       }
       break;
       }
     default:
-      jj_la1[6] = jj_gen;
+      jj_la1[5] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -165,7 +130,7 @@ result.add(new AnalyserError(getToken(1), "Definicao de variaveis ou constantes 
         break;
         }
       default:
-        jj_la1[7] = jj_gen;
+        jj_la1[6] = jj_gen;
         break label_1;
       }
     }
@@ -188,7 +153,7 @@ result.add(new AnalyserError(getToken(1), "Definicao de variaveis ou constantes 
         break;
         }
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[7] = jj_gen;
         break label_2;
       }
     }
@@ -204,8 +169,8 @@ result.add(new AnalyserError(getToken(1), "Definicao de variaveis ou constantes 
       break;
       }
     default:
-      jj_la1[9] = jj_gen;
-result.add(new AnalyserError(getToken(1), "Execute nao encontrado"));
+      jj_la1[8] = jj_gen;
+Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
     }
 }
 
@@ -236,7 +201,7 @@ result.add(new AnalyserError(getToken(1), "Execute nao encontrado"));
       break;
       }
     default:
-      jj_la1[10] = jj_gen;
+      jj_la1[9] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -262,7 +227,7 @@ result.add(new AnalyserError(getToken(1), "Execute nao encontrado"));
         break;
         }
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[10] = jj_gen;
         ;
       }
       break;
@@ -275,13 +240,13 @@ result.add(new AnalyserError(getToken(1), "Execute nao encontrado"));
         break;
         }
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[11] = jj_gen;
         ;
       }
       break;
       }
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[12] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -362,7 +327,7 @@ void Constants() throws ParseException {
       break;
       }
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[13] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -383,7 +348,7 @@ void Constants() throws ParseException {
       break;
       }
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[14] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -399,7 +364,7 @@ void Constants() throws ParseException {
       break;
       }
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[15] = jj_gen;
       ;
     }
 }
@@ -423,7 +388,7 @@ void Constants() throws ParseException {
       break;
       }
     default:
-      jj_la1[17] = jj_gen;
+      jj_la1[16] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -439,7 +404,7 @@ void Constants() throws ParseException {
         break;
         }
       default:
-        jj_la1[18] = jj_gen;
+        jj_la1[17] = jj_gen;
         break label_3;
       }
       jj_consume_token(SEPARATOR);
@@ -457,8 +422,8 @@ void Constants() throws ParseException {
         break;
         }
       default:
-        jj_la1[19] = jj_gen;
-result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u00c3\u00a3o encontrado "));
+        jj_la1[18] = jj_gen;
+Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case SET:
@@ -471,7 +436,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
         break;
         }
       default:
-        jj_la1[20] = jj_gen;
+        jj_la1[19] = jj_gen;
         break label_4;
       }
     }
@@ -491,7 +456,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
       break;
       }
     default:
-      jj_la1[21] = jj_gen;
+      jj_la1[20] = jj_gen;
       ;
     }
 }
@@ -508,7 +473,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
         break;
         }
       default:
-        jj_la1[22] = jj_gen;
+        jj_la1[21] = jj_gen;
         break label_5;
       }
       LowPriorityOperator();
@@ -530,7 +495,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
         break;
         }
       default:
-        jj_la1[23] = jj_gen;
+        jj_la1[22] = jj_gen;
         break label_6;
       }
       MediumPriorityOperator();
@@ -548,7 +513,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
         break;
         }
       default:
-        jj_la1[24] = jj_gen;
+        jj_la1[23] = jj_gen;
         break label_7;
       }
       jj_consume_token(POWER);
@@ -577,7 +542,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
       break;
       }
     default:
-      jj_la1[25] = jj_gen;
+      jj_la1[24] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -616,7 +581,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
       break;
       }
     default:
-      jj_la1[26] = jj_gen;
+      jj_la1[25] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -637,7 +602,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
       break;
       }
     default:
-      jj_la1[27] = jj_gen;
+      jj_la1[26] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -666,7 +631,278 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
       break;
       }
     default:
-      jj_la1[28] = jj_gen;
+      jj_la1[27] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+}
+
+// Analisador Léxico
+  final public 
+void Lexic() throws ParseException {
+    label_8:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case DEF:
+      case DATA_DEF:
+      case IS:
+      case EXE:
+      case VAR:
+      case NOT_VAR:
+      case SET:
+      case TO:
+      case GET:
+      case PUT:
+      case NAT:
+      case REAL:
+      case CHAR:
+      case BOOL:
+      case TRUE:
+      case FALSE:
+      case WHILE:
+      case LOOP:
+      case DO:
+      case IF:
+      case OPEN_CURLY:
+      case CLOSE_CURLY:
+      case OPEN_PARENT:
+      case CLOSE_PARENT:
+      case OPEN_SQUARE:
+      case CLOSE_SQUARE:
+      case EQUAL:
+      case N_EQUAL:
+      case GREATER:
+      case LOWER:
+      case LOW_EQ:
+      case GREAT_EQ:
+      case PLUS:
+      case MINUS:
+      case TIMES:
+      case DIVIDE:
+      case POWER:
+      case INT_DIVIDE:
+      case MOD:
+      case AND:
+      case OR:
+      case NOT:
+      case DELIMITER:
+      case SEPARATOR:
+      case HEADER_DEF:
+      case IDENTIFIER:
+      case INTEGER:
+      case FLOAT:
+      case LITERAL:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[28] = jj_gen;
+        break label_8;
+      }
+      token();
+    }
+}
+
+  final public void token() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case DEF:{
+      jj_consume_token(DEF);
+      break;
+      }
+    case DATA_DEF:{
+      jj_consume_token(DATA_DEF);
+      break;
+      }
+    case IS:{
+      jj_consume_token(IS);
+      break;
+      }
+    case EXE:{
+      jj_consume_token(EXE);
+      break;
+      }
+    case VAR:{
+      jj_consume_token(VAR);
+      break;
+      }
+    case NOT_VAR:{
+      jj_consume_token(NOT_VAR);
+      break;
+      }
+    case SET:{
+      jj_consume_token(SET);
+      break;
+      }
+    case TO:{
+      jj_consume_token(TO);
+      break;
+      }
+    case GET:{
+      jj_consume_token(GET);
+      break;
+      }
+    case PUT:{
+      jj_consume_token(PUT);
+      break;
+      }
+    case NAT:{
+      jj_consume_token(NAT);
+      break;
+      }
+    case REAL:{
+      jj_consume_token(REAL);
+      break;
+      }
+    case CHAR:{
+      jj_consume_token(CHAR);
+      break;
+      }
+    case BOOL:{
+      jj_consume_token(BOOL);
+      break;
+      }
+    case TRUE:{
+      jj_consume_token(TRUE);
+      break;
+      }
+    case FALSE:{
+      jj_consume_token(FALSE);
+      break;
+      }
+    case WHILE:{
+      jj_consume_token(WHILE);
+      break;
+      }
+    case LOOP:{
+      jj_consume_token(LOOP);
+      break;
+      }
+    case DO:{
+      jj_consume_token(DO);
+      break;
+      }
+    case IF:{
+      jj_consume_token(IF);
+      break;
+      }
+    case OPEN_CURLY:{
+      jj_consume_token(OPEN_CURLY);
+      break;
+      }
+    case CLOSE_CURLY:{
+      jj_consume_token(CLOSE_CURLY);
+      break;
+      }
+    case OPEN_PARENT:{
+      jj_consume_token(OPEN_PARENT);
+      break;
+      }
+    case CLOSE_PARENT:{
+      jj_consume_token(CLOSE_PARENT);
+      break;
+      }
+    case OPEN_SQUARE:{
+      jj_consume_token(OPEN_SQUARE);
+      break;
+      }
+    case CLOSE_SQUARE:{
+      jj_consume_token(CLOSE_SQUARE);
+      break;
+      }
+    case EQUAL:{
+      jj_consume_token(EQUAL);
+      break;
+      }
+    case N_EQUAL:{
+      jj_consume_token(N_EQUAL);
+      break;
+      }
+    case GREATER:{
+      jj_consume_token(GREATER);
+      break;
+      }
+    case LOWER:{
+      jj_consume_token(LOWER);
+      break;
+      }
+    case LOW_EQ:{
+      jj_consume_token(LOW_EQ);
+      break;
+      }
+    case GREAT_EQ:{
+      jj_consume_token(GREAT_EQ);
+      break;
+      }
+    case PLUS:{
+      jj_consume_token(PLUS);
+      break;
+      }
+    case MINUS:{
+      jj_consume_token(MINUS);
+      break;
+      }
+    case TIMES:{
+      jj_consume_token(TIMES);
+      break;
+      }
+    case DIVIDE:{
+      jj_consume_token(DIVIDE);
+      break;
+      }
+    case POWER:{
+      jj_consume_token(POWER);
+      break;
+      }
+    case INT_DIVIDE:{
+      jj_consume_token(INT_DIVIDE);
+      break;
+      }
+    case MOD:{
+      jj_consume_token(MOD);
+      break;
+      }
+    case AND:{
+      jj_consume_token(AND);
+      break;
+      }
+    case OR:{
+      jj_consume_token(OR);
+      break;
+      }
+    case NOT:{
+      jj_consume_token(NOT);
+      break;
+      }
+    case DELIMITER:{
+      jj_consume_token(DELIMITER);
+      break;
+      }
+    case SEPARATOR:{
+      jj_consume_token(SEPARATOR);
+      break;
+      }
+    case HEADER_DEF:{
+      jj_consume_token(HEADER_DEF);
+      break;
+      }
+    case IDENTIFIER:{
+      jj_consume_token(IDENTIFIER);
+      break;
+      }
+    case INTEGER:{
+      jj_consume_token(INTEGER);
+      break;
+      }
+    case FLOAT:{
+      jj_consume_token(FLOAT);
+      break;
+      }
+    case LITERAL:{
+      jj_consume_token(LITERAL);
+      break;
+      }
+    default:
+      jj_la1[29] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -681,7 +917,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[29];
+  final private int[] jj_la1 = new int[30];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -691,13 +927,13 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
 	   jj_la1_init_2();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x0,0x1000,0x0,0x2000,0x10000,0x20000,0x30000,0x3c00000,0x3c00000,0x8000,0xb0340000,0x8000000,0x4000000,0xc000000,0xc000000,0xc000000,0x0,0x3c00000,0x0,0x0,0xb0340000,0x0,0x0,0x0,0x0,0xc000000,0x0,0x0,0x0,};
+	   jj_la1_0 = new int[] {0x0,0x0,0x2000,0x10000,0x20000,0x30000,0x3c00000,0x3c00000,0x8000,0xb0340000,0x8000000,0x4000000,0xc000000,0xc000000,0xc000000,0x0,0x3c00000,0x0,0x0,0xb0340000,0x0,0x0,0x0,0x0,0xc000000,0x0,0x0,0x0,0xfffff000,0xfffff000,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x1000000,0x0,0x2000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x60000000,0x62000000,0x10,0x0,0x800000,0x400000,0x0,0xfc0,0x103000,0xec000,0x10000,0x62200004,0xfc0,0x103000,0xec000,};
+	   jj_la1_1 = new int[] {0x1000000,0x2000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x60000000,0x62000000,0x10,0x0,0x800000,0x400000,0x0,0xfc0,0x103000,0xec000,0x10000,0x62200004,0xfc0,0x103000,0xec000,0x63ffffff,0x63ffffff,};
 	}
 	private static void jj_la1_init_2() {
-	   jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x2,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x0,0x0,0x0,};
+	   jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x2,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x0,0x0,0x0,0x2,0x2,};
 	}
 
   /** Constructor with InputStream. */
@@ -711,7 +947,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -725,7 +961,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -735,7 +971,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -753,7 +989,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -762,7 +998,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -771,7 +1007,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -822,12 +1058,12 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[72];
+	 boolean[] la1tokens = new boolean[73];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
 	 }
-	 for (int i = 0; i < 29; i++) {
+	 for (int i = 0; i < 30; i++) {
 	   if (jj_la1[i] == jj_gen) {
 		 for (int j = 0; j < 32; j++) {
 		   if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -842,7 +1078,7 @@ result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas n\u0
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 72; i++) {
+	 for (int i = 0; i < 73; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

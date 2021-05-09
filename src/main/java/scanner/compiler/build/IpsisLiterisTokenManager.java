@@ -4,6 +4,11 @@ package scanner.compiler.build;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.Getter;
+import scanner.compiler.errors.AnalyserError;
+import scanner.compiler.errors.ErrorMessage;
+import scanner.compiler.errors.Log;
+import scanner.compiler.errors.TypeError;
+import javax.lang.model.type.ErrorType;
 
 /** Token Manager. */
 @SuppressWarnings ("unused")
@@ -207,8 +212,8 @@ private int jjMoveNfa_0(int startState, int curPos)
                case 106:
                   if ((0xffffdffeffffd9ffL & l) != 0L)
                   {
-                     if (kind > 71)
-                        kind = 71;
+                     if (kind > 70)
+                        kind = 70;
                   }
                   else if (curChar == 45)
                   {
@@ -370,8 +375,8 @@ private int jjMoveNfa_0(int startState, int curPos)
                      jjstateSet[jjnewStateCnt++] = 104;
                   break;
                case 104:
-                  if ((0xffffdffeffffd9ffL & l) != 0L && kind > 71)
-                     kind = 71;
+                  if ((0xffffdffeffffd9ffL & l) != 0L && kind > 70)
+                     kind = 70;
                   break;
                case 105:
                   if (curChar == 58)
@@ -541,8 +546,8 @@ private int jjMoveNfa_0(int startState, int curPos)
                case 106:
                   if ((0xf7ffffffffffffffL & l) != 0L)
                   {
-                     if (kind > 71)
-                        kind = 71;
+                     if (kind > 70)
+                        kind = 70;
                   }
                   if ((0xd000000150000001L & l) != 0L)
                   {
@@ -862,8 +867,8 @@ private int jjMoveNfa_0(int startState, int curPos)
                   { jjCheckNAdd(102); }
                   break;
                case 104:
-                  if ((0xf7ffffffffffffffL & l) != 0L && kind > 71)
-                     kind = 71;
+                  if ((0xf7ffffffffffffffL & l) != 0L && kind > 70)
+                     kind = 70;
                   break;
                case 107:
                   { jjCheckNAddStates(16, 19); }
@@ -1072,8 +1077,8 @@ private int jjMoveNfa_0(int startState, int curPos)
                   }
                   if (jjCanMove_0(hiByte, i1, i2, l1, l2))
                   {
-                     if (kind > 71)
-                        kind = 71;
+                     if (kind > 70)
+                        kind = 70;
                   }
                   break;
                case 95:
@@ -1085,8 +1090,8 @@ private int jjMoveNfa_0(int startState, int curPos)
                      { jjAddStates(3, 5); }
                   break;
                case 104:
-                  if (jjCanMove_0(hiByte, i1, i2, l1, l2) && kind > 71)
-                     kind = 71;
+                  if (jjCanMove_0(hiByte, i1, i2, l1, l2) && kind > 70)
+                     kind = 70;
                   break;
                case 107:
                   if (jjCanMove_0(hiByte, i1, i2, l1, l2))
@@ -1142,7 +1147,7 @@ null, null, null, null, null, null, null, null, null, null, null, null, null, nu
 null, null, null, null, null, null, null, null, null, null, null, null, null, null, 
 null, null, null, null, null, null, null, null, null, null, null, null, null, null, 
 null, null, null, null, null, null, null, null, null, null, null, null, null, null, 
-null, null, null, };
+null, null, null, null, };
 protected Token jjFillToken()
 {
    final Token t;
@@ -1315,11 +1320,7 @@ void SkipLexicalActions(Token matchedToken)
    {
       case 70 :
          image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
-        System.out.println(image);
-         break;
-      case 71 :
-         image.append(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1)));
-        System.out.println(image);
+        Log.getInstance().add(new AnalyserError(jjFillToken(), ErrorMessage.INVALID_TOKEN, TypeError.SCANNER));
          break;
       default :
          break;
@@ -1434,16 +1435,16 @@ public static final String[] lexStateNames = {
 public static final int[] jjnewLexState = {
    -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
 };
 static final long[] jjtoToken = {
    0x63fffffffffff001L, 0x2L, 
 };
 static final long[] jjtoSkip = {
-   0x5feL, 0xc0L, 
+   0x5feL, 0x40L, 
 };
 static final long[] jjtoSpecial = {
-   0x0L, 0xc0L, 
+   0x0L, 0x40L, 
 };
 static final long[] jjtoMore = {
    0x800L, 0x0L, 

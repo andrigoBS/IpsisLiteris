@@ -63,7 +63,9 @@ public enum TokenType {
     INTEGER("[0-999]"),
     FLOAT("[0-99999.99]"),
     // Constantes literais
-    LITERAL("texto");
+    LITERAL("texto"),
+    // Invalido
+    INVALID_TOKEN("");
 
     public static TokenType parseToken(String token) {
         token = token.replace("<", "").replace(">", "");

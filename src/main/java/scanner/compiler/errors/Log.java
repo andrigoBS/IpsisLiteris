@@ -20,5 +20,6 @@ public class Log {
 
     public void add(AnalyserError analyserError){
         errors.add(analyserError);
+        System.out.println(errors);
     }
 }

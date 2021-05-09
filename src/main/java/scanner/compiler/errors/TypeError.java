@@ -8,8 +8,6 @@ public enum TypeError {
     SCANNER("Léxico"),
     PARSER("Sintático");
 
-    SINTATIC,
-
     @Getter
     private final String name;
 }

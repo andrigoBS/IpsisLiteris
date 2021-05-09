@@ -1,0 +1,15 @@
+:- "Hello World"
+program{
+	define{
+		not variable
+		char is helloWorld "Hello World".
+		boolean is blablabla true.
+		natural is inteiro1_ 123.
+		variable
+		char is character.
+		natural is inteiro2_.
+	}
+	execute{
+		put{helloWorld}.
+	}
+}

@@ -11,20 +11,13 @@ package scanner.compiler.build;
 import java.util.LinkedList;
 import java.util.List;
 
-import lombok.Getter;
+import lombok.Getter;import scanner.compiler.errors.AnalyserError;import scanner.compiler.errors.ErrorMessage;import scanner.compiler.errors.Log;import scanner.compiler.errors.TypeError;import javax.lang.model.type.ErrorType;
 
 public class IpsisLiteris {
-
-    @Getter
-    private List<AnalyserError> result = new LinkedList<>();
 
     public static void main (String[] args) throws ParseException, TokenMgrError {
         IpsisLiteris parser = new IpsisLiteris(System.in);
         parser.Program();
-        System.out.println(parser.getResult());
-        /*for (AnalyserResult analyser : parser.result) {
-            System.out.println(analyser);
-        }*/
     }
 
     private void skipUntil(int type) {
@@ -35,34 +28,11 @@ public class IpsisLiteris {
         }
     }
 
-
-    public static class AnalyserError {
-
-        public final String token;
-        public final int line;
-        public final int column;
-        public final String type;
-        public final int id;
-        public final String errorMsg;
-
-        private AnalyserError (Token t, String errorMsg) {
-            token = t.image;
-            line = t.beginLine;
-            column = t.beginColumn;
-            type = IpsisLiterisConstants.tokenImage[t.kind];
-            id = t.kind;
-            this.errorMsg = errorMsg;
-        }
-
-        @Override
-        public String toString() {
-            return errorMsg + " at line: " + line + " at column: " + column;
-        }
-    }
-
 }
 
 PARSER_END(IpsisLiteris)
+
+
 
 // Ignorados
 SKIP: {"\n" | "\r" | "\r\n" | " " | "\t" | "\f" }
@@ -150,13 +120,14 @@ TOKEN : {
 
 // Tokens inválidos
 SPECIAL_TOKEN : {
-    <NOT_TOKENS: (~["a"-"z", "A"-"Z", "+", "-", "*", "/", "%", "0"-"9", "{", "}", "(", ")", "[", "]", "\"",
-    "'", "_", ".", ",", "\n", "\r", "\t", " "])+> {
-        System.out.println(image);
+    <INVALID_TOKEN: <NOT_TOKENS> | <INVALID_COLON> >
+    {
+        Log.getInstance().add(new AnalyserError(jjFillToken(), ErrorMessage.INVALID_TOKEN, TypeError.SCANNER));
     } |
-    <INVALID_COLON: ":" (~["{", "-", "\n", "\r", "\t", " "]) > {
-        System.out.println(image);
-    }
+
+    <#NOT_TOKENS: (~["a"-"z", "A"-"Z", "+", "-", "*", "/", "%", "0"-"9", "{", "}", "(", ")", "[", "]", "\"",
+    "'", "_", ".", ",", "\n", "\r", "\t", " "])+> |
+    <#INVALID_COLON: ":" (~["{", "-", "\n", "\r", "\t", " "]) >
 }
 
 //Analisador Sintático
@@ -165,15 +136,16 @@ void Program ():
 {}
 {
     (<HEADER_DEF> <LITERAL>)?
-    (
+    try{
         <DEF> <OPEN_CURLY>
-        VarDeclaration()
-        ProgMain()
-        <CLOSE_CURLY> |
-        {
-            result.add(new AnalyserError(getToken(1), "Definicao de programa (program {...}) esperada"));
-        }
-    )
+    } catch (ParseException e) {
+        Token t = getToken(1);
+        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
+    }
+
+    VarDeclaration()
+    ProgMain()
+    <CLOSE_CURLY>
     (<IDENTIFIER>)?
 }
 
@@ -185,7 +157,7 @@ void VarDeclaration ():
         VarField()
         <CLOSE_CURLY>)?
     } catch (ParseException e){
-        result.add(new AnalyserError(getToken(1), "Definicao de variaveis ou constantes esperada"));
+        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
         skipUntil(EXE);
     }
 }
@@ -213,7 +185,7 @@ void ProgMain ():
 {
     <EXE> <OPEN_CURLY> CommandList() <CLOSE_CURLY> |
     {
-        result.add(new AnalyserError(getToken(1), "Execute nao encontrado"));
+        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
     }
 }
 
@@ -310,7 +282,7 @@ void CommandList ():
 {
     (
     Command() (<DELIMITER> | {
-        result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas não encontrado "));
+        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
     })
     )+
 }
@@ -372,43 +344,42 @@ void MediumPriorityOperator ():
 
 // Analisador Léxico
 
-/*List<AnalyserResult> Lexic():
+void Lexic():
+{}
 {
-   List<AnalyserResult> result = new LinkedList<>();
-   AnalyserResult input;
-}
-{
-    (
-       input = token()
-       {
-           result.add(input);
-       }
-    )*
-    <EOF>
-    {return result;}
-
+   (token())*
 }
 
-AnalyserResult token():
+void token():
+{}
 {
-    Token t;
-    String msg;
+    // palavras reservadas
+     <DEF> | <DATA_DEF> | <IS> | <EXE> | <VAR> | <NOT_VAR> | <SET> | <TO> |
+     <GET> | <PUT> | <NAT> | <REAL> | <CHAR> | <BOOL> | <TRUE> | <FALSE> |
+     <WHILE> | <LOOP> | <DO> | <IF> |
+
+     // Agregadores
+     <OPEN_CURLY> | <CLOSE_CURLY> | <OPEN_PARENT> | <CLOSE_PARENT> | <OPEN_SQUARE> |
+     <CLOSE_SQUARE> |
+
+     // Comparadores
+     <EQUAL> | <N_EQUAL> | <GREATER> | <LOWER> | <LOW_EQ> | <GREAT_EQ> |
+
+     // Operadores Aritméticos
+     <PLUS> | <MINUS> | <TIMES> | <DIVIDE> | <POWER> | <INT_DIVIDE> | <MOD> |
+
+     // Operadores Lógicos
+     <AND> | <OR> | <NOT> |
+
+     // Simbolos especiais
+     <DELIMITER> | <SEPARATOR> | <HEADER_DEF> |
+
+     // Identificador
+     <IDENTIFIER> |
+
+     // Constantes
+     <INTEGER> | <FLOAT> | <LITERAL>
 }
-{
-    (
-    t = <FLOAT> | t = <INTEGER> | t = <LITERAL> |
-
-    t = <IDENTIFIER> |
-
-    t = <LOOP> | t = <NAT> | t = <REAL> | t = <IF> | t = <DEF> |
-    t = <DATA_DEF> | t = <BOOL> | t = <EXE> | t = <IS> |
-    t = <SET> | t = <NOT_VAR> | t = <GET> | t = <TO> | t = <VAR> |
-    t = <TRUE> | t = <FALSE> | t = <WHILE> | t = <DO> | t = <CHAR>
-    )
-    {return new AnalyserResult(t);} |
-     t = <(~[])> { msg = "TOKEN INVALIDO"; }
-     { return AnalyserResult.error(t, msg); }
-}*/
 
 
 
