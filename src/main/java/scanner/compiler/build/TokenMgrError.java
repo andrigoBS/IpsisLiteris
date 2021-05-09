@@ -2,6 +2,8 @@
 /* JavaCCOptions: */
 package scanner.compiler.build;
 
+import lombok.Getter;
+
 /** Token Manager Error. */
 public class TokenMgrError extends Error
 {
@@ -12,6 +14,9 @@ public class TokenMgrError extends Error
    * class changes.
    */
   private static final long serialVersionUID = 1L;
+
+  @Getter
+  private String error;
 
   /*
    * Ordinals for various reasons why an Error of this type can be thrown.
@@ -142,6 +147,7 @@ public class TokenMgrError extends Error
   /** Full Constructor. */
   public TokenMgrError(boolean EOFSeen, int lexState, int errorLine, int errorColumn, String errorAfter, int curChar, int reason) {
     this(LexicalErr(EOFSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason);
+    this.error = errorAfter;
   }
 }
 /* JavaCC - OriginalChecksum=b1792340f71918b696da40733c41caf8 (do not edit this line) */

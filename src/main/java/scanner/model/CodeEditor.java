@@ -55,6 +55,8 @@ public class CodeEditor {
             String message = "FUNFO";
             IpsisLiteris parser = new IpsisLiteris(fileManager.getFileInputStream());
             parser.Program();
+            System.out.println(parser.getResult());
+            message += "\n" + parser.getResult();
             /*List<IpsisLiteris.AnalyserResult> result = parser.Program();
             StringBuilder message = new StringBuilder();
             for (IpsisLiteris.AnalyserResult analyser : result) {

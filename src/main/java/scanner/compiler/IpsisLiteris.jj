@@ -2,6 +2,7 @@ options {
     STATIC = false;
     IGNORE_CASE = true;
     OUTPUT_DIRECTORY = "src/main/java/scanner/compiler/build";
+    UNICODE_INPUT = true;
 }
 
 PARSER_BEGIN(IpsisLiteris)
@@ -10,17 +11,30 @@ package scanner.compiler.build;
 import java.util.LinkedList;
 import java.util.List;
 
+import lombok.Getter;
+
 public class IpsisLiteris {
 
+    @Getter
     private List<AnalyserError> result = new LinkedList<>();
 
     public static void main (String[] args) throws ParseException, TokenMgrError {
         IpsisLiteris parser = new IpsisLiteris(System.in);
         parser.Program();
+        System.out.println(parser.getResult());
         /*for (AnalyserResult analyser : parser.result) {
             System.out.println(analyser);
         }*/
     }
+
+    private void skipUntil(int type) {
+        Token t = getToken(1);
+        while (t.kind != type) {
+            getNextToken();
+            t = getToken(1);
+        }
+    }
+
 
     public static class AnalyserError {
 
@@ -45,6 +59,7 @@ public class IpsisLiteris {
             return errorMsg + " at line: " + line + " at column: " + column;
         }
     }
+
 }
 
 PARSER_END(IpsisLiteris)
@@ -133,25 +148,46 @@ TOKEN : {
     <#ESCAPE_SQ: "\\" "'">
 }
 
+// Tokens inválidos
+SPECIAL_TOKEN : {
+    <NOT_TOKENS: (~["a"-"z", "A"-"Z", "+", "-", "*", "/", "%", "0"-"9", "{", "}", "(", ")", "[", "]", "\"",
+    "'", "_", ".", ",", "\n", "\r", "\t", " "])+> {
+        System.out.println(image);
+    } |
+    <INVALID_COLON: ":" (~["{", "-", "\n", "\r", "\t", " "]) > {
+        System.out.println(image);
+    }
+}
+
 //Analisador Sintático
 
 void Program ():
 {}
 {
     (<HEADER_DEF> <LITERAL>)?
-    <DEF> <OPEN_CURLY>
-    VarDeclaration()
-    ProgMain()
-    <CLOSE_CURLY>
+    (
+        <DEF> <OPEN_CURLY>
+        VarDeclaration()
+        ProgMain()
+        <CLOSE_CURLY> |
+        {
+            result.add(new AnalyserError(getToken(1), "Definicao de programa (program {...}) esperada"));
+        }
+    )
     (<IDENTIFIER>)?
 }
 
 void VarDeclaration ():
 {}
 {
-    (<DATA_DEF> <OPEN_CURLY>
-    VarField()
-    <CLOSE_CURLY>)?
+    try {
+        (<DATA_DEF> <OPEN_CURLY>
+        VarField()
+        <CLOSE_CURLY>)?
+    } catch (ParseException e){
+        result.add(new AnalyserError(getToken(1), "Definicao de variaveis ou constantes esperada"));
+        skipUntil(EXE);
+    }
 }
 
 void VarField ():
@@ -163,7 +199,7 @@ void VarField ():
 void ConstDef ():
 {}
 {
-    <NOT_VAR> <VAR> Type() <IS> (IdList() Constants() <DELIMITER>)+
+    <NOT_VAR> <VAR> (Type() <IS> IdList() Constants() <DELIMITER>)+
 }
 
 void VarDef():
@@ -175,10 +211,9 @@ void VarDef():
 void ProgMain ():
 {}
 {
-    <EXE> <OPEN_CURLY> CommandList() |
+    <EXE> <OPEN_CURLY> CommandList() <CLOSE_CURLY> |
     {
-        result.add(new AnalyserError(getToken(1), "ErRo"));
-        System.out.println(result);
+        result.add(new AnalyserError(getToken(1), "Execute nao encontrado"));
     }
 }
 
@@ -249,7 +284,13 @@ void Constants ():
 void Value():
 {}
 {
-    <IDENTIFIER> (<OPEN_SQUARE> <INTEGER> <CLOSE_SQUARE>)? | Constants()
+    Id() | Constants()
+}
+
+void Id():
+{}
+{
+    <IDENTIFIER> (<OPEN_SQUARE> <INTEGER> <CLOSE_SQUARE>)?
 }
 
 void Type():
@@ -261,13 +302,17 @@ void Type():
 void IdList():
 {}
 {
-    <IDENTIFIER> (<SEPARATOR> <IDENTIFIER>)*
+    Id() (<SEPARATOR> Id())*
 }
 
 void CommandList ():
 {}
 {
-    (Command() <DELIMITER>)+
+    (
+    Command() (<DELIMITER> | {
+        result.add(new AnalyserError(getToken(0), "Delimitador (\".\") Esperado mas não encontrado "));
+    })
+    )+
 }
 
 void Expression ():
@@ -323,7 +368,6 @@ void MediumPriorityOperator ():
 {
     <TIMES> | <DIVIDE> | <INT_DIVIDE> | <MOD> | <AND>
 }
-
 
 
 // Analisador Léxico
