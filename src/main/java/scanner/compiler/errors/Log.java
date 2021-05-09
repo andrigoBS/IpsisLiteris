@@ -1,6 +1,7 @@
 package scanner.compiler.errors;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Log {
     private static Log INSTANCE = null;
@@ -20,6 +21,10 @@ public class Log {
 
     public void add(AnalyserError analyserError){
         errors.add(analyserError);
-        System.out.println(errors);
+    }
+
+    @Override
+    public String toString() {
+        return errors.stream().map(AnalyserError::toString).collect(Collectors.joining("\n"));
     }
 }

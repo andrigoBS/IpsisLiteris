@@ -57,15 +57,11 @@ public enum TokenType {
     DELIMITER("."),
     SEPARATOR(","),
     HEADER_DEF(":-"),
-    // Identificadores
-    IDENTIFIER(""),
-    // Constantes numéricas
-    INTEGER("[0-999]"),
-    FLOAT("[0-99999.99]"),
-    // Constantes literais
-    LITERAL("texto"),
-    // Invalido
-    INVALID_TOKEN("");
+    IDENTIFIER("identificador"),
+    INTEGER("inteiro"),
+    FLOAT("real"),
+    LITERAL("literal"),
+    INVALID_TOKEN("Token Inválido");
 
     public static TokenType parseToken(String token) {
         token = token.replace("<", "").replace(">", "");
@@ -73,5 +69,5 @@ public enum TokenType {
     }
 
     @Getter
-    private String text;
+    private final String text;
 }
