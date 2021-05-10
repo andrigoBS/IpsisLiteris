@@ -24,7 +24,7 @@ public class Log {
     }
 
     public void clear(){
-        INSTANCE = new Log();
+        errors.clear();
     }
 
     public boolean hasError(){

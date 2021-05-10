@@ -24,7 +24,6 @@ public class IpsisLiteris implements IpsisLiterisConstants {
             return log.toString();
         }
         inputStream.reset();
-        log.clear();
         parser = new IpsisLiteris(inputStream);
         parser.Program();
         return (log.hasError()) ? log.toString() : "Programa compilado com sucesso!!! :D";
