@@ -20,7 +20,6 @@ public class IpsisLiteris implements IpsisLiterisConstants {
         log.clear();
         IpsisLiteris parser = new IpsisLiteris(inputStream);
         parser.Lexic();
-        log = Log.getInstance();
         if(log.hasError()){
             return log.toString();
         }
