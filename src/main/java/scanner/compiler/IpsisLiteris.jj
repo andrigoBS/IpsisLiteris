@@ -8,10 +8,13 @@ options {
 PARSER_BEGIN(IpsisLiteris)
 package scanner.compiler.build;
 
-import java.util.LinkedList;
+import java.io.IOException;import java.io.InputStream;import java.util.ArrayList;import java.util.LinkedList;
 import java.util.List;
 
-import lombok.Getter;import scanner.compiler.errors.AnalyserError;import scanner.compiler.errors.ErrorMessage;import scanner.compiler.errors.Log;import scanner.compiler.errors.TypeError;import javax.lang.model.type.ErrorType;
+import lombok.Getter;
+import scanner.compiler.errors.AnalyserError;
+import scanner.compiler.errors.ErrorMessage;
+import scanner.compiler.errors.Log;
 
 public class IpsisLiteris {
 
@@ -20,14 +23,17 @@ public class IpsisLiteris {
         parser.Program();
     }
 
-    public String getResult(){
-        Lexic();
+    public static String compile(InputStream inputStream) throws ParseException, IOException {
+        IpsisLiteris parser = new IpsisLiteris(inputStream);
+        parser.Lexic();
         Log log = Log.getInstance();
-        if(log.hasLexError()){
+        if(log.hasError()){
             return log.toString();
         }
-        Program();
-        return log.toString();
+        inputStream.reset();
+        parser = new IpsisLiteris(inputStream);
+        parser.Program();
+        return (log.hasError()) ? log.toString() : "Programa compilado com sucesso!!! :D";
     }
 
     private void skipUntil(int type) {
@@ -41,8 +47,6 @@ public class IpsisLiteris {
 }
 
 PARSER_END(IpsisLiteris)
-
-
 
 // Ignorados
 SKIP: {"\n" | "\r" | "\r\n" | " " | "\t" | "\f" }
@@ -132,11 +136,11 @@ TOKEN : {
 SPECIAL_TOKEN : {
     <INVALID_TOKEN: <NOT_TOKENS> | <INVALID_COLON> >
     {
-        Log.getInstance().add(new AnalyserError(jjFillToken(), ErrorMessage.INVALID_TOKEN, TypeError.SCANNER));
+        Log.getInstance().add(new AnalyserError(jjFillToken(), ErrorMessage.INVALID_TOKEN));
     } |
 
     <#NOT_TOKENS: (~["a"-"z", "A"-"Z", "+", "-", "*", "/", "%", "0"-"9", "{", "}", "(", ")", "[", "]", "\"",
-    "'", "_", ".", ",", "\n", "\r", "\t", " "])+> |
+    "'", "_", ".", ",", "\n", "\r", "\t", " "])> |
     <#INVALID_COLON: ":" (~["{", "-", "\n", "\r", "\t", " "]) >
 }
 
@@ -146,13 +150,7 @@ void Program ():
 {}
 {
     (<HEADER_DEF> <LITERAL>)?
-    try{
-        <DEF> <OPEN_CURLY>
-    } catch (ParseException e) {
-        Token t = getToken(1);
-        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
-    }
-
+    <DEF> <OPEN_CURLY>
     VarDeclaration()
     ProgMain()
     <CLOSE_CURLY>
@@ -162,14 +160,9 @@ void Program ():
 void VarDeclaration ():
 {}
 {
-    try {
-        (<DATA_DEF> <OPEN_CURLY>
-        VarField()
-        <CLOSE_CURLY>)?
-    } catch (ParseException e){
-        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
-        skipUntil(EXE);
-    }
+    (<DATA_DEF> <OPEN_CURLY>
+    VarField()
+    <CLOSE_CURLY>)?
 }
 
 void VarField ():
@@ -195,7 +188,7 @@ void ProgMain ():
 {
     <EXE> <OPEN_CURLY> CommandList() <CLOSE_CURLY> |
     {
-        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
+        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN));
     }
 }
 
@@ -260,7 +253,12 @@ void While ():
 void Constants ():
 {}
 {
-    <LITERAL> | <INTEGER> | <FLOAT> | <TRUE> | <FALSE>
+    try{
+        <LITERAL> | <INTEGER> | <FLOAT> | <TRUE> | <FALSE>
+    } catch (ParseException e){
+        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.MISSING,
+                List.of(LITERAL, INTEGER, FLOAT, TRUE, FALSE)));
+    }
 }
 
 void Value():
@@ -292,7 +290,7 @@ void CommandList ():
 {
     (
     Command() (<DELIMITER> | {
-        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN, TypeError.PARSER));
+        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN));
     })
     )+
 }

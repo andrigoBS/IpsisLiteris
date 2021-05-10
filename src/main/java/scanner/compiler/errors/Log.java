@@ -23,7 +23,7 @@ public class Log {
         errors.add(analyserError);
     }
 
-    public boolean hasLexError(){
+    public boolean hasError(){
         return !errors.isEmpty();
     }
 

@@ -50,9 +50,8 @@ public class CodeEditor {
 
     public String compile(){
         try {
-            IpsisLiteris parser = new IpsisLiteris(fileManager.getFileInputStream());
-            return parser.getResult();
-        } catch (ParseException e) {
+            return IpsisLiteris.compile(fileManager.getFileInputStream());
+        } catch (ParseException | IOException e) {
             e.printStackTrace();
             return e.getMessage();
         }

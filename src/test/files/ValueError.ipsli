@@ -3,7 +3,7 @@
 program{
 	define{
 		not variable 
-			char is helloWorld "Hello World".
+			char is helloWorld.
 	}
 	execute{
 		put{helloWorld}.

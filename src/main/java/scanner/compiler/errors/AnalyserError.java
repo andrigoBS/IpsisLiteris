@@ -4,6 +4,7 @@ import lombok.Getter;
 import scanner.compiler.build.IpsisLiterisConstants;
 import scanner.compiler.build.Token;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class AnalyserError {
@@ -22,7 +23,7 @@ public class AnalyserError {
     @Getter
     private final ArrayList<TokenType> tokensExpected;
 
-    public AnalyserError (Token t, ErrorMessage errorMsg, ArrayList<Integer> tokensKindsExpected) {
+    public AnalyserError (Token t, ErrorMessage errorMsg, List<Integer> tokensKindsExpected) {
         token = t.image;
         line = t.beginLine;
         column = t.beginColumn;
@@ -41,7 +42,7 @@ public class AnalyserError {
         return errorMsg.applyValues(token, line, column, tokensExpected);
     }
 
-    private ArrayList<TokenType> mapTokensExpected(ArrayList<Integer> kinds){
+    private ArrayList<TokenType> mapTokensExpected(List<Integer> kinds){
         if(kinds == null) return null;
         return (ArrayList<TokenType>) kinds.stream().map(
                 kind -> TokenType.parseToken(IpsisLiterisConstants.tokenImage[kind])

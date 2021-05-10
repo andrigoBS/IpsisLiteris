@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum ErrorMessage {
-    INVALID_TOKEN("ERRO LÉXICO:\n\tToken Não reconhecido: {TOKEN} na linha {ROW} e coluna {COL}."),
-    MISSING("ERRO SINTÀTICO:\n\tEsperava encontrar {TYPES} na linha {ROW} e coluna {COL}.\n\tEncontrado {TOKEN} no lugar.");
+    INVALID_TOKEN("ERRO LÉXICO:\n\tToken Não reconhecido: \"{TOKEN}\" na linha {ROW} e coluna {COL}."),
+    MISSING("ERRO SINTÁTICO:\n\tEsperava encontrar {TYPES} na linha {ROW} e coluna {COL}.\n\tEncontrado {TOKEN} no lugar.");
 
     @Getter
     private final String text;
