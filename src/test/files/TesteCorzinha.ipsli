@@ -1,0 +1,22 @@
+program {
+	define {
+		not variable natural is CONST_FULANO, CONST_BELTRANO 4.4.
+		not variable char is CONST_STRING "Hellow World".
+		variable boolean is tafunfando.
+	}
+	execute {
+		set 4 + 4 to tafunfando.
+		get { CONST_FULANO }.
+		put { tafunfando }.
+		verify 4 == CONST_BELTRANO is true {
+				get { CONST_FULANO }.
+		}.
+		loop { 
+		    get { CONST_BELTRANO }.
+		 }while 4 != 3 is true.
+		
+		while 4!=3 is true do {
+		    put {tafunfando}.
+		}.
+	}
+}

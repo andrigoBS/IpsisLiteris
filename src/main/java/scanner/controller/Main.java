@@ -21,6 +21,11 @@ public class Main extends Application {
     public static void resetFileTile(){ setFileTitle("Arquivo não salvo"); }
 
     @Override
+    public void stop() {
+        AbstractController.stopAll();
+    }
+
+    @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/mainScene.fxml"));
 

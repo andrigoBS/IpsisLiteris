@@ -104,6 +104,11 @@ public class TopBarController extends AbstractController{
         getCodeEditor().execute();
     }
 
+    @Override
+    public void stop() {
+        exit();
+    }
+
     private ScrollEditorController getScrollEditorController(){
         return (ScrollEditorController) getControllerBrother("ScrollEditor");
     }

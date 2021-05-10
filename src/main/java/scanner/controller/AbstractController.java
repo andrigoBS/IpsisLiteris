@@ -9,6 +9,10 @@ public abstract class AbstractController {
 
     private static final CodeEditor CODE_EDITOR = new CodeEditor();
 
+    public static void stopAll(){
+        CHILDREN.values().forEach(AbstractController::stop);
+    }
+
     public AbstractController() {
         CHILDREN.put(this.getClass().getSimpleName(), this);
     }
@@ -19,5 +23,9 @@ public abstract class AbstractController {
 
     protected CodeEditor getCodeEditor() {
         return CODE_EDITOR;
+    }
+
+    public void stop(){
+        //do not
     }
 }

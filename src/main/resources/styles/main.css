@@ -1,3 +1,38 @@
 ParagraphText {
     -fx-tab-size: 4;
 }
+
+.important {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
+}
+.keyword {
+    -fx-fill: #0d76d2;
+    -fx-font-weight: bold;
+}
+.special {
+    -fx-fill: #800013;
+    -fx-font-weight: bold;
+}
+.semicolon {
+    -fx-fill: #09ecd2;
+    -fx-font-weight: bold;
+}
+.paren {
+    -fx-fill: #c23c3c;
+    -fx-font-weight: bold;
+}
+.bracket {
+    -fx-fill: #0b8ce2;
+    -fx-font-weight: bold;
+}
+.brace {
+    -fx-fill: #e08b0c;
+    -fx-font-weight: bold;
+}
+.string {
+    -fx-fill: darkgreen;
+}
+.paragraph-box:has-caret {
+    -fx-background-color: #e3eef3;
+}
