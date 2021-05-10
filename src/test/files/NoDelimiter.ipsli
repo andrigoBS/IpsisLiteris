@@ -5,8 +5,9 @@ program{
 		char is helloWorld "Hello World".
 	}
 	execute{
-		put{helloWorld}
-		get{helloworld}
+		loop{
+		}
+		get{helloworld
 		get{aaa}
 		put{aaa}
 	}

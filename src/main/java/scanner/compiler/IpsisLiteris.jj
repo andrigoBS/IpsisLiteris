@@ -32,17 +32,29 @@ public class IpsisLiteris {
             return log.toString();
         }
         inputStream.reset();
+        log.clear();
         parser = new IpsisLiteris(inputStream);
         parser.Program();
         return (log.hasError()) ? log.toString() : "Programa compilado com sucesso!!! :D";
     }
 
-    private void skipUntil(int type) {
+    private void skipUntil (List<Integer> type) {
         Token t = getToken(1);
-        while (t.kind != type) {
+        while (t.kind != EOF && !type.contains(t.kind)) {
             getNextToken();
             t = getToken(1);
         }
+    }
+
+    private void logAndConsume (List<Integer> expected, List<Integer> skipTo) {
+        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.MISSING, expected));
+        //skipUntil(skipTo);
+    }
+
+    private ArrayList<Integer> mergeFollow (List<Integer> a, List<Integer> b){
+        ArrayList<Integer> newFollow = new ArrayList<>(a);
+        newFollow.addAll(b);
+        return newFollow;
     }
 
 }
@@ -148,208 +160,770 @@ SPECIAL_TOKEN : {
 //Analisador Sintático
 
 void Program ():
-{}
 {
-    (<HEADER_DEF> <LITERAL>)?
-    <DEF> <OPEN_CURLY>
-    VarDeclaration()
-    ProgMain()
-    <CLOSE_CURLY>
-    (<IDENTIFIER>)?
+    List<Integer> first = First.PROGRAM.getFirst();
 }
-
-void VarDeclaration ():
-{}
 {
-    (<DATA_DEF> <OPEN_CURLY>
-    VarField()
-    <CLOSE_CURLY>)?
-}
-
-void VarField ():
-{}
-{
-    ConstDef() (VarDef())? | VarDef() (ConstDef())?
-}
-
-void ConstDef ():
-{}
-{
-    <NOT_VAR> <VAR> (Type() <IS> IdList() Constants() <DELIMITER>)+
-}
-
-void VarDef():
-{}
-{
-    <VAR> (Type() <IS> IdList() <DELIMITER>)+
-}
-
-void ProgMain ():
-{}
-{
-    <EXE> <OPEN_CURLY> CommandList() <CLOSE_CURLY> |
-    {
-        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN));
+    try{
+        (
+            Header(List.of(LITERAL))
+            Literal(List.of(DEF))
+        )?
+        Def (List.of(OPEN_CURLY))
+        OpCurly (mergeFollow(First.VAR_DECLARATION.getFirst(), First.MAIN.getFirst()))
+        (VarDeclaration (First.MAIN.getFirst()))?
+        ProgMain (List.of(CLOSE_CURLY))
+        CloseCurly (List.of(IDENTIFIER, EOF))
+        (Identifier (List.of(EOF)))?
+    } catch (ParseException e) {
+        logAndConsume(first, List.of(EOF));
     }
 }
 
-void Command ():
-{}
+void VarDeclaration (List<Integer> follow):
 {
-    While() | DoWhile() | Read() | Print() | Select() | Attribution()
+    List<Integer> first = First.VAR_DECLARATION.getFirst();
+}
+{
+    try{
+        DataDef(List.of(OPEN_CURLY))
+        OpCurly(First.VAR_FIELD.getFirst())
+        VarField(List.of(CLOSE_CURLY))
+        CloseCurly(follow)
+    } catch (ParseException e){
+        logAndConsume(first, follow);
+    }
 }
 
-void Attribution ():
-{}
+void VarField (List<Integer> follow):
 {
-    <SET> Expression() <TO> IdList()
+    List<Integer> first = First.VAR_FIELD.getFirst();
+}
+{
+    try{
+        ConstDef (mergeFollow(follow, First.VAR_DEF.getFirst()))
+            (VarDef(follow))? |
+
+        VarDef (mergeFollow(follow, First.CONST_DEF.getFirst()))
+            (ConstDef(follow))?
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void Select ():
-{}
+void ConstDef (List<Integer> follow):
 {
-    <IF> Expression() <IS> (
-        IsTrue() (IsFalse())? | IsFalse() (IsTrue())?
-    )
+    List<Integer> first = First.CONST_DEF.getFirst();
+     ArrayList<Integer> delimiterFollow = mergeFollow(follow, First.TYPE.getFirst());
+}
+{
+    try{
+        NotVar(List.of(VAR))
+        Var(First.TYPE.getFirst())
+        (
+            Type(List.of(IS))
+            Is(First.ID_LIST.getFirst())
+            IdList(First.CONSTANTS.getFirst())
+            Constants(List.of(DELIMITER))
+            Delimiter(delimiterFollow)
+        )+
+    } catch (ParseException e){
+        logAndConsume(first, follow);
+    }
 }
 
-void IsTrue ():
-{}
+void VarDef(List<Integer> follow):
 {
-    <TRUE> <OPEN_CURLY> CommandList() <CLOSE_CURLY>
+    List<Integer> first = First.VAR_DEF.getFirst();
+    ArrayList<Integer> delimiterFollow = mergeFollow(follow, First.TYPE.getFirst());
+}
+{
+    try{
+        Var(First.TYPE.getFirst())
+        (
+            Type (List.of(IS))
+            Is (First.ID_LIST.getFirst())
+            IdList (List.of(DELIMITER))
+            Delimiter (delimiterFollow)
+        )+
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void IsFalse ():
-{}
+void ProgMain (List<Integer> follow):
 {
-    <FALSE> <OPEN_CURLY> CommandList() <CLOSE_CURLY>
+    List<Integer> first = First.MAIN.getFirst();
+}
+{
+    try{
+        Exe(First.COMMAND_LIST.getFirst())
+        CommandList(follow)
+    } catch (ParseException e){
+        logAndConsume(first, follow);
+    }
 }
 
-void Print ():
-{}
+void Command (List<Integer> follow):
 {
-    <PUT> <OPEN_CURLY> Value() <CLOSE_CURLY>
+    List<Integer> first = First.COMMAND.getFirst();
+}
+{
+    try{
+        WhileDo(follow) | DoWhile(follow) | Read(follow) |
+        Print(follow) | Select(follow) | Attribution(follow)
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void Read ():
-{}
+void Attribution (List<Integer> follow):
 {
-    <GET> <OPEN_CURLY> IdList() <CLOSE_CURLY>
+    List<Integer> first = First.ATTRIBUTION.getFirst();
+}
+{
+    try{
+        Set(First.EXPRESSION.getFirst())
+        Expression(List.of(TO))
+        To(First.ID_LIST.getFirst())
+        IdList(follow)
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void DoWhile ():
-{}
+void Select (List<Integer> follow):
 {
-    <LOOP> <OPEN_CURLY> CommandList() <CLOSE_CURLY> <WHILE> Expression() <IS> <TRUE>
+    List<Integer> first = First.SELECT.getFirst();
+}
+{
+    try{
+        If(First.EXPRESSION.getFirst())
+        Expression(List.of(IS))
+        Is(List.of(TRUE, FALSE))
+        (
+            IsTrue(mergeFollow(follow, List.of(FALSE)))
+                (IsFalse(follow))? |
+
+            IsFalse(mergeFollow(follow, List.of(TRUE)))
+                (IsTrue(follow))?
+        )
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void While ():
+void IsTrue (List<Integer> follow):
 {}
 {
-    <WHILE> Expression() <IS> <TRUE> <DO> <OPEN_CURLY> CommandList() <CLOSE_CURLY>
+    try {
+        True(First.COMMAND_LIST.getFirst())
+        CommandList(follow)
+    } catch (ParseException e) {
+        logAndConsume(List.of(TRUE), follow);
+    }
+}
+
+void IsFalse (List<Integer> follow):
+{}
+{
+    try {
+        False(First.COMMAND_LIST.getFirst())
+        CommandList(follow)
+    } catch (ParseException e) {
+        logAndConsume(List.of(FALSE), follow);
+    }
+}
+
+void Print (List<Integer> follow):
+{
+    List<Integer> first = First.PRINT.getFirst();
+}
+{
+    try{
+        Put(List.of(OPEN_CURLY))
+        OpCurly(First.VALUE.getFirst())
+        Value(List.of(SEPARATOR, CLOSE_CURLY))
+        (
+            Separator(First.VALUE.getFirst())
+            Value(List.of(SEPARATOR, CLOSE_CURLY))
+        )*
+        CloseCurly(follow)
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
+}
+
+void Read (List<Integer> follow):
+{
+    List<Integer> first = First.READ.getFirst();
+}
+{
+    try {
+        Get(List.of(OPEN_CURLY))
+        OpCurly(First.ID_LIST.getFirst())
+        IdList(List.of(CLOSE_CURLY))
+        CloseCurly(follow)
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
+}
+
+void DoWhile (List<Integer> follow):
+{
+    List<Integer> first = First.DO_WHILE.getFirst();
+}
+{
+    try{
+        Loop (First.COMMAND_LIST.getFirst())
+        CommandList (List.of(WHILE))
+        While (First.EXPRESSION.getFirst())
+        Expression (List.of(IS))
+        Is (List.of(TRUE))
+        True (follow)
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
+}
+
+void WhileDo (List<Integer> follow):
+{
+    List<Integer> first = First.WHILE_DO.getFirst();
+}
+{
+    try{
+        While (First.EXPRESSION.getFirst())
+        Expression (List.of(TRUE))
+        Is (List.of(TRUE))
+        True (List.of(DO))
+        Do (First.COMMAND_LIST.getFirst())
+        CommandList (follow)
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
 // Sintático Úteis
 
-void Constants ():
-{}
+void IdList(List<Integer> follow):
 {
-    try{
-        <LITERAL> | <INTEGER> | <FLOAT> | <TRUE> | <FALSE>
-    } catch (ParseException e){
-        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.MISSING,
-                List.of(LITERAL, INTEGER, FLOAT, TRUE, FALSE)));
+    List<Integer> first = First.ID_LIST.getFirst();
+    ArrayList<Integer> idFollow = mergeFollow(follow, List.of(SEPARATOR));
+}
+{
+    try {
+        Id(idFollow)
+        (
+            Separator(First.ID.getFirst())
+            Id(idFollow)
+        )*
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
     }
 }
 
-void Value():
-{}
+void CommandList (List<Integer> follow):
 {
-    Id() | Constants()
+    List<Integer> first = First.COMMAND_LIST.getFirst();
+    ArrayList<Integer> delimiterFollow = mergeFollow(First.COMMAND.getFirst(), List.of(CLOSE_CURLY));
+}
+{
+    try{
+        OpCurly(First.COMMAND.getFirst())
+        (
+            Command(List.of(DELIMITER))
+            Delimiter(delimiterFollow)
+        )+
+        CloseCurly(follow)
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void Id():
-{}
+void Expression (List<Integer> follow):
 {
-    <IDENTIFIER> (<OPEN_SQUARE> <INTEGER> <CLOSE_SQUARE>)?
+    List<Integer> first = First.EXPRESSION.getFirst();
+    ArrayList<Integer> elementFollow = mergeFollow(follow, First.COMPARATOR.getFirst());
+}
+{
+    try{
+        ExpLogicAritmetic(elementFollow) (
+            Comparator(First.EXP_LOGIC_ARITMETIC.getFirst())
+            ExpLogicAritmetic(elementFollow)
+        )?
+    } catch (ParseException e){
+        logAndConsume(first, follow);
+    }
 }
 
-void Type():
-{}
+void ExpLogicAritmetic (List<Integer> follow):
 {
-    <NAT> | <REAL> | <CHAR> | <BOOL>
+    List<Integer> first = First.EXP_LOGIC_ARITMETIC.getFirst();
+    ArrayList<Integer> elementFollow = mergeFollow(follow, First.LOW_PRIORITY.getFirst());
+}
+{
+    try{
+        Element2(elementFollow) (
+            LowPriorityOperator(First.ELEMENT2.getFirst())
+            Element2(elementFollow)
+        )*
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void IdList():
-{}
+void Element2 (List<Integer> follow):
 {
-    Id() (<SEPARATOR> Id())*
+    List<Integer> first = First.ELEMENT2.getFirst();
+    ArrayList<Integer> elementFollow = mergeFollow(follow, First.MEDIUM_PRIORITY.getFirst());
+}
+{
+    try{
+        Element1(elementFollow) (
+            MediumPriorityOperator(First.ELEMENT1.getFirst())
+            Element1(elementFollow)
+        )*
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void CommandList ():
-{}
+void Element1 (List<Integer> follow):
 {
-    (
-    Command() (<DELIMITER> | {
-        Log.getInstance().add(new AnalyserError(getToken(1), ErrorMessage.INVALID_TOKEN));
-    })
-    )+
+    List<Integer> first = First.ELEMENT1.getFirst();
+    ArrayList<Integer> elementFollow = mergeFollow(follow, List.of(POWER));
+}
+{
+    try{
+        Element(elementFollow) (
+            Power(First.ELEMENT.getFirst())
+            Element(elementFollow)
+        )*
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void Expression ():
-{}
+void Element (List<Integer> follow):
 {
-    ExpLogicAritmetic() (Comparator() ExpLogicAritmetic())?
+    List<Integer> first = First.ELEMENT.getFirst();
+}
+{
+    try{
+        (Not(First.VALUE.getFirst())) ?
+        ParentesisExp(follow) |
+        Value(follow)
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void ExpLogicAritmetic ():
-{}
+void ParentesisExp (List<Integer> follow):
 {
-    Element2() (LowPriorityOperator() Element2())*
+    List<Integer> first = First.PARENTESIS_EXP.getFirst();
+}
+{
+    try{
+        OpParentesis(First.EXPRESSION.getFirst())
+        Expression(List.of(CLOSE_PARENT))
+        CloseParentesis(follow)
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void Element2 ():
-{}
+void Value(List<Integer> follow):
 {
-    Element1() (MediumPriorityOperator() Element1())*
+    List<Integer> first = First.VALUE.getFirst();
+}
+{
+    try{
+        Id(follow) | Constants(follow)
+    } catch (ParseException e){
+        logAndConsume(first, follow);
+    }
 }
 
-void Element1 ():
-{}
+void Id(List<Integer> follow):
 {
-     Element() ( <POWER> Element())*
+    List<Integer> first = First.ID.getFirst();
+    ArrayList<Integer> idFollow = mergeFollow(follow, List.of(OPEN_SQUARE));
+}
+{
+    try{
+        Identifier(idFollow) (
+            OpSquare(List.of(INTEGER))
+            Integer(List.of(CLOSE_SQUARE))
+            CloseSquare(follow)
+        )?
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void Element ():
-{}
+// Grupos
+
+void Type(List<Integer> follow):
 {
-    Value() | ParentesisExp() | <NOT> ParentesisExp()
+    List<Integer> first = First.TYPE.getFirst();
+}
+{
+    try {
+        <NAT> | <REAL> | <CHAR> | <BOOL>
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void ParentesisExp ():
-{}
+void Constants (List<Integer> follow):
 {
-    <OPEN_PARENT> Expression() <CLOSE_PARENT>
+    List<Integer> first = First.CONSTANTS.getFirst();
+}
+{
+    try{
+        <LITERAL> | <INTEGER> | <FLOAT> | <TRUE> | <FALSE>
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void Comparator ():
-{}
+void Comparator (List<Integer> follow):
 {
-    <EQUAL> | <N_EQUAL> | <LOWER> | <GREATER> | <LOW_EQ> | <GREAT_EQ>
+    List<Integer> first = First.COMPARATOR.getFirst();
+}
+{
+    try{
+        <EQUAL> | <N_EQUAL> | <LOWER> | <GREATER> | <LOW_EQ> | <GREAT_EQ>
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void LowPriorityOperator ():
-{}
+void LowPriorityOperator (List<Integer> follow):
 {
-    <PLUS> | <MINUS> | <OR>
+    List<Integer> first = First.LOW_PRIORITY.getFirst();
+ }
+{
+    try{
+        <PLUS> | <MINUS> | <OR>
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
-void MediumPriorityOperator ():
-{}
+void MediumPriorityOperator (List<Integer> follow):
 {
-    <TIMES> | <DIVIDE> | <INT_DIVIDE> | <MOD> | <AND>
+    List<Integer> first = First.MEDIUM_PRIORITY.getFirst();
+ }
+{
+    try {
+        <TIMES> | <DIVIDE> | <INT_DIVIDE> | <MOD> | <AND>
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
 }
 
+// Terminais
+
+void Literal (List<Integer> follow):
+{}
+{
+    try{
+        <LITERAL>
+    } catch (ParseException e){
+        logAndConsume(List.of(LITERAL), follow);
+    }
+}
+
+void Header (List<Integer> follow):
+{}
+{
+    try{
+        <HEADER_DEF>
+    } catch (ParseException e){
+        logAndConsume(List.of(HEADER_DEF), follow);
+    }
+}
+
+void Def (List<Integer> follow):
+{}
+{
+    try{
+        <DEF>
+    } catch (ParseException e){
+        logAndConsume(List.of(DEF), follow);
+    }
+}
+
+void DataDef (List<Integer> follow):
+{}
+{
+    try{
+        <DATA_DEF>
+    } catch (ParseException e){
+        logAndConsume(List.of(DATA_DEF), follow);
+    }
+}
+
+void NotVar (List<Integer> follow):
+{}
+{
+    try{
+        <NOT_VAR>
+    } catch (ParseException e){
+        logAndConsume(List.of(NOT_VAR), follow);
+    }
+}
+
+void Var (List<Integer> follow):
+{}
+{
+    try{
+        <VAR>
+    } catch (ParseException e){
+        logAndConsume(List.of(VAR), follow);
+    }
+}
+
+void Exe (List<Integer> follow):
+{}
+{
+    try{
+        <EXE>
+    } catch (ParseException e){
+        logAndConsume(List.of(EXE), follow);
+    }
+}
+
+void Do (List<Integer> follow):
+{}
+{
+    try{
+        <DO>
+    } catch (ParseException e){
+        logAndConsume(List.of(DO), follow);
+    }
+}
+
+void While (List<Integer> follow):
+{}
+{
+    try{
+        <WHILE>
+    } catch (ParseException e){
+        logAndConsume(List.of(WHILE), follow);
+    }
+}
+
+void Loop (List<Integer> follow):
+{}
+{
+    try{
+        <LOOP>
+    } catch (ParseException e){
+        logAndConsume(List.of(LOOP), follow);
+    }
+}
+
+void Get (List<Integer> follow):
+{}
+{
+    try{
+        <GET>
+    } catch (ParseException e){
+        logAndConsume(List.of(GET), follow);
+    }
+}
+
+void Put (List<Integer> follow):
+{}
+{
+    try{
+        <PUT>
+    } catch (ParseException e){
+        logAndConsume(List.of(PUT), follow);
+    }
+}
+
+void False (List<Integer> follow):
+{}
+{
+    try{
+        <FALSE>
+    } catch (ParseException e){
+        logAndConsume(List.of(FALSE), follow);
+    }
+}
+
+void True (List<Integer> follow):
+{}
+{
+    try{
+        <TRUE>
+    } catch (ParseException e){
+        logAndConsume(List.of(TRUE), follow);
+    }
+}
+
+void Is (List<Integer> follow):
+{}
+{
+    try{
+        <IS>
+    } catch (ParseException e) {
+        logAndConsume(List.of(IS), follow);
+    }
+}
+
+void If (List<Integer> follow):
+{}
+{
+    try{
+        <IF>
+    } catch (ParseException e) {
+        logAndConsume(List.of(IF), follow);
+    }
+}
+
+void Separator (List<Integer> follow):
+{}
+{
+    try{
+        <SEPARATOR>
+    } catch (ParseException e) {
+        logAndConsume(List.of(SEPARATOR), follow);
+    }
+}
+
+void To (List<Integer> follow):
+{}
+{
+    try {
+        <TO>
+    } catch (ParseException e) {
+        logAndConsume(List.of(TO), follow);
+    }
+}
+
+void Set(List<Integer> follow):
+{}
+{
+    try {
+        <SET>
+    } catch (ParseException e) {
+        logAndConsume(List.of(SET), follow);
+    }
+}
+
+void OpCurly (List<Integer> follow):
+{}
+{
+    try{
+        <OPEN_CURLY>
+    } catch (ParseException e){
+        logAndConsume(List.of(OPEN_CURLY), follow);
+    }
+}
+
+void CloseCurly (List<Integer> follow):
+{}
+{
+    try{
+        <CLOSE_CURLY>
+    } catch (ParseException e){
+        logAndConsume(List.of(CLOSE_CURLY), follow);
+    }
+}
+
+void Delimiter (List<Integer> follow):
+{}
+{
+    try{
+        <DELIMITER>
+    } catch (ParseException e){
+        logAndConsume(List.of(DELIMITER), follow);
+    }
+}
+
+void Power (List<Integer> follow):
+{}
+{
+    try{
+        <POWER>
+    } catch (ParseException e) {
+        logAndConsume(List.of(POWER), follow);
+    }
+}
+
+void Identifier (List<Integer> follow):
+{}
+{
+    try{
+        <IDENTIFIER>
+    } catch (ParseException e) {
+        logAndConsume(List.of(IDENTIFIER), follow);
+    }
+}
+
+void Integer (List<Integer> follow):
+{}
+{
+    try{
+        <INTEGER>
+    } catch (ParseException e) {
+        logAndConsume(List.of(INTEGER), follow);
+    }
+}
+
+void CloseSquare (List<Integer> follow):
+{}
+{
+    try{
+        <CLOSE_SQUARE>
+    } catch (ParseException e) {
+        logAndConsume(List.of(CLOSE_SQUARE), follow);
+    }
+}
+
+void OpSquare (List<Integer> follow):
+{}
+{
+    try{
+        <OPEN_SQUARE>
+    } catch (ParseException e) {
+        logAndConsume(List.of(OPEN_SQUARE), follow);
+    }
+}
+
+void Not (List<Integer> follow):
+{}
+{
+    try{
+        <NOT>
+    } catch (ParseException e) {
+        logAndConsume(List.of(NOT), follow);
+    }
+}
+
+void CloseParentesis (List<Integer> follow):
+{}
+{
+    try{
+        <CLOSE_PARENT>
+    } catch (ParseException e) {
+        logAndConsume(List.of(CLOSE_PARENT), follow);
+    }
+}
+
+void OpParentesis (List<Integer> follow):
+{}
+{
+    try{
+        <OPEN_PARENT>
+    } catch (ParseException e) {
+        logAndConsume(List.of(OPEN_PARENT), follow);
+    }
+}
 
 // Analisador Léxico
 

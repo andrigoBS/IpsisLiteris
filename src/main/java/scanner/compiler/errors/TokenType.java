@@ -66,7 +66,8 @@ public enum TokenType {
     INTEGER("inteiro"),
     FLOAT("real"),
     LITERAL("literal"),
-    INVALID_TOKEN("Token Inválido");
+    INVALID_TOKEN("Token Inválido"),
+    EOF("Final do arquivo");
 
     public static TokenType parseToken(String token) {
         token = token.replace("<", "").replace(">", "");
