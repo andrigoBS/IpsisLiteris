@@ -44,6 +44,10 @@ public class CodeEditor {
         return fileManager.isSaved();
     }
 
+    public boolean isClear() {
+        return fileManager.isClear();
+    }
+
     public boolean hasFileName(){
         return fileManager.hasFileName();
     }

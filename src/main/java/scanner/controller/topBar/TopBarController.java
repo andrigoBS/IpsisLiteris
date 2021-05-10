@@ -86,16 +86,18 @@ public class TopBarController extends AbstractController{
     }
 
     public void compile(){
-        if(getCodeEditor().hasFileName()){
-            try {
-                getCodeEditor().save();
-            } catch (IOException e) {
-                e.printStackTrace();
-                dialog.saveError();
+        if(!getCodeEditor().isClear()){
+            if(getCodeEditor().hasFileName()){
+                try {
+                    getCodeEditor().save();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    dialog.saveError();
+                }
             }
+            String result = getCodeEditor().compile();
+            getResultController().setText(result);
         }
-        String result = getCodeEditor().compile();
-        getResultController().setText(result);
     }
 
     public void execute(){

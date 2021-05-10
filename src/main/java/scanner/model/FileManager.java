@@ -72,6 +72,10 @@ public class FileManager {
     }
 
     public boolean isSaved() {
-        return isSaved || text.trim().isEmpty();
+        return isSaved || isClear();
+    }
+
+    public boolean isClear(){
+        return text.trim().isEmpty();
     }
 }

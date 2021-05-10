@@ -23,6 +23,10 @@ public class Log {
         errors.add(analyserError);
     }
 
+    public void clear(){
+        INSTANCE = new Log();
+    }
+
     public boolean hasError(){
         return !errors.isEmpty();
     }
