@@ -17,6 +17,7 @@ public class IpsisLiteris implements IpsisLiterisConstants {
 
     public static String compile(InputStream inputStream) throws ParseException, IOException {
         Log log = Log.getInstance();
+        log.clear();
         IpsisLiteris parser = new IpsisLiteris(inputStream);
         parser.Lexic();
         log = Log.getInstance();
