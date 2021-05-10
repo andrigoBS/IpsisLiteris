@@ -23,6 +23,10 @@ public class Log {
         errors.add(analyserError);
     }
 
+    public boolean hasLexError(){
+        return !errors.isEmpty();
+    }
+
     @Override
     public String toString() {
         return errors.stream().map(AnalyserError::toString).collect(Collectors.joining("\n"));

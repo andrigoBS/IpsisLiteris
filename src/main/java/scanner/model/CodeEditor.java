@@ -2,9 +2,7 @@ package scanner.model;
 
 import scanner.compiler.build.IpsisLiteris;
 import scanner.compiler.build.ParseException;
-
 import java.io.*;
-import java.util.List;
 
 public class CodeEditor {
     private FileManager fileManager;
@@ -52,39 +50,8 @@ public class CodeEditor {
 
     public String compile(){
         try {
-            String message = "FUNFO";
             IpsisLiteris parser = new IpsisLiteris(fileManager.getFileInputStream());
-            parser.Program();
-            /*List<IpsisLiteris.AnalyserResult> result = parser.Program();
-            StringBuilder message = new StringBuilder();
-            for (IpsisLiteris.AnalyserResult analyser : result) {
-                if(analyser.error){
-                    message.append("Erro léxico ")
-                           .append(analyser.errorMsg)
-                           .append(", Token ")
-                           .append(analyser.token)
-                           .append(" na linha ")
-                           .append(analyser.line)
-                           .append(" e coluna ")
-                           .append(analyser.column)
-                           .append("\n");
-                }else {
-                    message.append("Aceito ")
-                           .append("Token ")
-                           .append(analyser.token)
-                           .append(" na linha ")
-                           .append(analyser.line)
-                           .append(" e coluna ")
-                           .append(analyser.column)
-                           .append(" do tipo ")
-                           .append(analyser.type)
-                           .append(" com id ")
-                           .append(analyser.id)
-                           .append("\n");
-                }
-
-            }*/
-            return message.toString();
+            return parser.getResult();
         } catch (ParseException e) {
             e.printStackTrace();
             return e.getMessage();

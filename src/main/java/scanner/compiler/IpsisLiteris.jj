@@ -20,6 +20,16 @@ public class IpsisLiteris {
         parser.Program();
     }
 
+    public String getResult(){
+        Lexic();
+        Log log = Log.getInstance();
+        if(log.hasLexError()){
+            return log.toString();
+        }
+        Program();
+        return log.toString();
+    }
+
     private void skipUntil(int type) {
         Token t = getToken(1);
         while (t.kind != type) {

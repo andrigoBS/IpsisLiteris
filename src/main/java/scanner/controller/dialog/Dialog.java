@@ -81,11 +81,7 @@ public final class Dialog {
     }
 
     private void errorAlert(String msg, String title) {
-        Alert dialog = new Alert(Alert.AlertType.ERROR);
-        dialog.setHeaderText(null);
-        dialog.setContentText(msg);
-        dialog.setTitle(primaryTitle+title);
-        Optional<ButtonType> option = dialog.showAndWait();
+        infoAlert(msg, title, Alert.AlertType.ERROR);
     }
 
     private void infoAlert(String msg, String title) {
