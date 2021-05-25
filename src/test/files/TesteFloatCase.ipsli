@@ -6,7 +6,7 @@ proGRAM {
 	Execute {
 		set 4 + 4 to tafunfando.
 		get { CONST_FULANO }.
-		put { tafunfando }.
+		put { tafunfando }.	
 		verify 4 == CONST_BELTRANO is true {
 				get { CONST_FULANO }.
 		}.
