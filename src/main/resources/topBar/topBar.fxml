@@ -5,9 +5,9 @@
 <MenuBar xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1"
          fx:controller="scanner.controller.topBar.TopBarController">
     <Menu mnemonicParsing="false" text="Arquivo">
-        <MenuItem mnemonicParsing="false" text="Novo" onAction="#newFile"/>
-        <MenuItem mnemonicParsing="false" text="Abrir" onAction="#openFile"/>
-        <MenuItem mnemonicParsing="false" text="Salvar" onAction="#saveFile"/>
+        <MenuItem mnemonicParsing="false" text="Novo" onAction="#newFile" accelerator="Shortcut+N"/>
+        <MenuItem mnemonicParsing="false" text="Abrir" onAction="#openFile" accelerator="Shortcut+O"/>
+        <MenuItem mnemonicParsing="false" text="Salvar" onAction="#saveFile" accelerator="Shortcut+S"/>
         <MenuItem mnemonicParsing="false" text="Salvar como" onAction="#saveAsFile"/>
         <MenuItem mnemonicParsing="false" text="Sair" onAction="#exit"/>
     </Menu>
@@ -17,7 +17,7 @@
         <MenuItem mnemonicParsing="false" text="Recortar" onAction="#cutEdit"/>
     </Menu>
     <Menu mnemonicParsing="false" text="Compilação">
-        <MenuItem mnemonicParsing="false" text="Compilar" onAction="#compile"/>
+        <MenuItem mnemonicParsing="false" text="Compilar" onAction="#compile" accelerator="Shortcut+B"/>
         <MenuItem mnemonicParsing="false" text="Executar" onAction="#execute"/>
     </Menu>
 </MenuBar>
