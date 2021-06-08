@@ -31,7 +31,7 @@ public class Main extends Application {
 
         Parent root = fxmlLoader.load();
 
-        Scene scene = new Scene(root, 700, 700);
+        Scene scene = new Scene(root, 750, 700);
         scene.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
 
         STAGE = stage;

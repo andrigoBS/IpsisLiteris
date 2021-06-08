@@ -1,11 +1,14 @@
 package scanner.compiler.errors;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class Log {
     private static Log INSTANCE = null;
 
+    @Getter
     private ArrayList<AnalyserError> errors;
 
     public Log() {

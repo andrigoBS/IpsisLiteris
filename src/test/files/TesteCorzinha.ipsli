@@ -20,3 +20,10 @@ program {
 		}.
 	}
 }
+define while natural
+[] == ** && :-
+"string"
+:_cometario
+:{ 
+cometario de bloco
+}:

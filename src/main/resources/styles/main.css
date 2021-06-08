@@ -1,38 +1,49 @@
 ParagraphText {
     -fx-tab-size: 4;
+    -fx-font-size: 16;
+    -fx-font-family: "Courier New";
+    -fx-line-spacing: 0;
 }
 
-.important {
-    -fx-fill: purple;
+.paragraph-box:has-caret {
+    -fx-background-color: #fcfaed;
+}
+
+.words, .commands, .types, .aggregators, .comparators, .arithmetic, .logic, .special{
     -fx-font-weight: bold;
 }
-.keyword {
-    -fx-fill: #0d76d2;
-    -fx-font-weight: bold;
+
+.normal{
+    -fx-fill: #2b2b2b;
+}
+
+.words {
+    -fx-fill: #881295;
+}
+.commands {
+    -fx-fill: #194bd4;
+}
+.types {
+    -fx-fill: #c23c3c;
+}
+.aggregators {
+    -fx-fill: #ff8d00;
+}
+.comparators {
+    -fx-fill: #0bac0b;
+}
+.arithmetic {
+    -fx-fill: #cb006b;
+}
+.logic {
+    -fx-fill: #deb100;
 }
 .special {
-    -fx-fill: #800013;
-    -fx-font-weight: bold;
-}
-.semicolon {
-    -fx-fill: #09ecd2;
-    -fx-font-weight: bold;
-}
-.paren {
-    -fx-fill: #c23c3c;
-    -fx-font-weight: bold;
-}
-.bracket {
-    -fx-fill: #0b8ce2;
-    -fx-font-weight: bold;
-}
-.brace {
-    -fx-fill: #e08b0c;
-    -fx-font-weight: bold;
+    -fx-fill: #0043b8;
 }
 .string {
-    -fx-fill: darkgreen;
+    -fx-fill: #187d18;
 }
-.paragraph-box:has-caret {
-    -fx-background-color: #e3eef3;
+.comments {
+    -fx-fill: #8d8d8d;
 }

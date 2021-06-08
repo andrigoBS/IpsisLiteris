@@ -4,11 +4,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1082.0" prefWidth="1920.0"
-      xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1082.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1">
     <fx:include source="topBar/topBar.fxml" />
     <fx:include source="hotBar/hotBar.fxml" />
-    <SplitPane dividerPositions="0.625242718446602" orientation="VERTICAL" prefHeight="1032.0" prefWidth="985.0">
+    <SplitPane dividerPositions="0.7" orientation="VERTICAL" prefHeight="1032.0" prefWidth="985.0">
         <VBox.margin>
             <Insets />
         </VBox.margin>
