@@ -1,8 +1,7 @@
 ParagraphText {
     -fx-tab-size: 4;
-    -fx-font-size: 16;
+    -fx-font-size: 17;
     -fx-font-family: "Courier New";
-    -fx-line-spacing: 0;
 }
 
 .paragraph-box:has-caret {
@@ -18,28 +17,28 @@ ParagraphText {
 }
 
 .words {
-    -fx-fill: #881295;
+    -fx-fill: #6d0da0;
 }
 .commands {
     -fx-fill: #194bd4;
 }
 .types {
-    -fx-fill: #c23c3c;
+    -fx-fill: #db0606;
 }
 .aggregators {
-    -fx-fill: #ff8d00;
+    -fx-fill: #ff7700;
 }
 .comparators {
-    -fx-fill: #0bac0b;
+    -fx-fill: #89ad01;
 }
 .arithmetic {
-    -fx-fill: #cb006b;
+    -fx-fill: #52C0F5FF;
 }
 .logic {
-    -fx-fill: #deb100;
+    -fx-fill: #deae00;
 }
 .special {
-    -fx-fill: #0043b8;
+    -fx-fill: #cb00b0;
 }
 .string {
     -fx-fill: #187d18;
