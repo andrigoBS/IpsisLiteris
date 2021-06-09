@@ -16,9 +16,9 @@ public class ColorRegex {
          COMPARATORS("==", "!=", ">=", "<=", ">", "<"),
          ARITHMETIC("\\+", "-", "/", "\\*", "%"),
          LOGIC("&", "\\|", "!"),
-         SPECIAL("\\.", ",", ":-","\\d"),
-         STRING("\".*\"|'.*'"),
-         COMMENTS(":_.*\\n|:\\{(.|\\s)*\\}:");
+         SPECIAL("\\.", ",", ":-", "\\d"),
+         STRING("\".*\"", "'.*'"),
+         COMMENTS(":_.*\\n", ":\\{(.|\\s)*\\}:");
 
         private final List<String> regexes;
 
