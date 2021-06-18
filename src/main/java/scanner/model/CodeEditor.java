@@ -3,6 +3,7 @@ package scanner.model;
 import scanner.compiler.build.IpsisLiteris;
 import scanner.compiler.build.ParseException;
 import java.io.*;
+import java.util.Stack;
 
 public class CodeEditor {
     private FileManager fileManager;
@@ -27,7 +28,7 @@ public class CodeEditor {
         fileManager.newFile();
     }
 
-    public String open(String path) throws IOException, ClassNotFoundException {
+    public String open(String path) throws IOException {
         fileManager.load(path);
         return fileManager.getText();
     }

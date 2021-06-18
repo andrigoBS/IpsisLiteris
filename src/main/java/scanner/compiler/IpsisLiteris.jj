@@ -1,6 +1,6 @@
 options {
     STATIC = false;
-    IGNORE_CASE = true;
+//    IGNORE_CASE = true;
     OUTPUT_DIRECTORY = "src/main/java/scanner/compiler/build";
     UNICODE_INPUT = true;
 }
@@ -76,7 +76,7 @@ SKIP : {
 }
 
 // Palavras reservadas
-TOKEN : {
+TOKEN [IGNORE_CASE]: {
     <DEF: ("program"){1} > | <DATA_DEF: ("define"){1} > |
     <IS: ("is"){1} > | <EXE: ("execute"){1}> |
 
