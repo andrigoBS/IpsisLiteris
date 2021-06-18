@@ -3,8 +3,10 @@ package scanner.controller.dialog;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
+import scanner.model.dto.InstructionRowDTO;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public final class Dialog {
@@ -53,6 +55,14 @@ public final class Dialog {
 
     public void savedAlert(){
         infoAlert("Arquivo salvo com sucesso!!", ": Arquivo salvo");
+    }
+
+    public void objectCodeTable(ArrayList<InstructionRowDTO> rows){
+        Alert dialog = new Alert(Alert.AlertType.INFORMATION);
+        dialog.setHeaderText(null);
+        dialog.setContentText("");
+        dialog.setTitle(primaryTitle);
+        Optional<ButtonType> option = dialog.showAndWait();
     }
 
     private String fileChooser(File openDirectory, ChooserType type){

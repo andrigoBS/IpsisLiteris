@@ -1,13 +1,17 @@
 package scanner.controller.topBar;
 
+import javafx.event.ActionEvent;
 import scanner.controller.AbstractController;
 import scanner.controller.Main;
 import scanner.controller.dialog.Dialog;
 import scanner.controller.resultView.ResultController;
 import scanner.controller.scrollEditor.ScrollEditorController;
 import javafx.application.Platform;
+import scanner.model.dto.InstructionRowDTO;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TopBarController extends AbstractController{
     private final Dialog dialog = new Dialog();
@@ -102,6 +106,10 @@ public class TopBarController extends AbstractController{
 
     public void execute(){
         getCodeEditor().execute();
+    }
+
+    public void openObjectCode(){
+        dialog.objectCodeTable(new ArrayList<>(List.of(new InstructionRowDTO[]{new InstructionRowDTO(1, "add")})));
     }
 
     @Override
