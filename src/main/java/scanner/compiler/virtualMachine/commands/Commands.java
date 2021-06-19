@@ -47,6 +47,9 @@ public enum Commands implements Command {
             if (param1.equals(0)) {
                 Commands.throwError(ErrorMessage.ZERO_DIVISION, executer);
             }
+            executer.getStack().push(Double.parseDouble(param1.toString()) /
+                    Double.parseDouble(param2.toString()));
+
         }
     },
 
