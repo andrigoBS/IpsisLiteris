@@ -1,13 +1,22 @@
 package scanner.controller.dialog;
 
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import scanner.controller.Main;
 import scanner.model.dto.InstructionRowDTO;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.IntStream;
 
 public final class Dialog {
 
@@ -58,11 +67,21 @@ public final class Dialog {
     }
 
     public void objectCodeTable(ArrayList<InstructionRowDTO> rows){
-        Alert dialog = new Alert(Alert.AlertType.INFORMATION);
-        dialog.setHeaderText(null);
-        dialog.setContentText("");
-        dialog.setTitle(primaryTitle);
-        Optional<ButtonType> option = dialog.showAndWait();
+        TableView<InstructionRowDTO> tableView = new TableView<>();
+
+        Main.newWindow(tableView, "Código objeto");
+
+        ArrayList<String> keys = new ArrayList<>(List.of("address", "command", "parameter"));
+        ArrayList<String> values = new ArrayList<>(List.of("Endereço", "comando", "parametro"));
+
+        IntStream.range(0, keys.size()).forEach(index -> {
+            TableColumn<InstructionRowDTO, String> column = new TableColumn<>(values.get(index));
+            column.setMinWidth(150);
+            column.setCellValueFactory(new PropertyValueFactory<>(keys.get(index)));
+            tableView.getColumns().add(column);
+        });
+
+        rows.forEach(row -> tableView.getItems().add(row));
     }
 
     private String fileChooser(File openDirectory, ChooserType type){
