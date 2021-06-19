@@ -5,8 +5,8 @@ import scanner.compiler.errors.ErrorMessage;
 
 
 import java.util.Stack;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @Data
 public class Executer {
@@ -21,6 +21,6 @@ public class Executer {
 
     private Consumer<ErrorMessage> error;
 
-    private Function<Class<?>, Object> write;
+    private Callable<String> write;
 
 }

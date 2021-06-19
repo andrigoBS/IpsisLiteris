@@ -1,7 +1,9 @@
 package scanner.compiler.virtualMachine.commands;
 
+import scanner.compiler.errors.ErrorMessage;
 import scanner.compiler.virtualMachine.Executer;
 
+import java.util.Map;
 import java.util.Stack;
 
 
@@ -19,7 +21,11 @@ public enum Commands implements Command {
                 stack.push(numericSum(param1, param2));
                 return;
             }
-
+            if (param1.getClass().equals(String.class) && param2.getClass().equals(String.class)) {
+                stack.push(param1.toString() + param2);
+                return;
+            }
+            Commands.throwError(ErrorMessage.LOGIC_ARITHMETIC, executer);
         }
 
         private Object numericSum (Object param1, Object param2) {
@@ -33,28 +39,35 @@ public enum Commands implements Command {
     DIV {
         @Override
         public void execute(Object parameter, Executer executer) {
-
+            Object param1 = executer.getStack().pop();
+            Object param2 = executer.getStack().pop();
+            if (!Commands.isNumeric(param1) || !Commands.isNumeric(param2)){
+                Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
+            }
+            if (param1.equals(0)) {
+                Commands.throwError(ErrorMessage.ZERO_DIVISION, executer);
+            }
         }
     },
 
     MUL {
         @Override
         public void execute(Object parameter, Executer executer) {
-
+            Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
         }
     },
 
     SUB {
         @Override
         public void execute(Object parameter, Executer executer) {
-
+            Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
         }
     },
 
     MOD {
         @Override
         public void execute(Object parameter, Executer executer) {
-
+            Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
         }
     },
 
@@ -245,6 +258,11 @@ public enum Commands implements Command {
 
     private static boolean isNumeric (Object object) {
         return object.getClass().equals(Integer.class) || object.getClass().equals(Double.class);
+    }
+
+    private static void throwError(ErrorMessage error, Executer executer){
+        executer.getError().accept(error);
+        executer.setHalt(true);
     }
 
 }

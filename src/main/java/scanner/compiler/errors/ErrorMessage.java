@@ -7,8 +7,20 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum ErrorMessage {
+
+    // Léxico
     INVALID_TOKEN("ERRO LÉXICO:\n\tToken Não reconhecido: \"{TOKEN}\" na linha {ROW} e coluna {COL}."),
-    MISSING("ERRO SINTÁTICO:\n\tEsperava encontrar {TYPES} na linha {ROW} e coluna {COL}.\n\tEncontrado {TOKEN} no lugar.");
+
+    // Sintático
+    MISSING("ERRO SINTÁTICO:\n\tEsperava encontrar {TYPES} na linha {ROW} e coluna {COL}.\n\tEncontrado {TOKEN} no lugar."),
+
+    // Semântico
+
+    // Runtime
+    LOGIC_ARITHMETIC("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação aritmética não aplicável à valores do tipo boolean"),
+    ZERO_DIVISION("ERRO EM TEMPO DE EXECUÇÃO:\n\tDivisão por zero"),
+    NOT_A_NUMBER("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação Inválida para valores não numéricos"),
+    ;
 
     @Getter
     private final String text;
