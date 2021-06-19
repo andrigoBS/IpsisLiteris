@@ -17,7 +17,9 @@ public enum Commands implements Command {
             Object param2 = stack.pop();
             if (Commands.isNumeric(param1) && Commands.isNumeric(param2)){
                 stack.push(numericSum(param1, param2));
+                return;
             }
+
         }
 
         private Object numericSum (Object param1, Object param2) {
