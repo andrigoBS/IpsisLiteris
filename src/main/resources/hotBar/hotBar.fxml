@@ -6,29 +6,41 @@
 
 <HBox spacing="15.0" xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scanner.controller.hotBar.HotBarController">
     <fx:define/>
-    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickNew" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickNew"
+               pickOnBounds="true" preserveRatio="true" fx:id="newFile">
         <Image url="@../icons/document.png" />
     </ImageView>
-    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickOpen" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickOpen"
+               pickOnBounds="true" preserveRatio="true" fx:id="openFile">
         <Image url="@../icons/folder.png" />
     </ImageView>
-    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickSave" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickSave"
+               pickOnBounds="true" preserveRatio="true" fx:id="saveFile">
         <Image url="@../icons/save.png" />
     </ImageView>
-    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickCut" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickCut"
+               pickOnBounds="true" preserveRatio="true" fx:id="cutEdit">
         <Image url="@../icons/scissors.png" />
     </ImageView>
-    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickCopy" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickCopy"
+               pickOnBounds="true" preserveRatio="true" fx:id="copyEdit">
         <Image url="@../icons/copy.png" />
     </ImageView>
-    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickPaste" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickPaste"
+               pickOnBounds="true" preserveRatio="true" fx:id="pasteEdit">
         <Image url="@../icons/arquivo.png" />
     </ImageView>
-    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickCompile" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickCompile"
+               pickOnBounds="true" preserveRatio="true" fx:id="compile">
         <Image url="@../icons/settings.png" />
     </ImageView>
-    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickExecute" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickExecute"
+               pickOnBounds="true" preserveRatio="true" fx:id="execute">
         <Image url="@../icons/running.png" />
+    </ImageView>
+    <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickObjectCode"
+               pickOnBounds="true" preserveRatio="true" fx:id="objectCode">
+        <Image url="@../icons/bitcode.png" />
     </ImageView>
    <padding>
       <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />

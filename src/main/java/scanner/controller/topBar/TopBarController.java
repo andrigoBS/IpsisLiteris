@@ -109,7 +109,7 @@ public class TopBarController extends AbstractController{
     }
 
     public void openObjectCode(){
-        dialog.objectCodeTable(new ArrayList<>(List.of(new InstructionRowDTO[]{new InstructionRowDTO(1, "add")})));
+        dialog.objectCodeTable(new ArrayList<>(List.of(new InstructionRowDTO[]{new InstructionRowDTO(1999887640, "ADD")})));
     }
 
     @Override

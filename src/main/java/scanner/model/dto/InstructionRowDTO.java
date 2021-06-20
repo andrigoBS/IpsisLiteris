@@ -8,5 +8,4 @@ public class InstructionRowDTO {
     private final int address;
     private final String command;
     private Object parameter;
-
 }
