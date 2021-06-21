@@ -3,7 +3,8 @@ package scanner.compiler.virtualMachine.commands;
 import scanner.compiler.errors.ErrorMessage;
 import scanner.compiler.virtualMachine.Executer;
 
-import java.util.Stack;
+import java.util.*;
+import java.util.function.Function;
 
 public enum Commands implements Command {
 
@@ -15,7 +16,7 @@ public enum Commands implements Command {
             Stack<Object> stack = executer.getStack();
             Object param1 = stack.pop();
             Object param2 = stack.pop();
-            if (param1 instanceof Boolean && param2 instanceof Boolean) {
+            if (param1 instanceof Boolean || param2 instanceof Boolean) {
                 Commands.throwError(ErrorMessage.LOGIC_ARITHMETIC, executer);
                 return;
             }
@@ -23,7 +24,7 @@ public enum Commands implements Command {
                 stack.push(numericSum((Number) param1, (Number) param2));
                 return;
             }
-            stack.push(param1.toString() + param2);
+            stack.push(param2.toString() + param1);
         }
 
         private Object numericSum (Number param1, Number param2) {
@@ -64,7 +65,7 @@ public enum Commands implements Command {
                 executer.getStack().push((Integer) param1 * (Integer) param2);
                 return;
             }
-            executer.getStack().push(((Number)param1).doubleValue() * ((Number)param2).doubleValue());
+            executer.getStack().push(((Number)param2).doubleValue() * ((Number)param1).doubleValue());
         }
     },
 
@@ -94,7 +95,7 @@ public enum Commands implements Command {
                 Commands.throwError(ErrorMessage.NOT_A_INTEGER, executer);
                 return;
             }
-            executer.getStack().push(((Integer) param1) % ((Integer) param2));
+            executer.getStack().push(((Integer) param2) % ((Integer) param1));
         }
     },
 
@@ -107,7 +108,7 @@ public enum Commands implements Command {
                 Commands.throwError(ErrorMessage.NOT_A_INTEGER, executer);
                 return;
             }
-            executer.getStack().push(((Integer) param1) / ((Integer) param2));
+            executer.getStack().push(((Integer) param2) / ((Integer) param1));
         }
     },
 
@@ -176,9 +177,9 @@ public enum Commands implements Command {
     LDV {
         @Override
         public void execute (Object parameter, Executer executer) {
-            Integer address = (Integer) parameter;
+            int address = (Integer) parameter - 1;
             Stack<Object> stack = executer.getStack();
-            stack.push(stack.get(address - 1));
+            stack.push(stack.get(address));
         }
     },
 
@@ -192,7 +193,14 @@ public enum Commands implements Command {
                 stack.set(address, loaded);
                 return;
             }
-            throw new ClassCastException();
+            Commands.throwError(ErrorMessage.TYPE_ERROR, executer);
+        }
+    },
+
+    DPC {
+        @Override
+        public void execute (Object parameter, Executer executer) {
+            executer.getStack().push(executer.getStack().peek());
         }
     },
 
@@ -207,7 +215,7 @@ public enum Commands implements Command {
                 Commands.throwError(ErrorMessage.NOT_A_BOOLEAN, executer);
                 return;
             }
-            executer.getStack().push(((Boolean) param1) && ((Boolean) param2));
+            executer.getStack().push(((Boolean) param2) && ((Boolean) param1));
         }
     },
 
@@ -232,7 +240,7 @@ public enum Commands implements Command {
                 Commands.throwError(ErrorMessage.NOT_A_BOOLEAN, executer);
                 return;
             }
-            executer.getStack().push(((Boolean) param1) || ((Boolean) param2));
+            executer.getStack().push(((Boolean) param2) || ((Boolean) param1));
         }
     },
 
@@ -240,6 +248,7 @@ public enum Commands implements Command {
 
     BGE {
         @Override
+        @SuppressWarnings("DuplicatedCode")
         public void execute (Object parameter, Executer executer) {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
@@ -247,42 +256,67 @@ public enum Commands implements Command {
                 Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
                 return;
             }
-            executer.getStack().push(((Boolean) param1) && ((Boolean) param2));
+            executer.getStack().push(((Number)param2).doubleValue() >= ((Number)param1).doubleValue());
         }
     },
 
     BGR {
         @Override
+        @SuppressWarnings("DuplicatedCode")
         public void execute (Object parameter, Executer executer) {
-
+            Object param1 = executer.getStack().pop();
+            Object param2 = executer.getStack().pop();
+            if (!(param1 instanceof Number) || !(param2 instanceof Number)){
+                Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
+                return;
+            }
+            executer.getStack().push(((Number)param2).doubleValue() > ((Number)param1).doubleValue());
         }
     },
 
     DIF {
         @Override
         public void execute (Object parameter, Executer executer) {
-
+            Object param1 = executer.getStack().pop();
+            Object param2 = executer.getStack().pop();
+            executer.getStack().push(!param2.equals(param1));
         }
     },
 
     EQL {
         @Override
         public void execute (Object parameter, Executer executer) {
-
+            Object param1 = executer.getStack().pop();
+            Object param2 = executer.getStack().pop();
+            executer.getStack().push(param2.equals(param1));
         }
     },
 
     SME {
         @Override
+        @SuppressWarnings("DuplicatedCode")
         public void execute (Object parameter, Executer executer) {
-
+            Object param1 = executer.getStack().pop();
+            Object param2 = executer.getStack().pop();
+            if (!(param1 instanceof Number) || !(param2 instanceof Number)){
+                Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
+                return;
+            }
+            executer.getStack().push(((Number)param2).doubleValue() <= ((Number)param1).doubleValue());
         }
     },
 
     SMR {
         @Override
+        @SuppressWarnings("DuplicatedCode")
         public void execute (Object parameter, Executer executer) {
-
+            Object param1 = executer.getStack().pop();
+            Object param2 = executer.getStack().pop();
+            if (!(param1 instanceof Number) || !(param2 instanceof Number)){
+                Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
+                return;
+            }
+            executer.getStack().push(((Number)param2).doubleValue() < ((Number)param1).doubleValue());
         }
     },
 
@@ -291,7 +325,6 @@ public enum Commands implements Command {
     JMF {
         @Override
         public void execute (Object parameter, Executer executer) {
-
         }
     },
 
@@ -314,27 +347,41 @@ public enum Commands implements Command {
     STP {
         @Override
         public void execute (Object parameter, Executer executer) {
-
+            executer.halt();
         }
     },
 
     REA {
+
+        private final List<Function<String, Object>> functionList = List.of(
+          Integer::parseInt, Double::parseDouble, String::new
+        );
+
         @Override
         public void execute (Object parameter, Executer executer) {
-
+            int type = (Integer) parameter - 1;
+            try {
+                functionList.get(type).apply(executer.getRead().call());
+            } catch (NumberFormatException e) {
+                Commands.throwError(ErrorMessage.TYPE_ERROR, executer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                executer.halt();
+            }
         }
     },
 
     WRT {
         @Override
         public void execute (Object parameter, Executer executer) {
-
+            executer.getWrite().accept(executer.getStack().pop().toString());
         }
     };
 
     private static void throwError (ErrorMessage error, Executer executer){
         executer.getError().accept(error);
-        executer.setHalt(true);
+        executer.halt();
     }
 
     private static void allocate (int space, Object value, Executer executer) {

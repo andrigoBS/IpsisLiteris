@@ -21,7 +21,8 @@ public enum ErrorMessage {
     ZERO_DIVISION("ERRO EM TEMPO DE EXECUÇÃO:\n\tDivisão por zero"),
     NOT_A_NUMBER("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação aritmética Inválida para valores não numéricos"),
     NOT_A_INTEGER("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação resto de divisão não aplicável para números não inteiros"),
-    NOT_A_BOOLEAN("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação lógica Inválida para valores não booleanos")
+    NOT_A_BOOLEAN("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação lógica Inválida para valores não booleanos"),
+    TYPE_ERROR("ERRO EM TEMPO DE EXECUÇÃO:\n\tValor incompatível com o tipo definido para a variável"),
     ;
 
     @Getter
