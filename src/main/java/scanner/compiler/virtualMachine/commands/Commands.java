@@ -394,13 +394,16 @@ public enum Commands implements Command {
         @Override
         public void execute (Object parameter, Executer executer) {
             int type = (Integer) parameter - 1;
+            if (type >= functionList.size()){
+                Commands.throwError(ErrorMessage.CONSTANT_ERROR, executer);
+                return;
+            }
             try {
-                Object param = functionList.get(type).apply(executer.getRead().call());
+                String call = executer.getRead().call();
+                Object param = functionList.get(type).apply(call);
                 executer.getStack().push(param);
             } catch (NumberFormatException e) {
                 Commands.throwError(ErrorMessage.TYPE_ERROR, executer);
-            } catch (IndexOutOfBoundsException e) {
-                Commands.throwError(ErrorMessage.CONSTANT_ERROR, executer);
             }catch (Exception e) {
                 e.printStackTrace();
                 executer.halt();
