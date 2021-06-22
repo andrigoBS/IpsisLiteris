@@ -399,7 +399,9 @@ public enum Commands implements Command {
                 executer.getStack().push(param);
             } catch (NumberFormatException e) {
                 Commands.throwError(ErrorMessage.TYPE_ERROR, executer);
-            } catch (Exception e) {
+            } catch (IndexOutOfBoundsException e) {
+                Commands.throwError(ErrorMessage.CONSTANT_ERROR, executer);
+            }catch (Exception e) {
                 e.printStackTrace();
                 executer.halt();
             }
