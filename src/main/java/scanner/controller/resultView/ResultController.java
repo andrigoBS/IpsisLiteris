@@ -1,18 +1,13 @@
 package scanner.controller.resultView;
 
-import javafx.event.Event;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ListView;
-import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import scanner.controller.AbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class ResultController extends AbstractController implements Initializable {
@@ -59,8 +54,8 @@ public class ResultController extends AbstractController implements Initializabl
                 codeArea.replaceText(backupText);
             }
         });
-        setText("console\nlogsom\n"); //teste console
-        enableInput(); //teste console
+//        setText("console\nlogsom\n"); //teste console
+//        enableInput(); //teste console
     }
 
     public void enableInput(){
