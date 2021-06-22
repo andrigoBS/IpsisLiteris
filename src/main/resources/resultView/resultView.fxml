@@ -3,13 +3,14 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.fxmisc.richtext.CodeArea?>
 
 <VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="scanner.controller.resultView.ResultController">
-    <TextArea fx:id="textView" editable="false" prefHeight="357.0" prefWidth="600.0">
+    <CodeArea fx:id="codeArea" prefHeight="357.0" prefWidth="600.0">
         <opaqueInsets>
             <Insets />
         </opaqueInsets>
-    </TextArea>
+    </CodeArea>
     <Label fx:id="rowColView" prefHeight="49.0" prefWidth="600.0" text=" Linha: 0,  Coluna: 0" />
 </VBox>
