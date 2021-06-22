@@ -197,6 +197,22 @@ public enum Commands implements Command {
         }
     },
 
+    STC {
+        @Override
+        public void execute(Object parameter, Executer executer) {
+            int range = (Integer) parameter - 1;
+            Stack<Object> stack = executer.getStack();
+            Object value = stack.pop();
+            for (int i = range; i < stack.size(); i ++) {
+                if (! stack.get(i).getClass().equals(value.getClass()) ) {
+                    Commands.throwError(ErrorMessage.TYPE_ERROR, executer);
+                    return;
+                }
+                stack.set(i, value);
+            }
+        }
+    },
+
     DPC {
         @Override
         public void execute (Object parameter, Executer executer) {
@@ -325,20 +341,38 @@ public enum Commands implements Command {
     JMF {
         @Override
         public void execute (Object parameter, Executer executer) {
+            Object param = executer.getStack().pop();
+            int address = (Integer) parameter - 1;
+            if (!(param instanceof Boolean)) {
+                Commands.throwError(ErrorMessage.NOT_A_BOOLEAN, executer);
+                return;
+            }
+            if (!((Boolean) param)) {
+                executer.setPointer(address - 1);
+            }
         }
     },
 
     JMP {
         @Override
         public void execute (Object parameter, Executer executer) {
-
+            int address = (Integer) parameter - 1;
+            executer.setPointer(address - 1);
         }
     },
 
     JMT {
         @Override
         public void execute (Object parameter, Executer executer) {
-
+            Object param = executer.getStack().pop();
+            int address = (Integer) parameter - 1;
+            if (!(param instanceof Boolean)) {
+                Commands.throwError(ErrorMessage.NOT_A_BOOLEAN, executer);
+                return;
+            }
+            if ((Boolean) param) {
+                executer.setPointer(address - 1);
+            }
         }
     },
 
@@ -361,12 +395,12 @@ public enum Commands implements Command {
         public void execute (Object parameter, Executer executer) {
             int type = (Integer) parameter - 1;
             try {
-                functionList.get(type).apply(executer.getRead().call());
+                Object param = functionList.get(type).apply(executer.getRead().call());
+                executer.getStack().push(param);
             } catch (NumberFormatException e) {
                 Commands.throwError(ErrorMessage.TYPE_ERROR, executer);
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
                 executer.halt();
             }
         }

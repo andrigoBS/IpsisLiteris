@@ -1,8 +1,10 @@
 package scanner.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Data @AllArgsConstructor @RequiredArgsConstructor
 public class InstructionRowDTO {
 
     private final int address;

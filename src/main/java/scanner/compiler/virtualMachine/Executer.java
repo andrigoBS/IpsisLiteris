@@ -31,4 +31,8 @@ public class Executer {
         setHalt(true);
     }
 
+    public void increasePointer () {
+        pointer++;
+    }
+
 }
