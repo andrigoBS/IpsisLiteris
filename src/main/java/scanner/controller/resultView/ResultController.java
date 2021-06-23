@@ -35,10 +35,10 @@ public class ResultController extends AbstractController implements Initializabl
                     if (codeArea.getCaretPosition() >= inputPosition) {
                         backupText = backupText.substring(0, codeArea.getText().length());
                     }
-                }else if(keyEvent.getCode().equals(KeyCode.ENTER)){
+                }else if(keyEvent.getCode().equals(KeyCode.ENTER)) {
                     codeArea.setEditable(false);
                     backupText += keyEvent.getText();
-                }else if(keyEvent.getCode().isLetterKey() || keyEvent.getCode().isDigitKey() || keyEvent.getCode().isWhitespaceKey()){
+                }else if(!(keyEvent.getCode().isMediaKey() || keyEvent.getCode().isFunctionKey() || keyEvent.getCode().isNavigationKey() || keyEvent.getCode().isArrowKey() || keyEvent.getCode().isModifierKey())){
                     if (codeArea.getCaretPosition() >= inputPosition) {
                         char character = keyEvent.getText().charAt(0);
                         if(keyEvent.isShiftDown()){

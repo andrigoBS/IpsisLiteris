@@ -17,9 +17,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.qsy7.java.dependencies</groupId>
+            <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>0.1.0</version>
+            <version>1.18.20</version>
             <type>pom</type>
         </dependency>
         <dependency>
