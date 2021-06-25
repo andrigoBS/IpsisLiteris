@@ -22,6 +22,8 @@ public final class Dialog {
 
     private final String primaryTitle;
 
+    private Stage stageInstruction;
+
     public Dialog(String primaryTitle) {
         this.primaryTitle = primaryTitle;
     }
@@ -66,10 +68,12 @@ public final class Dialog {
         infoAlert("Arquivo salvo com sucesso!!", ": Arquivo salvo");
     }
 
-    public void objectCodeTable(ArrayList<InstructionRowDTO> rows){
+    public void objectCodeTable(List<InstructionRowDTO> rows){
+        if(stageInstruction != null && stageInstruction.isShowing()) return;
+
         TableView<InstructionRowDTO> tableView = new TableView<>();
 
-        Main.newWindow(tableView, "Código objeto");
+        stageInstruction = Main.newWindow(tableView, "Código objeto");
 
         ArrayList<String> keys = new ArrayList<>(List.of("address", "command", "parameter"));
         ArrayList<String> values = new ArrayList<>(List.of("Endereço", "comando", "parametro"));

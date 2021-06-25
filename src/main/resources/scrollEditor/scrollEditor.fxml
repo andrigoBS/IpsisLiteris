@@ -7,7 +7,8 @@
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
 
 <VirtualizedScrollPane prefHeight="586.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/14"
-                       xmlns:fx="http://javafx.com/fxml/1" fx:controller="scanner.controller.scrollEditor.ScrollEditorController">
+                       xmlns:fx="http://javafx.com/fxml/1"
+                       fx:controller="scanner.controller.scrollEditor.ScrollEditorController">
 
     <content>
         <CodeArea fx:id="writer" onKeyPressed="#updateTextCursor" onKeyTyped="#onTextChange" onMouseClicked="#updateTextCursor"  prefHeight="584.0" prefWidth="1800.0"/>

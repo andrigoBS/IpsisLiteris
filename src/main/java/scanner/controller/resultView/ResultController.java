@@ -1,12 +1,15 @@
 package scanner.controller.resultView;
 
+import javafx.application.Platform;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import scanner.compiler.errors.ErrorMessage;
 import scanner.controller.AbstractController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -15,59 +18,43 @@ public class ResultController extends AbstractController implements Initializabl
     private CodeArea codeArea;
 
     @FXML
+    private TextField inputTextField;
+
+    @FXML
     private Label rowColView;
-
-    private int inputPosition;
-
-    private String backupText;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        codeArea.setEditable(false);
-        codeArea.caretPositionProperty().addListener(((observableValue, oldValue, newValue) -> {
-            if(newValue < inputPosition){
-                codeArea.displaceCaret(codeArea.getText().length());
-            }
-        }));
-        codeArea.setOnKeyPressed(keyEvent -> {
-            if(codeArea.isEditable()){
-                if(keyEvent.getCode().equals(KeyCode.BACK_SPACE)) {
-                    if (codeArea.getCaretPosition() >= inputPosition) {
-                        backupText = backupText.substring(0, codeArea.getText().length());
-                    }
-                }else if(keyEvent.getCode().equals(KeyCode.ENTER)) {
-                    codeArea.setEditable(false);
-                    backupText += keyEvent.getText();
-                }else if(!(keyEvent.getCode().isMediaKey() || keyEvent.getCode().isFunctionKey() || keyEvent.getCode().isNavigationKey() || keyEvent.getCode().isArrowKey() || keyEvent.getCode().isModifierKey())){
-                    if (codeArea.getCaretPosition() >= inputPosition) {
-                        char character = keyEvent.getText().charAt(0);
-                        if(keyEvent.isShiftDown()){
-                            character = Character.isLowerCase(character) ? Character.toUpperCase(character) : Character.toLowerCase(character);
-                        }
-                        backupText += character;
-                    }
-                }
+        inputTextField.setDisable(true);
+
+        inputTextField.setOnKeyPressed(keyEvent -> {
+            if(keyEvent.getCode().equals(KeyCode.ENTER)) {
+                Platform.exitNestedEventLoop("AWAIT_ENTER", null);
             }
         });
-        codeArea.setOnKeyReleased(keyEvent -> {
-            if (codeArea.isEditable()) {
-                codeArea.replaceText(backupText);
-            }
-        });
-//        setText("console\nlogsom\n"); //teste console
-//        enableInput(); //teste console
     }
 
-    public void enableInput(){
-        backupText = codeArea.getText();
-        inputPosition = backupText.length();
-        codeArea.setEditable(true);
-        codeArea.displaceCaret(inputPosition);
+    public String getInputText(){
+        inputTextField.setDisable(false);
+        Platform.enterNestedEventLoop("AWAIT_ENTER");
+        inputTextField.setDisable(true);
+        String text = inputTextField.getText();
+        inputTextField.clear();
+        codeArea.replaceText(codeArea.getText()+text+"\n");
+        return text;
     }
 
     public void setText(String text){
         clear();
         codeArea.replaceText(text);
+    }
+
+    public void printText(String text){
+        codeArea.replaceText(codeArea.getText()+text+"\n");
+    }
+
+    public void printError(ErrorMessage errorMessage){
+        codeArea.replaceText(codeArea.getText()+errorMessage.getText()+"\n");
     }
 
     public void clear(){

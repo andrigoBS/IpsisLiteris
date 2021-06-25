@@ -36,7 +36,6 @@ public class ScrollEditorController extends AbstractController implements Initia
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        writer.setParagraphGraphicFactory(LineNumberFactory.get(writer));
         executor = Executors.newSingleThreadExecutor();
         writer.setParagraphGraphicFactory(LineNumberFactory.get(writer));
         Subscription cleanupWhenDone = writer.multiPlainChanges()

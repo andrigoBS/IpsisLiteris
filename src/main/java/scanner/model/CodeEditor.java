@@ -2,14 +2,30 @@ package scanner.model;
 
 import scanner.compiler.build.IpsisLiteris;
 import scanner.compiler.build.ParseException;
+import scanner.compiler.virtualMachine.IdEst;
+import scanner.model.dto.InstructionRowDTO;
+
 import java.io.*;
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class CodeEditor {
     private FileManager fileManager;
 
+    private ArrayList<InstructionRowDTO> instructions;
+
+    private boolean isRunning;
+
     public CodeEditor(){
         fileManager = new FileManager();
+        instructions = new ArrayList<>();
+        //TODO: remover antes de entregar
+        try {
+            instructions = new ArrayList<>(IdEst.builder().build().getInstructions(new FileInputStream("src/jar/files/test.ie")));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void updateText(String text){
@@ -53,6 +69,10 @@ public class CodeEditor {
         return fileManager.hasFileName();
     }
 
+    public boolean isCompiled(){
+        return !instructions.isEmpty();
+    }
+
     public String compile(){
         try {
             return IpsisLiteris.compile(fileManager.getFileInputStream());
@@ -62,7 +82,27 @@ public class CodeEditor {
         }
     }
 
-    public void execute(){
+    public void compile(Consumer<String> print){
+//        try {
+//            IpsisLiteris.compile(fileManager.getFileInputStream(), print);
+//        } catch (ParseException | IOException e) {
+//            e.printStackTrace();
+//            print.accept(e.getMessage());
+//        }
+    }
 
+    public IdEst.IdEstBuilder getRunner(){
+        return IdEst.builder();
+    }
+
+    public void execute(IdEst idEst){
+        if(isRunning) return;
+        isRunning = true;
+        idEst.run(instructions);
+        isRunning = false;
+    }
+
+    public ArrayList<InstructionRowDTO> getObjectCodeTable(){
+        return instructions;
     }
 }
