@@ -9,8 +9,11 @@ import lombok.Getter;
 import scanner.compiler.errors.AnalyserError;
 import scanner.compiler.errors.ErrorMessage;
 import scanner.compiler.errors.Log;
+import scanner.compiler.semantic.Semantic;
+import scanner.compiler.semantic.Actions;
 
 public class IpsisLiteris implements IpsisLiterisConstants {
+    Semantic semantic = new Semantic();
 
     public static void main (String[] args) throws ParseException, TokenMgrError {
         IpsisLiteris parser = new IpsisLiteris(System.in);
@@ -54,6 +57,7 @@ public class IpsisLiteris implements IpsisLiterisConstants {
 //Analisador Sintático
   final public 
 void Program() throws ParseException {List<Integer> first = First.PROGRAM.getFirst();
+    Token t;
     try {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case HEADER_DEF:{
@@ -80,7 +84,8 @@ void Program() throws ParseException {List<Integer> first = First.PROGRAM.getFir
       CloseCurly(List.of(IDENTIFIER, EOF));
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case IDENTIFIER:{
-        Identifier(List.of(EOF));
+        t = Identifier(List.of(EOF));
+Actions.AC2_ProgramIdentifierRec(semantic, t);
         break;
         }
       default:
@@ -89,6 +94,8 @@ void Program() throws ParseException {List<Integer> first = First.PROGRAM.getFir
       }
     } catch (ParseException e) {
 logAndConsume(first, List.of(EOF));
+    } finally {
+{ Actions.AC1_EndOfProgram(semantic); }
     }
 }
 
@@ -143,16 +150,21 @@ logAndConsume(first, follow);
 }
 
   final public void ConstDef(List<Integer> follow) throws ParseException {List<Integer> first = First.CONST_DEF.getFirst();
-     ArrayList<Integer> delimiterFollow = mergeFollow(follow, First.TYPE.getFirst());
+    ArrayList<Integer> delimiterFollow = mergeFollow(follow, First.TYPE.getFirst());
+    Token t;
     try {
       NotVar(List.of(VAR));
       Var(First.TYPE.getFirst());
+Actions.AC3_ContextToConstant(semantic);
       label_1:
       while (true) {
         Type(List.of(IS));
         Is(First.ID_LIST.getFirst());
         IdList(First.CONSTANTS.getFirst());
-        Constants(List.of(DELIMITER));
+Actions.AC4_EndOfDeclaration(semantic);
+        // AC#4
+                    t = Constants(List.of(DELIMITER));
+Actions.AC5_ConstantDeclarationRecognition(semantic, t);
         Delimiter(delimiterFollow);
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case NAT:
@@ -181,6 +193,7 @@ logAndConsume(first, follow);
         Type(List.of(IS));
         Is(First.ID_LIST.getFirst());
         IdList(List.of(DELIMITER));
+Actions.AC4_EndOfDeclaration(semantic);
         Delimiter(delimiterFollow);
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case NAT:
@@ -630,18 +643,22 @@ void Type(List<Integer> follow) throws ParseException {List<Integer> first = Fir
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case NAT:{
         jj_consume_token(NAT);
+Actions.AC7_NaturalType(semantic);
         break;
         }
       case REAL:{
         jj_consume_token(REAL);
+Actions.AC8_RealType(semantic);
         break;
         }
       case CHAR:{
         jj_consume_token(CHAR);
+Actions.AC9_LiteralType(semantic);
         break;
         }
       case BOOL:{
         jj_consume_token(BOOL);
+Actions.AC10_LogicalType(semantic);
         break;
         }
       default:
@@ -654,27 +671,28 @@ logAndConsume(first, follow);
     }
 }
 
-  final public void Constants(List<Integer> follow) throws ParseException {List<Integer> first = First.CONSTANTS.getFirst();
+  final public Token Constants(List<Integer> follow) throws ParseException {List<Integer> first = First.CONSTANTS.getFirst();
+    Token t;
     try {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case LITERAL:{
-        jj_consume_token(LITERAL);
+        t = jj_consume_token(LITERAL);
         break;
         }
       case INTEGER:{
-        jj_consume_token(INTEGER);
+        t = jj_consume_token(INTEGER);
         break;
         }
       case FLOAT:{
-        jj_consume_token(FLOAT);
+        t = jj_consume_token(FLOAT);
         break;
         }
       case TRUE:{
-        jj_consume_token(TRUE);
+        t = jj_consume_token(TRUE);
         break;
         }
       case FALSE:{
-        jj_consume_token(FALSE);
+        t = jj_consume_token(FALSE);
         break;
         }
       default:
@@ -682,9 +700,11 @@ logAndConsume(first, follow);
         jj_consume_token(-1);
         throw new ParseException();
       }
+{if ("" != null) return t;}
     } catch (ParseException e) {
 logAndConsume(first, follow);
     }
+    throw new Error("Missing return statement in function");
 }
 
   final public void Comparator(List<Integer> follow) throws ParseException {List<Integer> first = First.COMPARATOR.getFirst();
@@ -968,12 +988,14 @@ logAndConsume(List.of(POWER), follow);
     }
 }
 
-  final public void Identifier(List<Integer> follow) throws ParseException {
+  final public Token Identifier(List<Integer> follow) throws ParseException {Token t;
     try {
-      jj_consume_token(IDENTIFIER);
+      t = jj_consume_token(IDENTIFIER);
+{if ("" != null) return t;}
     } catch (ParseException e) {
 logAndConsume(List.of(IDENTIFIER), follow);
     }
+    throw new Error("Missing return statement in function");
 }
 
   final public void Integer(List<Integer> follow) throws ParseException {

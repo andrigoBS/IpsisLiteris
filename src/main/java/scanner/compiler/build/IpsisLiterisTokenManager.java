@@ -10,6 +10,8 @@ import lombok.Getter;
 import scanner.compiler.errors.AnalyserError;
 import scanner.compiler.errors.ErrorMessage;
 import scanner.compiler.errors.Log;
+import scanner.compiler.semantic.Semantic;
+import scanner.compiler.semantic.Actions;
 
 /** Token Manager. */
 @SuppressWarnings ("unused")

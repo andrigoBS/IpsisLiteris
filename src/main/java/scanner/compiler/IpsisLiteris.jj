@@ -15,8 +15,11 @@ import lombok.Getter;
 import scanner.compiler.errors.AnalyserError;
 import scanner.compiler.errors.ErrorMessage;
 import scanner.compiler.errors.Log;
+import scanner.compiler.semantic.Semantic;
+import scanner.compiler.semantic.Actions;
 
 public class IpsisLiteris {
+    Semantic semantic = new Semantic();
 
     public static void main (String[] args) throws ParseException, TokenMgrError {
         IpsisLiteris parser = new IpsisLiteris(System.in);
@@ -56,7 +59,6 @@ public class IpsisLiteris {
         newFollow.addAll(b);
         return newFollow;
     }
-
 }
 
 PARSER_END(IpsisLiteris)
@@ -162,6 +164,7 @@ SPECIAL_TOKEN : {
 void Program ():
 {
     List<Integer> first = First.PROGRAM.getFirst();
+    Token t;
 }
 {
     try{
@@ -174,9 +177,14 @@ void Program ():
         (VarDeclaration (First.MAIN.getFirst()))?
         ProgMain (List.of(CLOSE_CURLY))
         CloseCurly (List.of(IDENTIFIER, EOF))
-        (Identifier (List.of(EOF)))?
+        (
+            t = Identifier (List.of(EOF))
+            {Actions.AC2_ProgramIdentifierRec(semantic, t);}
+        )?
     } catch (ParseException e) {
         logAndConsume(first, List.of(EOF));
+    } finally{
+        { Actions.AC1_EndOfProgram(semantic); }
     }
 }
 
@@ -191,7 +199,7 @@ void VarDeclaration (List<Integer> follow):
         VarField(List.of(CLOSE_CURLY))
         CloseCurly(follow)
     } catch (ParseException e){
-        logAndConsume(first, follow);
+            logAndConsume(first, follow);
     }
 }
 
@@ -214,17 +222,21 @@ void VarField (List<Integer> follow):
 void ConstDef (List<Integer> follow):
 {
     List<Integer> first = First.CONST_DEF.getFirst();
-     ArrayList<Integer> delimiterFollow = mergeFollow(follow, First.TYPE.getFirst());
+    ArrayList<Integer> delimiterFollow = mergeFollow(follow, First.TYPE.getFirst());
+    Token t;
 }
 {
     try{
         NotVar(List.of(VAR))
         Var(First.TYPE.getFirst())
+        { Actions.AC3_ContextToConstant(semantic); }
         (
             Type(List.of(IS))
             Is(First.ID_LIST.getFirst())
             IdList(First.CONSTANTS.getFirst())
-            Constants(List.of(DELIMITER))
+            { Actions.AC4_EndOfDeclaration(semantic); }// AC#4
+            t = Constants(List.of(DELIMITER))
+            { Actions.AC5_ConstantDeclarationRecognition(semantic, t); }// AC#5
             Delimiter(delimiterFollow)
         )+
     } catch (ParseException e){
@@ -240,10 +252,12 @@ void VarDef(List<Integer> follow):
 {
     try{
         Var(First.TYPE.getFirst())
+        // AC#6
         (
             Type (List.of(IS))
             Is (First.ID_LIST.getFirst())
             IdList (List.of(DELIMITER))
+            { Actions.AC4_EndOfDeclaration(semantic); } // AC#4
             Delimiter (delimiterFollow)
         )+
     } catch (ParseException e) {
@@ -413,6 +427,7 @@ void IdList(List<Integer> follow):
 {
     try {
         Id(idFollow)
+        // AC#11
         (
             Separator(First.ID.getFirst())
             Id(idFollow)
@@ -569,19 +584,24 @@ void Type(List<Integer> follow):
 }
 {
     try {
-        <NAT> | <REAL> | <CHAR> | <BOOL>
+        <NAT>       { Actions.AC7_NaturalType(semantic); }// AC#7
+        | <REAL>    { Actions.AC8_RealType(semantic); }// AC#8
+        | <CHAR>    { Actions.AC9_LiteralType(semantic); }// AC#9
+        | <BOOL>    { Actions.AC10_LogicalType(semantic); }// AC#10
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
 }
 
-void Constants (List<Integer> follow):
+Token Constants (List<Integer> follow):
 {
     List<Integer> first = First.CONSTANTS.getFirst();
+    Token t;
 }
 {
     try{
-        <LITERAL> | <INTEGER> | <FLOAT> | <TRUE> | <FALSE>
+        (t = <LITERAL> | t = <INTEGER> | t = <FLOAT> | t = <TRUE> | t = <FALSE>)
+        { return t; }
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
@@ -855,11 +875,14 @@ void Power (List<Integer> follow):
     }
 }
 
-void Identifier (List<Integer> follow):
-{}
+Token Identifier (List<Integer> follow):
+{
+    Token t;
+}
 {
     try{
-        <IDENTIFIER>
+    t = <IDENTIFIER>
+    {return t;}
     } catch (ParseException e) {
         logAndConsume(List.of(IDENTIFIER), follow);
     }
