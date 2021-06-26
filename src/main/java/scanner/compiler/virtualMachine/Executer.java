@@ -1,6 +1,6 @@
 package scanner.compiler.virtualMachine;
 
-import lombok.Data;
+import lombok.*;
 import scanner.compiler.errors.ErrorMessage;
 
 
@@ -15,12 +15,24 @@ public class Executer {
 
     private int pointer = 0;
 
+    @Setter(value = AccessLevel.PRIVATE)
     private boolean halt = false;
 
-    private Consumer<String> read;
+    @NonNull
+    private Callable<String> read;
 
+    @NonNull
     private Consumer<ErrorMessage> error;
 
-    private Callable<String> write;
+    @NonNull
+    private Consumer<String> write;
+
+    public void halt() {
+        setHalt(true);
+    }
+
+    public void increasePointer () {
+        pointer++;
+    }
 
 }

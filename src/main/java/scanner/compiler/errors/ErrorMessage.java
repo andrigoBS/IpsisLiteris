@@ -17,11 +17,13 @@ public enum ErrorMessage {
     // Semântico
 
     // Runtime
-    LOGIC_ARITHMETIC("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação de soma não aplicável à valores do tipo boolean, apenas valores literais ou numéricos"),
-    ZERO_DIVISION("ERRO EM TEMPO DE EXECUÇÃO:\n\tDivisão por zero"),
-    NOT_A_NUMBER("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação aritmética Inválida para valores não numéricos"),
-    NOT_A_INTEGER("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação resto de divisão não aplicável para números não inteiros"),
-    NOT_A_BOOLEAN("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação lógica Inválida para valores não booleanos")
+    LOGIC_ARITHMETIC("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação de soma não aplicável à valores do tipo boolean, apenas valores literais ou numéricos."),
+    ZERO_DIVISION("ERRO EM TEMPO DE EXECUÇÃO:\n\tDivisão por zero."),
+    NOT_A_NUMBER("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação aritmética Inválida para valores não numéricos."),
+    NOT_A_INTEGER("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação resto de divisão não aplicável para números não inteiros."),
+    NOT_A_BOOLEAN("ERRO EM TEMPO DE EXECUÇÃO:\n\tOperação lógica Inválida para valores não booleanos."),
+    TYPE_ERROR("ERRO EM TEMPO DE EXECUÇÃO:\n\tValor incompatível com o tipo definido para a variável."),
+    CONSTANT_ERROR("ERRO EM TEMPO DE EXECUÇÃO:\n\tNão é possível ler uma constante."),
     ;
 
     @Getter

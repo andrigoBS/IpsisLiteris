@@ -23,12 +23,13 @@ public class Main extends Application {
 
     public static void resetFileTile(){ setFileTitle("Arquivo não salvo"); }
 
-    public static void newWindow(Parent root, String title){
+    public static Stage newWindow(Parent root, String title){
         Stage secondStage = new Stage();
-        configWindow(secondStage, root,450, 450);
+        configWindow(secondStage, root,475, 475);
         setTitle(secondStage, title);
-        secondStage.setX(STAGE.getX() + 150);
-        secondStage.setY(STAGE.getY() + 150);
+        secondStage.setX(STAGE.getX() + 135);
+        secondStage.setY(STAGE.getY() + 135);
+        return secondStage;
     }
 
     private static void setTitle(Stage stage, String title){

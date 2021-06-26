@@ -1,23 +1,17 @@
 package scanner.controller.hotBar;
 
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
-import org.fxmisc.richtext.LineNumberFactory;
-import org.reactfx.Subscription;
 import scanner.controller.AbstractController;
-
 import scanner.controller.topBar.TopBarController;
-import javafx.fxml.FXML;
 
 import java.net.URL;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
 
 
 public class HotBarController extends AbstractController implements Initializable {
