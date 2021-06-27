@@ -1,30 +1,37 @@
 package scanner.compiler.virtualMachine.commands;
 
+import lombok.AllArgsConstructor;
 import scanner.compiler.errors.ErrorMessage;
+import scanner.compiler.errors.RuntimeError;
 import scanner.compiler.virtualMachine.Executer;
+import scanner.compiler.virtualMachine.IdEst;
 
 import java.util.*;
 import java.util.function.Function;
+
 
 public enum Commands implements Command {
 
     // Operações Aritméticas
 
     ADD {
+
         @Override
         public void execute (Object parameter, Executer executer) {
             Stack<Object> stack = executer.getStack();
             Object param1 = stack.pop();
             Object param2 = stack.pop();
-            if (param1 instanceof Boolean || param2 instanceof Boolean) {
-                Commands.throwError(ErrorMessage.LOGIC_ARITHMETIC, executer);
-                return;
-            }
             if (param1 instanceof Number && param2 instanceof Number){
                 stack.push(numericSum((Number) param1, (Number) param2));
                 return;
             }
-            stack.push(param2.toString() + param1);
+            if (param1 instanceof String && param2 instanceof String){
+                stack.push(param2.toString() + param1);
+                return;
+            }
+            Commands.throwError(
+                    applyValues(RuntimeError.OPERATION_VALUES, "SOMA", param1, param2), executer
+            );
         }
 
         private Object numericSum (Number param1, Number param2) {
@@ -41,11 +48,13 @@ public enum Commands implements Command {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
             if (!(param1 instanceof Number) || !(param2 instanceof Number)){
-                Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "DIVISÃO", param1, param2), executer
+                );
                 return;
             }
             if (((Number)param1).intValue() == 0) {
-                Commands.throwError(ErrorMessage.ZERO_DIVISION, executer);
+                Commands.throwError(RuntimeError.ZERO_DIVISION.getText(), executer);
                 return;
             }
             executer.getStack().push(((Number)param2).doubleValue() / ((Number) param1).doubleValue());
@@ -58,7 +67,9 @@ public enum Commands implements Command {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
             if (!(param1 instanceof Number) || !(param2 instanceof Number)){
-                Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "MULTIPLICAÇÃO", param1, param2), executer
+                );
                 return;
             }
             if (param1 instanceof Integer && param2 instanceof Integer){
@@ -70,12 +81,15 @@ public enum Commands implements Command {
     },
 
     SUB {
+
         @Override
         public void execute (Object parameter, Executer executer) {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
             if (!(param1 instanceof Number) || !(param2 instanceof Number)){
-                Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "SUBTRAÇÃO", param1, param2), executer
+                );
                 return;
             }
             if (param1 instanceof Integer && param2 instanceof Integer){
@@ -84,6 +98,7 @@ public enum Commands implements Command {
             }
             executer.getStack().push(((Number)param2).doubleValue() - ((Number)param1).doubleValue());
         }
+
     },
 
     MOD {
@@ -92,7 +107,9 @@ public enum Commands implements Command {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
             if (!(param1 instanceof Integer) || !(param2 instanceof Integer)){
-                Commands.throwError(ErrorMessage.NOT_A_INTEGER, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "RESTO DE DIVISÃO", param1, param2), executer
+                );
                 return;
             }
             executer.getStack().push(((Integer) param2) % ((Integer) param1));
@@ -105,10 +122,32 @@ public enum Commands implements Command {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
             if (!(param1 instanceof Integer) || !(param2 instanceof Integer)){
-                Commands.throwError(ErrorMessage.NOT_A_INTEGER, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "DIVISÃO INTEIRA", param1, param2), executer
+                );
                 return;
             }
             executer.getStack().push(((Integer) param2) / ((Integer) param1));
+        }
+    },
+
+    POW {
+        @Override
+        public void execute(Object parameter, Executer executer) {
+            Object param1 = executer.getStack().pop();
+            Object param2 = executer.getStack().pop();
+            if (!(param1 instanceof Number) || ! (param2 instanceof Number)){
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "POTENCIAÇÃO", param1, param2), executer
+                );
+                return;
+            }
+            double result = Math.pow(((Number)param2).doubleValue(), ((Number)param1).doubleValue());
+            if (result == Math.floor(result) && Double.isFinite(result)){
+                executer.getStack().push((int) result);
+                return;
+            }
+            executer.getStack().push(result);
         }
     },
 
@@ -193,7 +232,9 @@ public enum Commands implements Command {
                 stack.set(address, loaded);
                 return;
             }
-            Commands.throwError(ErrorMessage.TYPE_ERROR, executer);
+            Commands.throwError(
+                    applyValues(RuntimeError.TYPE_ERROR, null, loaded, stack.get(address)), executer
+            );
         }
     },
 
@@ -205,7 +246,9 @@ public enum Commands implements Command {
             Object value = stack.pop();
             for (int i = range; i < stack.size(); i ++) {
                 if (! stack.get(i).getClass().equals(value.getClass()) ) {
-                    Commands.throwError(ErrorMessage.TYPE_ERROR, executer);
+                    Commands.throwError(
+                            applyValues(RuntimeError.TYPE_ERROR, null, value, stack.get(i)), executer
+                    );
                     return;
                 }
                 stack.set(i, value);
@@ -228,7 +271,9 @@ public enum Commands implements Command {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
             if (!(param1 instanceof Boolean) || !(param2 instanceof Boolean)){
-                Commands.throwError(ErrorMessage.NOT_A_BOOLEAN, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "\"E\" LÓGICO", param1, param2), executer
+                );
                 return;
             }
             executer.getStack().push(((Boolean) param2) && ((Boolean) param1));
@@ -240,7 +285,9 @@ public enum Commands implements Command {
         public void execute (Object parameter, Executer executer) {
             Object param1 = executer.getStack().pop();
             if (!(param1 instanceof Boolean)){
-                Commands.throwError(ErrorMessage.NOT_A_BOOLEAN, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUE, "\"NOT\" LÓGICO", param1), executer
+                );
                 return;
             }
             executer.getStack().push( !((Boolean)param1) );
@@ -253,7 +300,9 @@ public enum Commands implements Command {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
             if (!(param1 instanceof Boolean) || !(param2 instanceof Boolean)){
-                Commands.throwError(ErrorMessage.NOT_A_BOOLEAN, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "\"OU\" LÓGICO", param1, param2), executer
+                );
                 return;
             }
             executer.getStack().push(((Boolean) param2) || ((Boolean) param1));
@@ -269,7 +318,9 @@ public enum Commands implements Command {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
             if (!(param1 instanceof Number) || !(param2 instanceof Number)){
-                Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "MAIOR OU IGUAL", param1, param2), executer
+                );
                 return;
             }
             executer.getStack().push(((Number)param2).doubleValue() >= ((Number)param1).doubleValue());
@@ -283,7 +334,9 @@ public enum Commands implements Command {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
             if (!(param1 instanceof Number) || !(param2 instanceof Number)){
-                Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "MAIOR QUE", param1, param2), executer
+                );
                 return;
             }
             executer.getStack().push(((Number)param2).doubleValue() > ((Number)param1).doubleValue());
@@ -315,7 +368,9 @@ public enum Commands implements Command {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
             if (!(param1 instanceof Number) || !(param2 instanceof Number)){
-                Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "MENOR OU IGUAL", param1, param2), executer
+                );
                 return;
             }
             executer.getStack().push(((Number)param2).doubleValue() <= ((Number)param1).doubleValue());
@@ -329,7 +384,9 @@ public enum Commands implements Command {
             Object param1 = executer.getStack().pop();
             Object param2 = executer.getStack().pop();
             if (!(param1 instanceof Number) || !(param2 instanceof Number)){
-                Commands.throwError(ErrorMessage.NOT_A_NUMBER, executer);
+                Commands.throwError(
+                        applyValues(RuntimeError.OPERATION_VALUES, "MENOR QUE", param1, param2), executer
+                );
                 return;
             }
             executer.getStack().push(((Number)param2).doubleValue() < ((Number)param1).doubleValue());
@@ -341,15 +398,7 @@ public enum Commands implements Command {
     JMF {
         @Override
         public void execute (Object parameter, Executer executer) {
-            Object param = executer.getStack().pop();
-            int address = (Integer) parameter - 1;
-            if (!(param instanceof Boolean)) {
-                Commands.throwError(ErrorMessage.NOT_A_BOOLEAN, executer);
-                return;
-            }
-            if (!((Boolean) param)) {
-                executer.setPointer(address - 1);
-            }
+            Commands.jumpIf(false, parameter, executer);
         }
     },
 
@@ -364,15 +413,7 @@ public enum Commands implements Command {
     JMT {
         @Override
         public void execute (Object parameter, Executer executer) {
-            Object param = executer.getStack().pop();
-            int address = (Integer) parameter - 1;
-            if (!(param instanceof Boolean)) {
-                Commands.throwError(ErrorMessage.NOT_A_BOOLEAN, executer);
-                return;
-            }
-            if ((Boolean) param) {
-                executer.setPointer(address - 1);
-            }
+            Commands.jumpIf(true, parameter, executer);
         }
     },
 
@@ -388,25 +429,37 @@ public enum Commands implements Command {
     REA {
 
         private final List<Function<String, Object>> functionList = List.of(
-          Integer::parseInt, Double::parseDouble, String::new
+                Integer::parseInt,
+                Double::parseDouble,
+                String::new,
+                IdEst::parseBool
         );
 
         @Override
         public void execute (Object parameter, Executer executer) {
             int type = (Integer) parameter - 1;
             if (type >= functionList.size()){
-                Commands.throwError(ErrorMessage.CONSTANT_ERROR, executer);
+                Commands.throwError(RuntimeError.CONSTANT_ERROR.getText(), executer);
                 return;
             }
             try {
                 String call = executer.getRead().call();
-                Object param = functionList.get(type).apply(call);
-                executer.getStack().push(param);
-            } catch (NumberFormatException e) {
-                Commands.throwError(ErrorMessage.TYPE_ERROR, executer);
-            }catch (Exception e) {
+                saveValue(type, call, executer);
+            } catch (Exception e) {
                 e.printStackTrace();
-                executer.halt();
+                Commands.throwError("ERRO EM CHAMADA DE SISTEMA", executer);
+            }
+        }
+
+        private void saveValue (int type, String value, Executer executer){
+            Function<String, Object> convert = functionList.get(type);
+            try {
+                Object param = convert.apply(value);
+                executer.getStack().push(param);
+            }catch (NumberFormatException e) {
+                Commands.throwError(
+                        applyValues(RuntimeError.TYPE_ERROR, null, value, convert.apply("1")), executer
+                );
             }
         }
     },
@@ -418,8 +471,8 @@ public enum Commands implements Command {
         }
     };
 
-    private static void throwError (ErrorMessage error, Executer executer){
-        executer.getError().accept(error);
+    private static void throwError (String message, Executer executer){
+        executer.getError().accept(message);
         executer.halt();
     }
 
@@ -431,6 +484,37 @@ public enum Commands implements Command {
 
     private static void load (Object value, Executer executer) {
         executer.getStack().push(value);
+    }
+
+    private static void jumpIf (boolean logicResult, Object parameter, Executer executer) {
+        Object param = executer.getStack().pop();
+        int address = (Integer) parameter - 1;
+        if (!(param instanceof Boolean)) {
+            Commands.throwError(
+                    applyValues(RuntimeError.OPERATION_VALUE, "DESVIO CONDICIONAL", param), executer
+            );
+            return;
+        }
+        if (((Boolean) param) == logicResult) {
+            executer.setPointer(address - 1);
+        }
+    }
+
+    private static String applyValues(RuntimeError error, String operation, Object... values){
+
+        Map<Class<?>, String> types = Map.of(
+                Integer.class, "INTEIRO",
+                Double.class, "REAL",
+                Boolean.class, "LÓGICO",
+                String.class, "LITERAL"
+        );
+        String errorMessage = error.getText().replace("{OPERATION}", operation);
+        for (int i = 0; i < values.length ; i++){
+            errorMessage = errorMessage.replace("{VALUE" + (i+1) + "}", values[i].toString())
+                                        .replace("{TYPE" + (i+1) +"}", types.get(values[i].getClass()));
+        }
+
+        return errorMessage;
     }
 
 }

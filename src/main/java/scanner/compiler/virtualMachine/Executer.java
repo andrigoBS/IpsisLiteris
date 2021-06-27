@@ -22,7 +22,7 @@ public class Executer {
     private Callable<String> read;
 
     @NonNull
-    private Consumer<ErrorMessage> error;
+    private Consumer<String> error;
 
     @NonNull
     private Consumer<String> write;

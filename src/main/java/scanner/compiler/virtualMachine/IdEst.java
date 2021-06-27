@@ -1,5 +1,6 @@
 package scanner.compiler.virtualMachine;
 
+import javafx.application.Platform;
 import lombok.Builder;
 import lombok.Cleanup;
 import scanner.compiler.errors.ErrorMessage;
@@ -23,7 +24,7 @@ public class IdEst {
 
     private Callable<String> read;
 
-    private Consumer<ErrorMessage> error;
+    private Consumer<String> error;
 
     private Consumer<String> write;
 
@@ -45,7 +46,7 @@ public class IdEst {
         Map<String, Function<String, Object>> parsers = Map.of(
                 "LDS", String::new,
                 "LDR", Double::parseDouble,
-                "LDB", Boolean::valueOf
+                "LDB", IdEst::parseBool
         );
         List<InstructionRowDTO> instructions = new ArrayList<>();
         @Cleanup Scanner scanner = new Scanner(inputStream);
@@ -70,12 +71,24 @@ public class IdEst {
     }
 
     public static void main (String[] args) throws FileNotFoundException {
-        IdEst.builder()
-                .onError(errorMessage -> System.err.println(errorMessage.getText()))
-                .onRead(new Scanner(System.in)::nextLine)
-                .onWrite(System.out::println)
-                .build()
-                .run(new FileInputStream(args[0]));
+        System.out.println(Double.valueOf("1"));
+//        IdEst.builder()
+//                .onError(System.err::println)
+//                .onRead(new Scanner(System.in)::nextLine)
+//                .onWrite(System.out::println)
+//                .build()
+//                .run(new FileInputStream(args[0]));
+    }
+
+    public static boolean parseBool (String string) {
+        List<String> acceptedValues = List.of("true", "false", "1", "0");
+        if (!acceptedValues.contains(string.trim())) {
+            throw new NumberFormatException();
+        }
+        if (string.equals("1")){
+            return true;
+        }
+        return Boolean.parseBoolean(string);
     }
 
 }

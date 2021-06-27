@@ -53,8 +53,8 @@ public class ResultController extends AbstractController implements Initializabl
         codeArea.replaceText(codeArea.getText()+text+"\n");
     }
 
-    public void printError(ErrorMessage errorMessage){
-        codeArea.replaceText(codeArea.getText()+errorMessage.getText()+"\n");
+    public void printError(String errorMessage){
+        codeArea.replaceText(codeArea.getText() + errorMessage + "\n");
     }
 
     public void clear(){
