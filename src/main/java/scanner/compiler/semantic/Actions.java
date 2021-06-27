@@ -161,11 +161,11 @@ public final class Actions {
 
                     if (entry.atribute_02 == -1) {
                         if (target.indexable_variable) throw new TokenMgrError("Variável não indexavel!", -3);
-                        target.as13.add(entry.atribute_01);
+                        target.as13.push(entry.atribute_01);
                     } else {
                         if (!target.indexable_variable)
                             throw new TokenMgrError("Variável indexada exige um índice!", -3);
-                        target.as13.add(entry.atribute_01 + target.as14 - 1);
+                        target.as13.push(entry.atribute_01 + target.as14 - 1);
                     }
                 }
             }
@@ -211,8 +211,9 @@ public final class Actions {
     }
 
     public static void AC16_AtribuitionEnd(Semantic target){
-        for(var atribute:target.as13){
-            Instruction(target, InstructionsCode.STR, atribute);
+        while(!target.as13.empty()){
+            var attribute = target.as13.pop();
+            Instruction(target, InstructionsCode.STR, attribute);
             target.instruction_pointer += 1;
         }
     }
@@ -228,8 +229,7 @@ public final class Actions {
 
     public static void AC19_DataOutputIdentifierRecognition(Semantic target, Token value){
         if(target.symbolTable.containsKey(value.image)){
-            target.as12.clear();
-            target.as12.add(value);
+            target.as12.push(value);
             target.indexable_variable = false;
         }else{
             // ERRO IDENTIFICADOR NAO DECLARADO
@@ -237,7 +237,7 @@ public final class Actions {
     }
 
     public static void AC20_DataOutputIndexableIdentifierRecognition(Semantic target){
-        var last_token = target.as12.get(0);
+        var last_token = target.as12.pop();
         var identifier = target.symbolTable.get(last_token.image);
         if(!target.indexable_variable){
             if (identifier.atribute_02 == -1){
