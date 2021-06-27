@@ -38,7 +38,15 @@ public class IpsisLiteris {
         log.clear();
         parser = new IpsisLiteris(inputStream);
         parser.Program();
-        return (log.hasError()) ? log.toString() : "Programa compilado com sucesso!!! :D";
+        return (log.hasError()) ? log.toString() : "Programa compilado com sucesso!!! :D\n\n" + ProgramToOutput(parser.semantic);
+    }
+
+    static private String ProgramToOutput(Semantic target){
+        StringBuilder output = new StringBuilder();
+        for(var line : target.program){
+            output.append(line.toString()).append("\n");
+        }
+        return output.toString();
     }
 
     private void skipUntil (List<Integer> type) {
@@ -254,10 +262,36 @@ void VarDef(List<Integer> follow):
         (
             Type (List.of(IS))
             Is (First.ID_LIST.getFirst())
-            IdList (List.of(DELIMITER))
+            IdVariables (List.of(DELIMITER))
             { Actions.AC4_EndOfDeclaration(semantic); } // AC#4
             Delimiter (delimiterFollow)
         )+
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
+}
+
+void IdVariables(List<Integer> follow):
+{
+    List<Integer> first = First.ID.getFirst();
+    ArrayList<Integer> idFollow = mergeFollow(follow, List.of(OPEN_SQUARE));
+    Token t;
+}
+{
+    try{
+        t = Identifier(idFollow)
+        {Actions.AC12_VariableRecognition(semantic, t); }// AC#12
+        (
+            OpSquare(List.of(INTEGER))
+            t = Integer(List.of(CLOSE_SQUARE))
+            { Actions.AC14_IndexableVariableIndexRecognition(semantic, t); }
+            CloseSquare(follow)
+        )?
+        { Actions.AC13_IndexableVariableSize(semantic); }
+        (
+            Separator(follow)
+            IdVariables(follow)
+        )?
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
@@ -276,20 +310,42 @@ void ProgMain (List<Integer> follow):
     }
 }
 
+
+// Commands
+
 void Command (List<Integer> follow):
 {
     List<Integer> first = First.COMMAND.getFirst();
 }
 {
     try{
-        WhileDo(follow) | DoWhile(follow) | Read(follow) |
-        Print(follow) | Select(follow) | Attribution(follow)
+        WhileDo(follow) | DoWhile(follow) | GetCommand(follow) |
+        PutCommand(follow) | VerifyCommand(follow) | SetCommand(follow)
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
 }
 
-void Attribution (List<Integer> follow):
+void CommandList (List<Integer> follow):
+{
+    List<Integer> first = First.COMMAND_LIST.getFirst();
+    ArrayList<Integer> delimiterFollow = mergeFollow(First.COMMAND.getFirst(), List.of(CLOSE_CURLY));
+}
+{
+    try{
+        OpCurly(First.COMMAND.getFirst())
+        (
+            Command(List.of(DELIMITER))
+            Delimiter(delimiterFollow)
+        )+
+        CloseCurly(follow)
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
+}
+
+// // Set
+void SetCommand (List<Integer> follow):
 {
     List<Integer> first = First.ATTRIBUTION.getFirst();
 }
@@ -299,13 +355,16 @@ void Attribution (List<Integer> follow):
         { Actions.AC15_AtribuitionBegin(semantic); }// AC#15
         Expression(List.of(TO))
         To(First.ID_LIST.getFirst())
-        IdList(follow)
+        IdVariables(follow)
+        { Actions.AC16_AtribuitionEnd(semantic); } //AC#16
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
 }
 
-void Select (List<Integer> follow):
+// // Verify
+
+void VerifyCommand (List<Integer> follow):
 {
     List<Integer> first = First.SELECT.getFirst();
 }
@@ -315,12 +374,19 @@ void Select (List<Integer> follow):
         Expression(List.of(IS))
         Is(List.of(TRUE, FALSE))
         (
-            IsTrue(mergeFollow(follow, List.of(FALSE)))
-                (IsFalse(follow))? |
-
-            IsFalse(mergeFollow(follow, List.of(TRUE)))
-                (IsTrue(follow))?
+            IsTrue(mergeFollow(follow, List.of(IS)))
+            (
+                Is(List.of(FALSE))
+                OrIsFalse(follow)
+            )?
+            |
+            IsFalse(mergeFollow(follow, List.of(IS)))
+            (
+                Is(List.of(TRUE))
+                OrIsTrue(follow)
+            )?
         )
+        { Actions.AC24_EndOfSelection(semantic);}// AC#24
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
@@ -331,6 +397,19 @@ void IsTrue (List<Integer> follow):
 {
     try {
         True(First.COMMAND_LIST.getFirst())
+        { Actions.AC25_JMF(semantic); }// AC#25
+        CommandList(follow)
+    } catch (ParseException e) {
+        logAndConsume(List.of(TRUE), follow);
+    }
+}
+
+void OrIsTrue (List<Integer> follow):
+{}
+{
+    try {
+        True(First.COMMAND_LIST.getFirst())
+        { Actions.AC27_JMP(semantic); }// AC#27
         CommandList(follow)
     } catch (ParseException e) {
         logAndConsume(List.of(TRUE), follow);
@@ -342,13 +421,28 @@ void IsFalse (List<Integer> follow):
 {
     try {
         False(First.COMMAND_LIST.getFirst())
+        { Actions.AC26_JMT(semantic); }// AC#26
         CommandList(follow)
     } catch (ParseException e) {
         logAndConsume(List.of(FALSE), follow);
     }
 }
 
-void Print (List<Integer> follow):
+void OrIsFalse (List<Integer> follow):
+{}
+{
+    try {
+        False(First.COMMAND_LIST.getFirst())
+        { Actions.AC27_JMP(semantic); } // AC#27
+        CommandList(follow)
+    } catch (ParseException e) {
+        logAndConsume(List.of(FALSE), follow);
+    }
+}
+
+// // Put
+
+void PutCommand (List<Integer> follow):
 {
     List<Integer> first = First.PRINT.getFirst();
 }
@@ -356,12 +450,12 @@ void Print (List<Integer> follow):
     try{
         Put(List.of(OPEN_CURLY))
         OpCurly(First.VALUE.getFirst())
-        ValuePrint(List.of(SEPARATOR, CLOSE_CURLY))
-        //AC#18
+        ValuePut(List.of(SEPARATOR, CLOSE_CURLY))
+        { Actions.AC18_DataOutput(semantic); }//AC#18
         (
             Separator(First.VALUE.getFirst())
-            ValuePrint(List.of(SEPARATOR, CLOSE_CURLY))
-            //AC#18
+            ValuePut(List.of(SEPARATOR, CLOSE_CURLY))
+            { Actions.AC18_DataOutput(semantic); } //AC#18
         )*
         CloseCurly(follow)
     } catch (ParseException e) {
@@ -369,13 +463,29 @@ void Print (List<Integer> follow):
     }
 }
 
-void ValuePrint(List<Integer> follow):
-{ List<Integer> first = First.VALUE_PRINT.getFirst(); }
+void ValuePut(List<Integer> follow):
+{
+    List<Integer> first = First.VALUE_PRINT.getFirst();
+}
 {
     try{
-        IdPut(follow)
-        | Constants(follow) // AC#21
+        IdPut(follow) | ConstantsPut(follow)
     } catch (ParseException e){
+        logAndConsume(first, follow);
+    }
+}
+
+void ConstantsPut (List<Integer> follow):
+{
+    List<Integer> first = First.CONSTANTS_PUT.getFirst();
+    Token t;
+}
+{
+    try{
+        t = <LITERAL>   { Actions.AC23_ConstantLiteralToOutputOrExpression(semantic,t); } //AC#23
+        | t = <INTEGER> { Actions.AC21_ConstantIntegerToOutputOrExpression(semantic, t); } //AC#21
+        | t = <FLOAT>   { Actions.AC22_ConstantRealToOutputOrExpression(semantic, t); } //AC#22
+    } catch (ParseException e) {
         logAndConsume(first, follow);
     }
 }
@@ -389,33 +499,38 @@ void IdPut(List<Integer> follow):
 {
     try{
         t = Identifier(idFollow)
-        // AC#19
+        { Actions.AC19_DataOutputIdentifierRecognition(semantic, t); }// AC#19
         (
             OpSquare(List.of(INTEGER))
             t = Integer(List.of(CLOSE_SQUARE))
-            // AC#14
+            { Actions.AC14_IndexableVariableIndexRecognition(semantic, t); } // AC#14
             CloseSquare(follow)
         )?
-        // AC#20
+        { Actions.AC20_DataOutputIndexableIdentifierRecognition(semantic); }// AC#20
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
 }
 
-void Read (List<Integer> follow):
+// // Get
+
+void GetCommand (List<Integer> follow):
 {
     List<Integer> first = First.READ.getFirst();
 }
 {
     try {
         Get(List.of(OPEN_CURLY))
+        { Actions.AC17_ContextToEntry(semantic); } // AC#17
         OpCurly(First.ID_LIST.getFirst())
-        IdList(List.of(CLOSE_CURLY))
+        IdVariables(List.of(CLOSE_CURLY))
         CloseCurly(follow)
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
 }
+
+// // Loop
 
 void DoWhile (List<Integer> follow):
 {
@@ -424,9 +539,11 @@ void DoWhile (List<Integer> follow):
 {
     try{
         Loop (First.COMMAND_LIST.getFirst())
+        { Actions.AC28_LoopRecognition(semantic); }// AC#28
         CommandList (List.of(WHILE))
         While (First.EXPRESSION.getFirst())
         Expression (List.of(IS))
+        { Actions.AC29_EndOfLoop(semantic); }//AC#29
         Is (List.of(TRUE))
         True (follow)
     } catch (ParseException e) {
@@ -441,30 +558,14 @@ void WhileDo (List<Integer> follow):
 {
     try{
         While (First.EXPRESSION.getFirst())
+        { Actions.AC30_LoopExpressionRecognition(semantic); }//AC#30
         Expression (List.of(TRUE))
+        { Actions.AC31_ExpressionJMF(semantic); }//AC31
         Is (List.of(TRUE))
         True (List.of(DO))
         Do (First.COMMAND_LIST.getFirst())
         CommandList (follow)
-    } catch (ParseException e) {
-        logAndConsume(first, follow);
-    }
-}
-
-// Sintático Úteis
-
-void IdList(List<Integer> follow):
-{
-    List<Integer> first = First.ID_LIST.getFirst();
-    ArrayList<Integer> idFollow = mergeFollow(follow, List.of(SEPARATOR));
-}
-{
-    try {
-        Id(idFollow)
-        (
-            Separator(First.ID.getFirst())
-            Id(idFollow)
-        )*
+        { Actions.AC32_EndOfLoop(semantic); }//AC#32
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
@@ -490,97 +591,147 @@ void IdConstList(List<Integer> follow):
     }
 }
 
-void CommandList (List<Integer> follow):
-{
-    List<Integer> first = First.COMMAND_LIST.getFirst();
-    ArrayList<Integer> delimiterFollow = mergeFollow(First.COMMAND.getFirst(), List.of(CLOSE_CURLY));
-}
-{
-    try{
-        OpCurly(First.COMMAND.getFirst())
-        (
-            Command(List.of(DELIMITER))
-            Delimiter(delimiterFollow)
-        )+
-        CloseCurly(follow)
-    } catch (ParseException e) {
-        logAndConsume(first, follow);
-    }
-}
+// Expresison
 
 void Expression (List<Integer> follow):
 {
-    List<Integer> first = First.EXPRESSION.getFirst();
+    List<Integer> first = First.EXP_LOGIC_ARITMETIC.getFirst();
     ArrayList<Integer> elementFollow = mergeFollow(follow, First.COMPARATOR.getFirst());
 }
 {
     try{
-        ExpLogicAritmetic(elementFollow) (
-            Comparator(First.EXP_LOGIC_ARITMETIC.getFirst())
-            ExpLogicAritmetic(elementFollow)
-        )?
+        ExpLogicAritmetic(elementFollow)
+        (Comparator(First.EXP_LOGIC_ARITMETIC.getFirst()))?
     } catch (ParseException e){
         logAndConsume(first, follow);
     }
 }
 
-void ExpLogicAritmetic (List<Integer> follow):
+void Comparator (List<Integer> follow):
+{
+    List<Integer> first = First.COMPARATOR.getFirst();
+    ArrayList<Integer> elementFollow = mergeFollow(follow, First.COMPARATOR.getFirst());
+}
+{
+    try{
+        <EQUAL> ExpLogicAritmetic(elementFollow)        { Actions.AC33_RelationalEqual(semantic); }//AC#33
+        | <N_EQUAL> ExpLogicAritmetic(elementFollow)    { Actions.AC34_RelationalDiferent(semantic); }//AC#34
+        | <LOWER> ExpLogicAritmetic(elementFollow)      { Actions.AC35_RelationalSmaller(semantic); }//AC#35
+        | <GREATER> ExpLogicAritmetic(elementFollow)    { Actions.AC36_RelationalBigger(semantic); }//AC#36
+        | <LOW_EQ> ExpLogicAritmetic(elementFollow)     { Actions.AC37_RelationalSmallerEqual(semantic); }//AC#37
+        | <GREAT_EQ> ExpLogicAritmetic(elementFollow)   { Actions.AC38_RelationalBiggerEqual(semantic); }//AC#38
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
+}
+
+void ExpLogicAritmetic(List<Integer> follow):
 {
     List<Integer> first = First.EXP_LOGIC_ARITMETIC.getFirst();
-    ArrayList<Integer> elementFollow = mergeFollow(follow, First.LOW_PRIORITY.getFirst());
 }
 {
     try{
-        Element2(elementFollow) (
-            LowPriorityOperator(First.ELEMENT2.getFirst())
-            Element2(elementFollow)
-        )*
+        Term2(First.LOW_PRIORITY.getFirst())
+        (LowPriority(follow))?
+    } catch(ParseException e){
+        logAndConsume(first, follow);
+    }
+}
+
+void LowPriority(List<Integer> follow):
+{
+    List<Integer> first = First.LOW_PRIORITY.getFirst();
+}
+{
+    <PLUS> Term2(follow) (LowPriority(first))?      { Actions.AC39_AritimeticAdd(semantic); }//AC#39
+    | <MINUS> Term2(follow) (LowPriority(first))?   { Actions.AC40_AritimeticSub(semantic); }//AC#40
+    | <OR> Term2(follow) (LowPriority(first))?      { Actions.AC41_LogicOr(semantic); }//AC#41
+}
+
+void Term2(List<Integer> follow):
+{
+    List<Integer> first = First.TERM2.getFirst();
+}
+{
+    Term1(follow)
+    (MediumPriority(follow))?
+}
+
+void MediumPriority(List<Integer> follow):
+{
+    List<Integer> first = First.MEDIUM_PRIORITY.getFirst();
+}
+{
+    <TIMES> Term1(follow)  (MediumPriority(follow))?           { Actions.AC42_AritimeticMultiply(semantic);}//AC#42
+    | <DIVIDE> Term1(follow)  (MediumPriority(follow))?        { Actions.AC43_AritimeticDivide(semantic); }//AC#43
+    | <INT_DIVIDE> Term1(follow)  (MediumPriority(follow))?    { Actions.AC44_AritimeticDivideInteger(semantic); }//AC#44
+    | <MOD> Term1(follow)  (MediumPriority(follow))?           { Actions.AC45_AritimeticModule(semantic); }//AC#45
+    | <AND> Term1(follow)  (MediumPriority(follow))?           { Actions.AC46_LogicAnd(semantic); } //AC#46
+}
+
+void Term1(List<Integer> follow):
+{
+    List<Integer> first = First.TERM1.getFirst();
+}
+{
+    ValueElement(follow)
+    (HighPriority(follow))?
+}
+
+void HighPriority(List<Integer> follow):
+{
+    List<Integer> first = List.of(POWER);
+}
+{
+    <POWER> ValueElement(follow)  (HighPriority(follow))?      { Actions.AC47_AritimeticPotency(semantic); } //AC#47
+}
+
+void ValueElement(List<Integer> follow):
+{
+    List<Integer> first = First.VALUE_ELEMENT.getFirst();
+}
+{
+    try{
+        IdElement(follow) | ConstantsElement(follow)
+    } catch (ParseException e){
+        logAndConsume(first, follow);
+    }
+}
+
+void IdElement(List<Integer> follow):
+{
+    List<Integer> first = First.ID_ELEMENT.getFirst();
+    ArrayList<Integer> idFollow = mergeFollow(follow, List.of(OPEN_SQUARE));
+    Token t;
+}
+{
+    try{
+        t = Identifier(idFollow)
+        { Actions.AC19_DataOutputIdentifierRecognition(semantic, t); }// AC#19
+        (
+            OpSquare(List.of(INTEGER))
+            t = Integer(List.of(CLOSE_SQUARE))
+            { Actions.AC14_IndexableVariableIndexRecognition(semantic, t); } // AC#14
+            CloseSquare(follow)
+        )?
+        { Actions.AC20_DataOutputIndexableIdentifierRecognition(semantic); }// AC#20
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
 }
 
-void Element2 (List<Integer> follow):
+void ConstantsElement (List<Integer> follow):
 {
-    List<Integer> first = First.ELEMENT2.getFirst();
-    ArrayList<Integer> elementFollow = mergeFollow(follow, First.MEDIUM_PRIORITY.getFirst());
+    List<Integer> first = First.CONSTANTS_ELEMENT.getFirst();
+    Token t;
 }
 {
     try{
-        Element1(elementFollow) (
-            MediumPriorityOperator(First.ELEMENT1.getFirst())
-            Element1(elementFollow)
-        )*
-    } catch (ParseException e) {
-        logAndConsume(first, follow);
-    }
-}
-
-void Element1 (List<Integer> follow):
-{
-    List<Integer> first = First.ELEMENT1.getFirst();
-    ArrayList<Integer> elementFollow = mergeFollow(follow, List.of(POWER));
-}
-{
-    try{
-        Element(elementFollow) (
-            Power(First.ELEMENT.getFirst())
-            Element(elementFollow)
-        )*
-    } catch (ParseException e) {
-        logAndConsume(first, follow);
-    }
-}
-
-void Element (List<Integer> follow):
-{
-    List<Integer> first = First.ELEMENT.getFirst();
-}
-{
-    try{
-        (Not(First.VALUE.getFirst())) ?
-        ParentesisExp(follow) |
-        Value(follow)
+        t = <LITERAL>   { Actions.AC23_ConstantLiteralToOutputOrExpression(semantic,t); } //AC#23
+        | t = <INTEGER> { Actions.AC21_ConstantIntegerToOutputOrExpression(semantic, t); } //AC#21
+        | t = <FLOAT>   { Actions.AC22_ConstantRealToOutputOrExpression(semantic, t); } //AC#22
+        | <TRUE>   { Actions.AC48_LogicalConstantTrue(semantic); } //AC#48
+        | <FALSE>   { Actions.AC49_LogicalConstantFalse(semantic);} //AC#48
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
@@ -600,41 +751,7 @@ void ParentesisExp (List<Integer> follow):
     }
 }
 
-void Value(List<Integer> follow):
-{
-    List<Integer> first = First.VALUE.getFirst();
-}
-{
-    try{
-        Id(follow) | Constants(follow)
-    } catch (ParseException e){
-        logAndConsume(first, follow);
-    }
-}
 
-void Id(List<Integer> follow):
-{
-    List<Integer> first = First.ID.getFirst();
-    ArrayList<Integer> idFollow = mergeFollow(follow, List.of(OPEN_SQUARE));
-    Token t;
-}
-{
-    try{
-        t = Identifier(idFollow)
-        {Actions.AC12_VariableRecognition(semantic, t); }// AC#12
-        (
-            OpSquare(List.of(INTEGER))
-            t = Integer(List.of(CLOSE_SQUARE))
-            { Actions.AC14_IndexableVariableIndexRecognition(semantic, t); }
-            CloseSquare(follow)
-        )?
-        { Actions.AC13_IndexableVariableSize(semantic); }
-    } catch (ParseException e) {
-        logAndConsume(first, follow);
-    }
-}
-
-// Grupos
 
 void Type(List<Integer> follow):
 {
@@ -666,48 +783,7 @@ Token Constants (List<Integer> follow):
     }
 }
 
-void Comparator (List<Integer> follow):
-{
-    List<Integer> first = First.COMPARATOR.getFirst();
-}
-{
-    try{
-        <EQUAL>         // AC#
-        | <N_EQUAL>
-        | <LOWER>
-        | <GREATER>
-        | <LOW_EQ>
-        | <GREAT_EQ>
-    } catch (ParseException e) {
-        logAndConsume(first, follow);
-    }
-}
 
-void LowPriorityOperator (List<Integer> follow):
-{
-    List<Integer> first = First.LOW_PRIORITY.getFirst();
- }
-{
-    try{
-        <PLUS> | <MINUS> | <OR>
-    } catch (ParseException e) {
-        logAndConsume(first, follow);
-    }
-}
-
-void MediumPriorityOperator (List<Integer> follow):
-{
-    List<Integer> first = First.MEDIUM_PRIORITY.getFirst();
- }
-{
-    try {
-        <TIMES> | <DIVIDE> | <INT_DIVIDE> | <MOD> | <AND>
-    } catch (ParseException e) {
-        logAndConsume(first, follow);
-    }
-}
-
-// Terminais
 
 void Literal (List<Integer> follow):
 {}

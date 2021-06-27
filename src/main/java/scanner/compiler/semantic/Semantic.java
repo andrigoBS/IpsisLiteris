@@ -10,7 +10,7 @@ import java.util.*;
 
 
 public class Semantic {
-    ArrayList<Token> as12 = new ArrayList<>();
+    Stack<Token> as12 = new Stack<>();
     ArrayList<Integer> as13 = new ArrayList<Integer>();
     int as14;
 

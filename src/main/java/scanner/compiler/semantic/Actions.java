@@ -120,76 +120,75 @@ public final class Actions {
     }
 
     public static void AC12_VariableRecognition(Semantic target, Token value) {
-        if(value == null) throw new TokenMgrError("Deu ruim brother", -2);
+        if(value == null)
+            throw new TokenMgrError("Deu ruim brother", -2);
 
         var identifier_value = value.image;
         if(target.context == Context.DEC_VAR){
-            if(target.symbolTable.containsKey(identifier_value)) throw new TokenMgrError("Identificador " + identifier_value +  " já declarado", -1);
-            target.as12.add(value);
+            if(target.symbolTable.containsKey(identifier_value))
+                throw new TokenMgrError("Identificador " + identifier_value +  " já declarado", -1);
         }else{
             target.indexable_variable = false;
-            target.as12.add(value);
-
         }
+        target.as12.push(value);
     }
 
     public static void AC13_IndexableVariableSize(Semantic target){
-        switch (target.context){
-            case DEC_VAR:
-                if(!target.indexable_variable){
+        switch (target.context) {
+            case DEC_VAR -> {
+                var identifier_value = target.as12.pop().image;
+                if (!target.indexable_variable) {
+                    target.VT += 1;
                     target.VP += 1;
-                    target.VIT += 1;
 
-                    var identifier_value = target.as12.get(0).image;
                     Symbol new_symbol = new Symbol(identifier_value, target.type, target.VT, -1);
-                }else{
+                    target.symbolTable.put(identifier_value, new_symbol);
+                } else {
                     target.VIT += target.as14;
-
-                    var identifier_value = target.as12.get(0).image;
                     Symbol new_symbol = new Symbol(identifier_value, target.type, target.VT + 1, target.as14);
-
+                    target.symbolTable.put(identifier_value, new_symbol);
                     target.VT += target.as14;
                 }
-                break;
-
-            case ATRIBUITION:
-                for (var variable:target.as12) {
-                    var identifier_value = variable.image;
-                    if(!target.symbolTable.containsKey(identifier_value) || !isVariable(target.symbolTable.get(identifier_value).category)){
+            }
+            case ATRIBUITION -> {
+                while (!target.as12.empty()) {
+                    var identifier_value =  target.as12.pop().image;
+                    if (!target.symbolTable.containsKey(identifier_value) || !isVariable(target.symbolTable.get(identifier_value).category)) {
                         throw new TokenMgrError("Identificador não declarado ou é constante!", -3);
                     }
 
                     var entry = target.symbolTable.get(identifier_value);
 
-                    if(entry.atribute_02 == -1){
-                        if(target.indexable_variable) throw new TokenMgrError("Variável não indexavel!", -3);
+                    if (entry.atribute_02 == -1) {
+                        if (target.indexable_variable) throw new TokenMgrError("Variável não indexavel!", -3);
                         target.as13.add(entry.atribute_01);
-                    }else{
-                        if(!target.indexable_variable) throw new TokenMgrError("Variável indexada exige um índice!", -3);
+                    } else {
+                        if (!target.indexable_variable)
+                            throw new TokenMgrError("Variável indexada exige um índice!", -3);
                         target.as13.add(entry.atribute_01 + target.as14 - 1);
                     }
                 }
-                break;
-
-            case DATA_ENTRY:
-                for (var variable:target.as12) {
+            }
+            case DATA_ENTRY -> {
+                for (var variable : target.as12) {
                     var identifier_value = variable.image;
-                    if(!target.symbolTable.containsKey(identifier_value) || !isVariable(target.symbolTable.get(identifier_value).category)){
+                    if (!target.symbolTable.containsKey(identifier_value) || !isVariable(target.symbolTable.get(identifier_value).category)) {
                         throw new TokenMgrError("Identificador não declarado ou é constante!", -3);
                     }
 
                     var entry = target.symbolTable.get(identifier_value);
 
-                    if(entry.atribute_02 == -1){
-                        if(target.indexable_variable) throw new TokenMgrError("Variável não indexavel!", -3);
+                    if (entry.atribute_02 == -1) {
+                        if (target.indexable_variable) throw new TokenMgrError("Variável não indexavel!", -3);
 
                         var category = entry.category;
                         Instruction(target, InstructionsCode.REA, category);
                         target.instruction_pointer += 1;
                         Instruction(target, InstructionsCode.STR, entry.atribute_01);
                         target.instruction_pointer += 1;
-                    }else{
-                        if(!target.indexable_variable) throw new TokenMgrError("Variável indexada exige um índice!", -3);
+                    } else {
+                        if (!target.indexable_variable)
+                            throw new TokenMgrError("Variável indexada exige um índice!", -3);
 
                         var category = entry.category;
                         Instruction(target, InstructionsCode.REA, category);
@@ -198,7 +197,7 @@ public final class Actions {
                         target.instruction_pointer += 1;
                     }
                 }
-                break;
+            }
         }
     }
 
@@ -237,7 +236,7 @@ public final class Actions {
         }
     }
 
-    public static void AC20_AC19_DataOutputIndexableIdentifierRecognition(Semantic target, Token value){
+    public static void AC20_DataOutputIndexableIdentifierRecognition(Semantic target){
         var last_token = target.as12.get(0);
         var identifier = target.symbolTable.get(last_token.image);
         if(!target.indexable_variable){
@@ -269,7 +268,7 @@ public final class Actions {
         Instruction(target, InstructionsCode.LDS, value);
         target.instruction_pointer += 1;
     }
-    public static void AC24_EndOfSelection(Semantic target, Token value){
+    public static void AC24_EndOfSelection(Semantic target){
         var jump_address = target.jumpStack.pop();
         for(var instruction : target.program){
             if(instruction.getAddress() == jump_address){

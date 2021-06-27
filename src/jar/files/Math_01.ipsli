@@ -1,0 +1,14 @@
+:- "Math_01"
+
+program{
+	define{
+		variable
+			natural is conta, contb, contc.
+			
+	}
+	execute{
+		set 10 to contb.
+		set 2 to conta.
+		set conta + contb to contc.
+	}
+}

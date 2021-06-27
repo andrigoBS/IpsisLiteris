@@ -7,6 +7,18 @@ import java.util.List;
 
 public enum First implements IpsisLiterisConstants {
 
+    // Regras
+
+    ID (List.of(IDENTIFIER)),
+
+    ID_PUT (List.of(IDENTIFIER)),
+
+    CONSTANTS (List.of(LITERAL, INTEGER, FLOAT, TRUE, FALSE)),
+
+    CONSTANTS_PUT (List.of(LITERAL, INTEGER, FLOAT)),
+
+    VALUE (List.of(), List.of(ID, CONSTANTS)),
+
     // Grupos
 
     MEDIUM_PRIORITY (List.of(TIMES, DIVIDE, INT_DIVIDE, MOD, AND)),
@@ -15,29 +27,27 @@ public enum First implements IpsisLiterisConstants {
 
     COMPARATOR (List.of(TIMES, DIVIDE, INT_DIVIDE, MOD, AND)),
 
-    CONSTANTS (List.of(LITERAL, INTEGER, FLOAT, TRUE, FALSE)),
-
     TYPE (List.of(NAT, REAL, CHAR, BOOL)),
 
-    // Regras
+    // Expressão
 
-    ID (List.of(IDENTIFIER)),
+    ID_ELEMENT (List.of(IDENTIFIER)),
 
-    VALUE (List.of(), List.of(ID, CONSTANTS)),
+    CONSTANTS_ELEMENT (List.of(LITERAL, INTEGER, FLOAT, TRUE, FALSE)),
 
-    ID_PUT (List.of(IDENTIFIER)),
+    VALUE_ELEMENT (List.of(), List.of(ID_ELEMENT, CONSTANTS_ELEMENT)),
 
     VALUE_PRINT(List.of(), List.of(ID_PUT, CONSTANTS)),
 
     PARENTESIS_EXP(List.of(OPEN_PARENT)),
 
-    ELEMENT (List.of(NOT), List.of(VALUE, PARENTESIS_EXP)),
+    ELEMENT (List.of(NOT), List.of(VALUE_ELEMENT, PARENTESIS_EXP)),
 
-    ELEMENT1 (List.of(), List.of(ELEMENT)),
+    TERM1 (List.of(), List.of(ELEMENT)),
 
-    ELEMENT2 (List.of(), List.of(ELEMENT1)),
+    TERM2 (List.of(), List.of(TERM1)),
 
-    EXP_LOGIC_ARITMETIC (List.of(), List.of(ELEMENT2)),
+    EXP_LOGIC_ARITMETIC (List.of(), List.of(TERM2)),
 
     EXPRESSION (List.of(), List.of(EXP_LOGIC_ARITMETIC)),
 
