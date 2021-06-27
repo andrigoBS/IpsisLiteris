@@ -3,10 +3,13 @@
 program{
 	define{
 		not variable 
-			char is helloWorld "Hello World".
+			char is helloWorld, a "Hello World".
+		variable
+			natural is teste.
+			real is testea.
+			
 	}
 	execute{
 		put{helloWorld}.
 	}
 }
-HelloWorld

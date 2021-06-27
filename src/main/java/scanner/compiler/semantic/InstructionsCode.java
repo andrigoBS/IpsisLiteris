@@ -1,7 +1,6 @@
 package scanner.compiler.semantic;
 
 public enum InstructionsCode {
-    ADD("ADD"),
     STP("STP"),
 
     ALI("ALI"),
@@ -11,7 +10,39 @@ public enum InstructionsCode {
 
     LDI("LDI"),
     LDR("LDR"),
-    LDS("LDS");
+    LDS("LDS"),
+    LDB("LDB"),
+
+    STC("STC"),
+
+    REA("REA"),
+    STR("STR"),
+
+    WRT("WRT"),
+    LDV("LDV"),
+
+    JMF("JMF"),
+    JMT("JMT"),
+    JMP("JMP"),
+
+    //Relacional
+    EQL("EQL"),
+    DIF("DIF"),
+    SMR("SMR"),
+    BGR("BGR"),
+    SME("SME"),
+    BGE("BGE"),
+
+    //Aritimética
+    ADD("ADD"),
+    SUB("SUB"),
+    MUL("MUL"),
+    DIV("DUV"),
+
+    //Logica
+    OR("OR"),
+    AND("AND"),
+    NOT("NOT");
 
     public final String label;
 

@@ -160,7 +160,7 @@ Actions.AC3_ContextToConstant(semantic);
       while (true) {
         Type(List.of(IS));
         Is(First.ID_LIST.getFirst());
-        IdList(First.CONSTANTS.getFirst());
+        IdConstList(First.CONSTANTS.getFirst());
 Actions.AC4_EndOfDeclaration(semantic);
         // AC#4
                     t = Constants(List.of(DELIMITER));
@@ -188,6 +188,7 @@ logAndConsume(first, follow);
     ArrayList<Integer> delimiterFollow = mergeFollow(follow, First.TYPE.getFirst());
     try {
       Var(First.TYPE.getFirst());
+Actions.AC6_VariableContextRecgnition(semantic);
       label_2:
       while (true) {
         Type(List.of(IS));
@@ -262,6 +263,7 @@ logAndConsume(first, follow);
   final public void Attribution(List<Integer> follow) throws ParseException {List<Integer> first = First.ATTRIBUTION.getFirst();
     try {
       Set(First.EXPRESSION.getFirst());
+Actions.AC15_AtribuitionBegin(semantic);
       Expression(List.of(TO));
       To(First.ID_LIST.getFirst());
       IdList(follow);
@@ -334,7 +336,7 @@ logAndConsume(List.of(FALSE), follow);
     try {
       Put(List.of(OPEN_CURLY));
       OpCurly(First.VALUE.getFirst());
-      Value(List.of(SEPARATOR, CLOSE_CURLY));
+      ValuePrint(List.of(SEPARATOR, CLOSE_CURLY));
       label_3:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -347,9 +349,55 @@ logAndConsume(List.of(FALSE), follow);
           break label_3;
         }
         Separator(First.VALUE.getFirst());
-        Value(List.of(SEPARATOR, CLOSE_CURLY));
+        ValuePrint(List.of(SEPARATOR, CLOSE_CURLY));
       }
       CloseCurly(follow);
+    } catch (ParseException e) {
+logAndConsume(first, follow);
+    }
+}
+
+  final public void ValuePrint(List<Integer> follow) throws ParseException {List<Integer> first = First.VALUE_PRINT.getFirst();
+    try {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case IDENTIFIER:{
+        IdPut(follow);
+        break;
+        }
+      case TRUE:
+      case FALSE:
+      case INTEGER:
+      case FLOAT:
+      case LITERAL:{
+        Constants(follow);
+        break;
+        }
+      default:
+        jj_la1[13] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } catch (ParseException e) {
+logAndConsume(first, follow);
+    }
+}
+
+  final public void IdPut(List<Integer> follow) throws ParseException {List<Integer> first = First.ID_PUT.getFirst();
+    ArrayList<Integer> idFollow = mergeFollow(follow, List.of(OPEN_SQUARE));
+    Token t;
+    try {
+      t = Identifier(idFollow);
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case OPEN_SQUARE:{
+        OpSquare(List.of(INTEGER));
+        t = Integer(List.of(CLOSE_SQUARE));
+        CloseSquare(follow);
+        break;
+        }
+      default:
+        jj_la1[14] = jj_gen;
+        ;
+      }
     } catch (ParseException e) {
 logAndConsume(first, follow);
     }
@@ -406,7 +454,7 @@ void IdList(List<Integer> follow) throws ParseException {List<Integer> first = F
           break;
           }
         default:
-          jj_la1[13] = jj_gen;
+          jj_la1[15] = jj_gen;
           break label_4;
         }
         Separator(First.ID.getFirst());
@@ -417,11 +465,37 @@ logAndConsume(first, follow);
     }
 }
 
+  final public void IdConstList(List<Integer> follow) throws ParseException {List<Integer> first = List.of(IDENTIFIER);
+    ArrayList<Integer> idFollow = mergeFollow(follow, List.of(SEPARATOR));
+    Token t;
+    try {
+      t = Identifier(idFollow);
+Actions.AC11_ConstantRecognition(semantic, t);
+      label_5:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+        case SEPARATOR:{
+          ;
+          break;
+          }
+        default:
+          jj_la1[16] = jj_gen;
+          break label_5;
+        }
+        Separator(first);
+        t = Identifier(idFollow);
+Actions.AC11_ConstantRecognition(semantic, t);
+      }
+    } catch (ParseException e) {
+logAndConsume(first, follow);
+    }
+}
+
   final public void CommandList(List<Integer> follow) throws ParseException {List<Integer> first = First.COMMAND_LIST.getFirst();
     ArrayList<Integer> delimiterFollow = mergeFollow(First.COMMAND.getFirst(), List.of(CLOSE_CURLY));
     try {
       OpCurly(First.COMMAND.getFirst());
-      label_5:
+      label_6:
       while (true) {
         Command(List.of(DELIMITER));
         Delimiter(delimiterFollow);
@@ -436,8 +510,8 @@ logAndConsume(first, follow);
           break;
           }
         default:
-          jj_la1[14] = jj_gen;
-          break label_5;
+          jj_la1[17] = jj_gen;
+          break label_6;
         }
       }
       CloseCurly(follow);
@@ -462,7 +536,7 @@ logAndConsume(first, follow);
         break;
         }
       default:
-        jj_la1[15] = jj_gen;
+        jj_la1[18] = jj_gen;
         ;
       }
     } catch (ParseException e) {
@@ -474,7 +548,7 @@ logAndConsume(first, follow);
     ArrayList<Integer> elementFollow = mergeFollow(follow, First.LOW_PRIORITY.getFirst());
     try {
       Element2(elementFollow);
-      label_6:
+      label_7:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case PLUS:
@@ -484,8 +558,8 @@ logAndConsume(first, follow);
           break;
           }
         default:
-          jj_la1[16] = jj_gen;
-          break label_6;
+          jj_la1[19] = jj_gen;
+          break label_7;
         }
         LowPriorityOperator(First.ELEMENT2.getFirst());
         Element2(elementFollow);
@@ -499,7 +573,7 @@ logAndConsume(first, follow);
     ArrayList<Integer> elementFollow = mergeFollow(follow, First.MEDIUM_PRIORITY.getFirst());
     try {
       Element1(elementFollow);
-      label_7:
+      label_8:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case TIMES:
@@ -511,8 +585,8 @@ logAndConsume(first, follow);
           break;
           }
         default:
-          jj_la1[17] = jj_gen;
-          break label_7;
+          jj_la1[20] = jj_gen;
+          break label_8;
         }
         MediumPriorityOperator(First.ELEMENT1.getFirst());
         Element1(elementFollow);
@@ -526,7 +600,7 @@ logAndConsume(first, follow);
     ArrayList<Integer> elementFollow = mergeFollow(follow, List.of(POWER));
     try {
       Element(elementFollow);
-      label_8:
+      label_9:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case POWER:{
@@ -534,8 +608,8 @@ logAndConsume(first, follow);
           break;
           }
         default:
-          jj_la1[18] = jj_gen;
-          break label_8;
+          jj_la1[21] = jj_gen;
+          break label_9;
         }
         Power(First.ELEMENT.getFirst());
         Element(elementFollow);
@@ -556,7 +630,7 @@ logAndConsume(first, follow);
           break;
           }
         default:
-          jj_la1[19] = jj_gen;
+          jj_la1[22] = jj_gen;
           ;
         }
         ParentesisExp(follow);
@@ -572,7 +646,7 @@ logAndConsume(first, follow);
         break;
         }
       default:
-        jj_la1[20] = jj_gen;
+        jj_la1[23] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -607,7 +681,7 @@ logAndConsume(first, follow);
         break;
         }
       default:
-        jj_la1[21] = jj_gen;
+        jj_la1[24] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -618,19 +692,23 @@ logAndConsume(first, follow);
 
   final public void Id(List<Integer> follow) throws ParseException {List<Integer> first = First.ID.getFirst();
     ArrayList<Integer> idFollow = mergeFollow(follow, List.of(OPEN_SQUARE));
+    Token t;
     try {
-      Identifier(idFollow);
+      t = Identifier(idFollow);
+Actions.AC12_VariableRecognition(semantic, t);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case OPEN_SQUARE:{
         OpSquare(List.of(INTEGER));
-        Integer(List.of(CLOSE_SQUARE));
+        t = Integer(List.of(CLOSE_SQUARE));
+Actions.AC14_IndexableVariableIndexRecognition(semantic, t);
         CloseSquare(follow);
         break;
         }
       default:
-        jj_la1[22] = jj_gen;
+        jj_la1[25] = jj_gen;
         ;
       }
+Actions.AC13_IndexableVariableSize(semantic);
     } catch (ParseException e) {
 logAndConsume(first, follow);
     }
@@ -662,7 +740,7 @@ Actions.AC10_LogicalType(semantic);
         break;
         }
       default:
-        jj_la1[23] = jj_gen;
+        jj_la1[26] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -696,13 +774,14 @@ logAndConsume(first, follow);
         break;
         }
       default:
-        jj_la1[24] = jj_gen;
+        jj_la1[27] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
 {if ("" != null) return t;}
     } catch (ParseException e) {
 logAndConsume(first, follow);
+        {if ("" != null) return null;}
     }
     throw new Error("Missing return statement in function");
 }
@@ -735,7 +814,7 @@ logAndConsume(first, follow);
         break;
         }
       default:
-        jj_la1[25] = jj_gen;
+        jj_la1[28] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -760,7 +839,7 @@ logAndConsume(first, follow);
         break;
         }
       default:
-        jj_la1[26] = jj_gen;
+        jj_la1[29] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -793,7 +872,7 @@ logAndConsume(first, follow);
         break;
         }
       default:
-        jj_la1[27] = jj_gen;
+        jj_la1[30] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -994,16 +1073,20 @@ logAndConsume(List.of(POWER), follow);
 {if ("" != null) return t;}
     } catch (ParseException e) {
 logAndConsume(List.of(IDENTIFIER), follow);
+        {if ("" != null) return null;}
     }
     throw new Error("Missing return statement in function");
 }
 
-  final public void Integer(List<Integer> follow) throws ParseException {
+  final public Token Integer(List<Integer> follow) throws ParseException {Token t;
     try {
-      jj_consume_token(INTEGER);
+      t = jj_consume_token(INTEGER);
+{if ("" != null) return t;}
     } catch (ParseException e) {
 logAndConsume(List.of(INTEGER), follow);
+        {if ("" != null) return null;}
     }
+    throw new Error("Missing return statement in function");
 }
 
   final public void CloseSquare(List<Integer> follow) throws ParseException {
@@ -1049,7 +1132,7 @@ logAndConsume(List.of(OPEN_PARENT), follow);
 // Analisador Léxico
   final public 
 void Lexic() throws ParseException {
-    label_9:
+    label_10:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case DEF:
@@ -1105,8 +1188,8 @@ void Lexic() throws ParseException {
         break;
         }
       default:
-        jj_la1[28] = jj_gen;
-        break label_9;
+        jj_la1[31] = jj_gen;
+        break label_10;
       }
       token();
     }
@@ -1311,7 +1394,7 @@ void Lexic() throws ParseException {
       break;
       }
     default:
-      jj_la1[29] = jj_gen;
+      jj_la1[32] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1326,7 +1409,7 @@ void Lexic() throws ParseException {
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[30];
+  final private int[] jj_la1 = new int[33];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -1336,13 +1419,13 @@ void Lexic() throws ParseException {
 	   jj_la1_init_2();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x0,0x2000,0x0,0x10000,0x20000,0x30000,0x3c00000,0x3c00000,0xb0340000,0x8000000,0x4000000,0xc000000,0x0,0x0,0xb0340000,0x0,0x0,0x0,0x0,0x0,0xc000000,0xc000000,0x0,0x3c00000,0xc000000,0x0,0x0,0x0,0xfffff000,0xfffff000,};
+	   jj_la1_0 = new int[] {0x0,0x2000,0x0,0x10000,0x20000,0x30000,0x3c00000,0x3c00000,0xb0340000,0x8000000,0x4000000,0xc000000,0x0,0xc000000,0x0,0x0,0x0,0xb0340000,0x0,0x0,0x0,0x0,0x0,0xc000000,0xc000000,0x0,0x3c00000,0xc000000,0x0,0x0,0x0,0xfffff000,0xfffff000,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x1000000,0x0,0x2000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x800000,0x800000,0x0,0xfc0,0x103000,0xec000,0x10000,0x200000,0x62200004,0x62000000,0x10,0x0,0x60000000,0xfc0,0x103000,0xec000,0x63ffffff,0x63ffffff,};
+	   jj_la1_1 = new int[] {0x1000000,0x0,0x2000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x800000,0x62000000,0x10,0x800000,0x800000,0x0,0xfc0,0x103000,0xec000,0x10000,0x200000,0x62200004,0x62000000,0x10,0x0,0x60000000,0xfc0,0x103000,0xec000,0x63ffffff,0x63ffffff,};
 	}
 	private static void jj_la1_init_2() {
-	   jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x2,0x0,0x0,0x2,0x0,0x0,0x0,0x2,0x2,};
+	   jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x2,0x0,0x0,0x2,0x0,0x0,0x0,0x2,0x2,};
 	}
 
   /** Constructor with InputStream. */
@@ -1356,7 +1439,7 @@ void Lexic() throws ParseException {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 33; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1370,7 +1453,7 @@ void Lexic() throws ParseException {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 33; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -1380,7 +1463,7 @@ void Lexic() throws ParseException {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 33; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1398,7 +1481,7 @@ void Lexic() throws ParseException {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 33; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -1407,7 +1490,7 @@ void Lexic() throws ParseException {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 33; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1416,7 +1499,7 @@ void Lexic() throws ParseException {
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 30; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 33; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -1472,7 +1555,7 @@ void Lexic() throws ParseException {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
 	 }
-	 for (int i = 0; i < 30; i++) {
+	 for (int i = 0; i < 33; i++) {
 	   if (jj_la1[i] == jj_gen) {
 		 for (int j = 0; j < 32; j++) {
 		   if ((jj_la1_0[i] & (1<<j)) != 0) {

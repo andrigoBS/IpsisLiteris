@@ -209,11 +209,9 @@ void VarField (List<Integer> follow):
 }
 {
     try{
-        ConstDef (mergeFollow(follow, First.VAR_DEF.getFirst()))
-            (VarDef(follow))? |
+        ConstDef (mergeFollow(follow, First.VAR_DEF.getFirst())) (VarDef(follow))? |
+        VarDef (mergeFollow(follow, First.CONST_DEF.getFirst())) (ConstDef(follow))?
 
-        VarDef (mergeFollow(follow, First.CONST_DEF.getFirst()))
-            (ConstDef(follow))?
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
@@ -233,7 +231,7 @@ void ConstDef (List<Integer> follow):
         (
             Type(List.of(IS))
             Is(First.ID_LIST.getFirst())
-            IdList(First.CONSTANTS.getFirst())
+            IdConstList(First.CONSTANTS.getFirst())
             { Actions.AC4_EndOfDeclaration(semantic); }// AC#4
             t = Constants(List.of(DELIMITER))
             { Actions.AC5_ConstantDeclarationRecognition(semantic, t); }// AC#5
@@ -252,7 +250,7 @@ void VarDef(List<Integer> follow):
 {
     try{
         Var(First.TYPE.getFirst())
-        // AC#6
+        { Actions.AC6_VariableContextRecgnition(semantic); } // AC#6
         (
             Type (List.of(IS))
             Is (First.ID_LIST.getFirst())
@@ -298,6 +296,7 @@ void Attribution (List<Integer> follow):
 {
     try{
         Set(First.EXPRESSION.getFirst())
+        { Actions.AC15_AtribuitionBegin(semantic); }// AC#15
         Expression(List.of(TO))
         To(First.ID_LIST.getFirst())
         IdList(follow)
@@ -357,12 +356,47 @@ void Print (List<Integer> follow):
     try{
         Put(List.of(OPEN_CURLY))
         OpCurly(First.VALUE.getFirst())
-        Value(List.of(SEPARATOR, CLOSE_CURLY))
+        ValuePrint(List.of(SEPARATOR, CLOSE_CURLY))
+        //AC#18
         (
             Separator(First.VALUE.getFirst())
-            Value(List.of(SEPARATOR, CLOSE_CURLY))
+            ValuePrint(List.of(SEPARATOR, CLOSE_CURLY))
+            //AC#18
         )*
         CloseCurly(follow)
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
+}
+
+void ValuePrint(List<Integer> follow):
+{ List<Integer> first = First.VALUE_PRINT.getFirst(); }
+{
+    try{
+        IdPut(follow)
+        | Constants(follow) // AC#21
+    } catch (ParseException e){
+        logAndConsume(first, follow);
+    }
+}
+
+void IdPut(List<Integer> follow):
+{
+    List<Integer> first = First.ID_PUT.getFirst();
+    ArrayList<Integer> idFollow = mergeFollow(follow, List.of(OPEN_SQUARE));
+    Token t;
+}
+{
+    try{
+        t = Identifier(idFollow)
+        // AC#19
+        (
+            OpSquare(List.of(INTEGER))
+            t = Integer(List.of(CLOSE_SQUARE))
+            // AC#14
+            CloseSquare(follow)
+        )?
+        // AC#20
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
@@ -427,10 +461,29 @@ void IdList(List<Integer> follow):
 {
     try {
         Id(idFollow)
-        // AC#11
         (
             Separator(First.ID.getFirst())
             Id(idFollow)
+        )*
+    } catch (ParseException e) {
+        logAndConsume(first, follow);
+    }
+}
+
+void IdConstList(List<Integer> follow):
+{
+    List<Integer> first = List.of(IDENTIFIER);
+    ArrayList<Integer> idFollow = mergeFollow(follow, List.of(SEPARATOR));
+    Token t;
+}
+{
+    try {
+        t = Identifier(idFollow)
+        {Actions.AC11_ConstantRecognition(semantic, t); }// AC#11
+        (
+            Separator(first)
+            t = Identifier(idFollow)
+            {Actions.AC11_ConstantRecognition(semantic, t); }// AC#11
         )*
     } catch (ParseException e) {
         logAndConsume(first, follow);
@@ -563,14 +616,19 @@ void Id(List<Integer> follow):
 {
     List<Integer> first = First.ID.getFirst();
     ArrayList<Integer> idFollow = mergeFollow(follow, List.of(OPEN_SQUARE));
+    Token t;
 }
 {
     try{
-        Identifier(idFollow) (
+        t = Identifier(idFollow)
+        {Actions.AC12_VariableRecognition(semantic, t); }// AC#12
+        (
             OpSquare(List.of(INTEGER))
-            Integer(List.of(CLOSE_SQUARE))
+            t = Integer(List.of(CLOSE_SQUARE))
+            { Actions.AC14_IndexableVariableIndexRecognition(semantic, t); }
             CloseSquare(follow)
         )?
+        { Actions.AC13_IndexableVariableSize(semantic); }
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
@@ -604,6 +662,7 @@ Token Constants (List<Integer> follow):
         { return t; }
     } catch (ParseException e) {
         logAndConsume(first, follow);
+        return null;
     }
 }
 
@@ -613,7 +672,12 @@ void Comparator (List<Integer> follow):
 }
 {
     try{
-        <EQUAL> | <N_EQUAL> | <LOWER> | <GREATER> | <LOW_EQ> | <GREAT_EQ>
+        <EQUAL>         // AC#
+        | <N_EQUAL>
+        | <LOWER>
+        | <GREATER>
+        | <LOW_EQ>
+        | <GREAT_EQ>
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }
@@ -885,16 +949,21 @@ Token Identifier (List<Integer> follow):
     {return t;}
     } catch (ParseException e) {
         logAndConsume(List.of(IDENTIFIER), follow);
+        return null;
     }
 }
 
-void Integer (List<Integer> follow):
-{}
+Token Integer (List<Integer> follow):
+{
+ Token t;
+}
 {
     try{
-        <INTEGER>
+        t = <INTEGER>
+        {return t;}
     } catch (ParseException e) {
         logAndConsume(List.of(INTEGER), follow);
+        return null;
     }
 }
 

@@ -6,12 +6,14 @@ import scanner.compiler.semantic.Symbol;
 import scanner.model.dto.InstructionRowDTO;
 
 
-import java.util.HashMap;
-import java.util.Stack;
-import java.util.Vector;
+import java.util.*;
 
 
 public class Semantic {
+    ArrayList<Token> as12 = new ArrayList<>();
+    ArrayList<Integer> as13 = new ArrayList<Integer>();
+    int as14;
+
     public int VT = 0;
     public int VP = 0;
     public int VIT = 0;
@@ -21,8 +23,8 @@ public class Semantic {
     public int instruction_pointer = 1;
     public boolean indexable_variable = false;
 
-    public Stack<Integer> jumpStack = new Stack<Integer>();
-    public HashMap<String, Symbol> symbolTable = new HashMap<String, Symbol>();
+    public Stack<Integer> jumpStack = new Stack<>();
+    public HashMap<String, Symbol> symbolTable = new HashMap<>();
 
-    public Vector<InstructionRowDTO> program = new Vector<InstructionRowDTO>();
+    public Vector<InstructionRowDTO> program = new Vector<>();
 }

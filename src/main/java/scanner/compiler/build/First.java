@@ -25,6 +25,10 @@ public enum First implements IpsisLiterisConstants {
 
     VALUE (List.of(), List.of(ID, CONSTANTS)),
 
+    ID_PUT (List.of(IDENTIFIER)),
+
+    VALUE_PRINT(List.of(), List.of(ID_PUT, CONSTANTS)),
+
     PARENTESIS_EXP(List.of(OPEN_PARENT)),
 
     ELEMENT (List.of(NOT), List.of(VALUE, PARENTESIS_EXP)),
