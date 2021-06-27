@@ -1,0 +1,24 @@
+:- "Math_03"
+
+program{
+	define{
+		variable
+			natural is conta, contb, contc.
+			
+	}
+	execute{
+		set 10 to conta.
+		set 5 to contb.
+		set 100 to contc.
+		while contc > 50 is true do
+		{
+			verify conta == 10 is true{
+				put {conta, contb}.
+			}
+			is false{
+				set contb - 1 to contb. 
+			}.
+			set contc - 1 to contc.
+		}.
+	}
+}
