@@ -144,11 +144,9 @@ public final class Actions {
             if(target.symbolTable.containsKey(identifier_value)){
                 var error = new AnalyserError(value, ErrorMessage.VARIABLE_ALREADY_DECLARED, null);
                 Log.getInstance().add(error);
-                //throw new TokenMgrError("Identificador '"+value.image+"' já declarado!", -1);
             }
-        }else{
-            target.indexable_variable = false;
         }
+        target.indexable_variable = false;
         target.as12.push(value);
     }
 
@@ -199,37 +197,37 @@ public final class Actions {
                 }
             }
             case DATA_ENTRY -> {
-                for (var variable : target.as12) {
-                    var identifier_value = variable.image;
-                    if (!target.symbolTable.containsKey(identifier_value) || !isVariable(target.symbolTable.get(identifier_value).category)) {
-                        var error = new AnalyserError(variable, ErrorMessage.VARIABLE_NOT_DECLARED, null);
+                while (!target.as12.empty()) {
+                    var identifier_value =  target.as12.pop();
+                    if (!target.symbolTable.containsKey(identifier_value.image) || !isVariable(target.symbolTable.get(identifier_value.image).category)) {
+                        var error = new AnalyserError(identifier_value, ErrorMessage.VARIABLE_NOT_DECLARED, null);
                         Log.getInstance().add(error);
                         //throw new TokenMgrError("Identificador '"+variable.image+"' não declarado!", -1);
                     }
 
-                    var entry = target.symbolTable.get(identifier_value);
+                    var entry = target.symbolTable.get(identifier_value.image);
 
                     if (entry.atribute_02 == -1) {
                         if (target.indexable_variable) {
-                            var error = new AnalyserError(variable, ErrorMessage.CONSTANT_OR_NOT_INDEXABLE, null);
+                            var error = new AnalyserError(identifier_value, ErrorMessage.CONSTANT_OR_NOT_INDEXABLE, null);
                             Log.getInstance().add(error);
                             //throw new TokenMgrError("Variável não indexavel!", -3);
                         }
 
                         var category = entry.category;
-                        Instruction(target, InstructionsCode.REA, category);
+                        Instruction(target, InstructionsCode.REA, category.getValue());
                         target.instruction_pointer += 1;
                         Instruction(target, InstructionsCode.STR, entry.atribute_01);
                         target.instruction_pointer += 1;
                     } else {
                         if (!target.indexable_variable){
-                            var error = new AnalyserError(variable, ErrorMessage.VARIABLE_NEEDS_INDEX, null);
+                            var error = new AnalyserError(identifier_value, ErrorMessage.VARIABLE_NEEDS_INDEX, null);
                             Log.getInstance().add(error);
                             //throw new TokenMgrError("Variável indexada exige um índice!", -3);
                         }
 
                         var category = entry.category;
-                        Instruction(target, InstructionsCode.REA, category);
+                        Instruction(target, InstructionsCode.REA, category.getValue());
                         target.instruction_pointer += 1;
                         Instruction(target, InstructionsCode.STR, entry.atribute_01 + target.as14 - 1);
                         target.instruction_pointer += 1;

@@ -114,7 +114,7 @@ public class TopBarController extends AbstractController{
     public void execute(){
         if(!getCodeEditor().isCompiled()){
             compile();
-        }
+        }getResultController().clear();
         getCodeEditor().execute(idEst);
     }
 
