@@ -1,13 +1,10 @@
 package scanner.model;
 
 import scanner.compiler.build.IpsisLiteris;
-import scanner.compiler.build.ParseException;
 import scanner.compiler.virtualMachine.IdEst;
 import scanner.model.dto.InstructionRowDTO;
-
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class CodeEditor {
@@ -20,12 +17,6 @@ public class CodeEditor {
     public CodeEditor(){
         fileManager = new FileManager();
         instructions = new ArrayList<>();
-        //TODO: remover antes de entregar
-        try {
-            instructions = new ArrayList<>(IdEst.builder().build().getInstructions(new FileInputStream("src/jar/files/test.ie")));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     public void updateText(String text){
@@ -73,22 +64,8 @@ public class CodeEditor {
         return !instructions.isEmpty();
     }
 
-    public String compile(){
-        try {
-            return IpsisLiteris.compile(fileManager.getFileInputStream());
-        } catch (ParseException | IOException e) {
-            e.printStackTrace();
-            return e.getMessage();
-        }
-    }
-
-    public void compile(Consumer<String> print){
-//        try {
-//            IpsisLiteris.compile(fileManager.getFileInputStream(), print);
-//        } catch (ParseException | IOException e) {
-//            e.printStackTrace();
-//            print.accept(e.getMessage());
-//        }
+    public void compile(Consumer<String> printError) {
+        instructions = new ArrayList<>(IpsisLiteris.compile(fileManager.getFileInputStream(), printError));
     }
 
     public IdEst.IdEstBuilder getRunner(){
