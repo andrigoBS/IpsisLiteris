@@ -37,7 +37,7 @@ public enum InstructionsCode {
     ADD("ADD"),
     SUB("SUB"),
     MUL("MUL"),
-    DIV("DUV"),
+    DIV("DIV"),
 
     //Logica
     OR("OR"),
