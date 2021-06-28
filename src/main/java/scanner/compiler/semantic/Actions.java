@@ -232,7 +232,7 @@ public final class Actions {
             target.as12.push(value);
             target.indexable_variable = false;
         }else{
-            // ERRO IDENTIFICADOR NAO DECLARADO
+            throw new TokenMgrError("Identificador '"+value.image+"' não declarado!", -1);
         }
     }
 
@@ -244,14 +244,14 @@ public final class Actions {
                 Instruction(target, InstructionsCode.LDV, identifier.atribute_01);
                 target.instruction_pointer += 1;
             }else{
-                //“identificador de variável indexada exige índice”
+                throw new TokenMgrError("identificador de variável indexada exige índice", -1);
             }
         }else{
             if (identifier.atribute_02 != -1){
                 Instruction(target, InstructionsCode.LDV, identifier.atribute_01 + target.as14 - 1);
                 target.instruction_pointer += 1;
             }else{
-                //erro: “identificador de constante ou de variável não indexada”
+                throw new TokenMgrError("Identificador de constante ou de variável não indexada", -1);
             }
         }
     }
@@ -394,7 +394,7 @@ public final class Actions {
         target.instruction_pointer += 1;
     }
     public static void AC47_AritimeticPotency(Semantic target){
-        //TODO
+        Instruction(target, InstructionsCode.POW, 0);
         target.instruction_pointer += 1;
     }
     public static void AC48_LogicalConstantTrue(Semantic target){

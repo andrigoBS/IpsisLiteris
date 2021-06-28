@@ -41,6 +41,7 @@ public enum InstructionsCode {
     DIV("DIV"),
     IDV("IDV"),
     MOD("MOD"),
+    POW("POW"),
 
     //Logica
     OR("OR"),
