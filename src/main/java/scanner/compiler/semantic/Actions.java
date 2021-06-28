@@ -399,7 +399,7 @@ public final class Actions {
         target.instruction_pointer += 1;
     }
     public static void AC37_RelationalSmallerEqual(Semantic target){
-        Instruction(target, InstructionsCode.BGE, 0);
+        Instruction(target, InstructionsCode.SME, 0);
         target.instruction_pointer += 1;
     }
     public static void AC38_RelationalBiggerEqual(Semantic target){

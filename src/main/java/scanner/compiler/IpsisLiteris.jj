@@ -624,8 +624,8 @@ void Comparator (List<Integer> follow):
         | <N_EQUAL> ExpLogicAritmetic(elementFollow)    { Actions.AC34_RelationalDiferent(semantic); }//AC#34
         | <LOWER> ExpLogicAritmetic(elementFollow)      { Actions.AC35_RelationalSmaller(semantic); }//AC#35
         | <GREATER> ExpLogicAritmetic(elementFollow)    { Actions.AC36_RelationalBigger(semantic); }//AC#36
-        | <LOW_EQ> ExpLogicAritmetic(elementFollow)     { Actions.AC37_RelationalSmallerEqual(semantic); }//AC#37
-        | <GREAT_EQ> ExpLogicAritmetic(elementFollow)   { Actions.AC38_RelationalBiggerEqual(semantic); }//AC#38
+        | <LOW_EQ> ExpLogicAritmetic(elementFollow)     { Actions.AC38_RelationalBiggerEqual(semantic); }//AC#38
+        | <GREAT_EQ> ExpLogicAritmetic(elementFollow)   { Actions.AC37_RelationalSmallerEqual(semantic); }//AC#37
     } catch (ParseException e) {
         logAndConsume(first, follow);
     }

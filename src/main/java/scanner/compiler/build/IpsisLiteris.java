@@ -525,7 +525,7 @@ logAndConsume(first, follow);
     Token t;
     try {
       t = Identifier(idFollow);
-        Actions.AC19_DataOutputIdentifierRecognition(semantic, t);
+Actions.AC19_DataOutputIdentifierRecognition(semantic, t);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case OPEN_SQUARE:{
         OpSquare(List.of(INTEGER));
@@ -673,13 +673,13 @@ Actions.AC36_RelationalBigger(semantic);
       case LOW_EQ:{
         jj_consume_token(LOW_EQ);
         ExpLogicAritmetic(elementFollow);
-Actions.AC37_RelationalSmallerEqual(semantic);
+Actions.AC38_RelationalBiggerEqual(semantic);
         break;
         }
       case GREAT_EQ:{
         jj_consume_token(GREAT_EQ);
         ExpLogicAritmetic(elementFollow);
-Actions.AC38_RelationalBiggerEqual(semantic);
+Actions.AC37_RelationalSmallerEqual(semantic);
         break;
         }
       default:
