@@ -1,12 +1,11 @@
 package scanner.compiler.semantic;
-import scanner.compiler.build.IpsisLiterisConstants;
+
 import scanner.compiler.build.Token;
-import scanner.compiler.semantic.VariableCategory;
-import scanner.compiler.semantic.Symbol;
 import scanner.model.dto.InstructionRowDTO;
 
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Stack;
+import java.util.Vector;
 
 
 public class Semantic {

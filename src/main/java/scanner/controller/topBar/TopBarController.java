@@ -1,12 +1,13 @@
 package scanner.controller.topBar;
 
+import javafx.application.Platform;
 import scanner.compiler.virtualMachine.IdEst;
 import scanner.controller.AbstractController;
 import scanner.controller.Main;
 import scanner.controller.dialog.Dialog;
 import scanner.controller.resultView.ResultController;
 import scanner.controller.scrollEditor.ScrollEditorController;
-import javafx.application.Platform;
+
 import java.io.IOException;
 
 public class TopBarController extends AbstractController{

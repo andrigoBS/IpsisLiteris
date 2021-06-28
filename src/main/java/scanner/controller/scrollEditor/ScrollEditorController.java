@@ -11,9 +11,13 @@ import org.reactfx.Subscription;
 import scanner.compiler.validator.ColorRegex;
 import scanner.controller.AbstractController;
 import scanner.controller.resultView.ResultController;
+
 import java.net.URL;
 import java.time.Duration;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -38,7 +42,7 @@ public class ScrollEditorController extends AbstractController implements Initia
     public void initialize(URL location, ResourceBundle resources) {
         executor = Executors.newSingleThreadExecutor();
         writer.setParagraphGraphicFactory(LineNumberFactory.get(writer));
-        Subscription cleanupWhenDone = writer.multiPlainChanges()
+        writer.multiPlainChanges()
                 .successionEnds(Duration.ofMillis(500))
                 .supplyTask(this::computeHighlightingAsync)
                 .awaitLatest(writer.multiPlainChanges())
@@ -50,7 +54,7 @@ public class ScrollEditorController extends AbstractController implements Initia
                         return Optional.empty();
                     }
                 })
-                .subscribe(this::applyHighlighting);
+                .subscribe(highlighting -> writer.setStyleSpans(0, highlighting));
     }
 
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
@@ -63,10 +67,6 @@ public class ScrollEditorController extends AbstractController implements Initia
         };
         executor.execute(task);
         return task;
-    }
-
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        writer.setStyleSpans(0, highlighting);
     }
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {

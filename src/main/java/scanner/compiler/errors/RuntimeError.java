@@ -3,10 +3,6 @@ package scanner.compiler.errors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @AllArgsConstructor
 public enum RuntimeError {
 

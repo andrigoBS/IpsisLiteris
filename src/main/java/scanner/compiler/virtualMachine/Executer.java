@@ -1,8 +1,9 @@
 package scanner.compiler.virtualMachine;
 
-import lombok.*;
-import scanner.compiler.errors.ErrorMessage;
-
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.util.Stack;
 import java.util.concurrent.Callable;

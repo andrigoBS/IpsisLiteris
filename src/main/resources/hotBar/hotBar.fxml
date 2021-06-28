@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-
+<?import javafx.scene.layout.HBox?>
 <HBox spacing="15.0" xmlns="http://javafx.com/javafx/14" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scanner.controller.hotBar.HotBarController">
     <fx:define/>
     <ImageView fitHeight="25.0" fitWidth="40.0" onMouseClicked="#onClickNew"

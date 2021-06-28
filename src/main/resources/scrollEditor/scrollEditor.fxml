@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-
-<?import org.fxmisc.richtext.CodeArea?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
-
+<?import org.fxmisc.richtext.CodeArea?>
 <VirtualizedScrollPane prefHeight="586.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/14"
                        xmlns:fx="http://javafx.com/fxml/1"
                        fx:controller="scanner.controller.scrollEditor.ScrollEditorController">

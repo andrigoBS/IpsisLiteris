@@ -46,3 +46,7 @@ ParagraphText, TableView {
 .comments {
     -fx-fill: #8d8d8d;
 }
+
+.error {
+    -fx-fill: #ff2b2b;
+}

@@ -1,12 +1,12 @@
 package scanner.compiler.virtualMachine.commands;
 
-import lombok.AllArgsConstructor;
-import scanner.compiler.errors.ErrorMessage;
 import scanner.compiler.errors.RuntimeError;
 import scanner.compiler.virtualMachine.Executer;
 import scanner.compiler.virtualMachine.IdEst;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 import java.util.function.Function;
 
 

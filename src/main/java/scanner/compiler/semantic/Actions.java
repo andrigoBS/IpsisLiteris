@@ -1,12 +1,8 @@
 package scanner.compiler.semantic;
-import javafx.util.converter.IntegerStringConverter;
+
 import scanner.compiler.build.IpsisLiterisConstants;
 import scanner.compiler.build.Token;
 import scanner.compiler.build.TokenMgrError;
-import scanner.compiler.semantic.Symbol;
-import scanner.compiler.semantic.VariableCategory;
-import scanner.compiler.semantic.InstructionsCode;
-import scanner.compiler.semantic.Context;
 import scanner.model.dto.InstructionRowDTO;
 
 public final class Actions {

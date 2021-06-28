@@ -1,17 +1,20 @@
 package scanner.controller.resultView;
 
 import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
-import scanner.compiler.errors.ErrorMessage;
+import org.fxmisc.richtext.model.Paragraph;
+import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
 import scanner.controller.AbstractController;
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.time.Duration;
+import java.util.*;
 
 public class ResultController extends AbstractController implements Initializable {
     @FXML
@@ -53,12 +56,18 @@ public class ResultController extends AbstractController implements Initializabl
         codeArea.replaceText(codeArea.getText()+text+"\n");
     }
 
-    public void printError(ErrorMessage errorMessage){
-        printError(errorMessage.getText());
+    public void printError(String errorMessage){
+        int start = codeArea.getText().length();
+        codeArea.replaceText(codeArea.getText()+errorMessage+"\n");
+        int end = codeArea.getText().length();
+        codeArea.setStyleSpans(0, computeHighlighting(start, end));
     }
 
-    public void printError(String errorMessage){
-        codeArea.replaceText(codeArea.getText()+errorMessage+"\n");
+    private static StyleSpans<Collection<String>> computeHighlighting(int start, int end) {
+        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+        spansBuilder.add(Collections.emptyList(), start);
+        spansBuilder.add(Collections.singleton("error"), end-start);
+        return spansBuilder.create();
     }
 
     public void clear(){

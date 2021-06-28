@@ -1,18 +1,14 @@
 package scanner.compiler.virtualMachine;
 
-import javafx.application.Platform;
 import lombok.Builder;
 import lombok.Cleanup;
-import scanner.compiler.errors.ErrorMessage;
 import scanner.compiler.errors.RuntimeError;
 import scanner.compiler.virtualMachine.commands.Commands;
 import scanner.model.dto.InstructionRowDTO;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;

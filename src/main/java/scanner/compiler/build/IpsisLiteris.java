@@ -41,7 +41,7 @@ public class IpsisLiteris implements IpsisLiterisConstants {
             printError.accept(log.hasError()? log.toString() : "Programa compilado com sucesso!!! :D");
 
             return parser.semantic.program;
-        }catch(Exception e){
+        }catch(TokenMgrError | Exception e){
             printError.accept(e.getMessage());
 
             return new ArrayList<>();

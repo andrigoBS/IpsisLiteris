@@ -3,7 +3,9 @@ package scanner.model;
 import scanner.compiler.build.IpsisLiteris;
 import scanner.compiler.virtualMachine.IdEst;
 import scanner.model.dto.InstructionRowDTO;
-import java.io.*;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
@@ -33,10 +35,12 @@ public class CodeEditor {
 
     public void newFile(){
         fileManager.newFile();
+        instructions = new ArrayList<>();
     }
 
     public String open(String path) throws IOException {
         fileManager.load(path);
+        instructions = new ArrayList<>();
         return fileManager.getText();
     }
 

@@ -1,6 +1,6 @@
 package scanner.compiler.semantic;
+
 import lombok.AllArgsConstructor;
-import scanner.compiler.semantic.VariableCategory;
 @AllArgsConstructor
 public class Symbol {
     public String Identifier;

@@ -3,6 +3,7 @@ package scanner.compiler.errors;
 import lombok.Getter;
 import scanner.compiler.build.IpsisLiterisConstants;
 import scanner.compiler.build.Token;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
