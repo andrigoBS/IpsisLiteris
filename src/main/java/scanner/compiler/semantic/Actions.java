@@ -211,7 +211,7 @@ public final class Actions {
         while(!target.as13.empty()){
             var attribute = target.as13.pop();
             if(!first)
-                Instruction(target, InstructionsCode.DPC, attribute);
+                Instruction(target, InstructionsCode.DPC, 0);
 
             Instruction(target, InstructionsCode.STR, attribute);
             target.instruction_pointer += 1;
