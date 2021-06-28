@@ -249,16 +249,18 @@ public enum Commands implements Command {
     STC {
         @Override
         public void execute(Object parameter, Executer executer) {
-            int range = (Integer) parameter - 1;
+            int range = (Integer) parameter;
             Stack<Object> stack = executer.getStack();
-            Object value = stack.pop();
-            for (int i = range; i < stack.size(); i ++) {
+            var value = stack.pop();
+            for (int i = stack.size() - range; i < stack.size(); i ++) {
+                /*
                 if (! stack.get(i).getClass().equals(value.getClass()) ) {
                     Commands.throwError(
                             applyValues(RuntimeError.TYPE_ERROR, null, value, stack.get(i)), executer
                     );
                     return;
                 }
+                 */
                 stack.set(i, value);
             }
         }
