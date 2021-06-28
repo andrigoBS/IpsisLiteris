@@ -207,15 +207,14 @@ public final class Actions {
     }
 
     public static void AC16_AtribuitionEnd(Semantic target){
-        var first = true;
         while(!target.as13.empty()){
             var attribute = target.as13.pop();
-            if(!first)
+            if(!target.as13.empty())
                 Instruction(target, InstructionsCode.DPC, 0);
+
 
             Instruction(target, InstructionsCode.STR, attribute);
             target.instruction_pointer += 1;
-            first = false;
         }
     }
 
