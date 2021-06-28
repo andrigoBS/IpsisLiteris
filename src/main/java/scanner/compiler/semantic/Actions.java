@@ -207,10 +207,15 @@ public final class Actions {
     }
 
     public static void AC16_AtribuitionEnd(Semantic target){
+        var first = true;
         while(!target.as13.empty()){
             var attribute = target.as13.pop();
+            if(!first)
+                Instruction(target, InstructionsCode.DPC, attribute);
+
             Instruction(target, InstructionsCode.STR, attribute);
             target.instruction_pointer += 1;
+            first = false;
         }
     }
 
@@ -377,11 +382,11 @@ public final class Actions {
         target.instruction_pointer += 1;
     }
     public static void AC44_AritimeticDivideInteger(Semantic target){
-        //TODO
+        Instruction(target, InstructionsCode.IDV, 0);
         target.instruction_pointer += 1;
     }
     public static void AC45_AritimeticModule(Semantic target){
-        //TODO
+        Instruction(target, InstructionsCode.MOD, 0);
         target.instruction_pointer += 1;
     }
 

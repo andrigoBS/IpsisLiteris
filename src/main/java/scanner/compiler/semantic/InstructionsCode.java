@@ -20,6 +20,7 @@ public enum InstructionsCode {
 
     WRT("WRT"),
     LDV("LDV"),
+    DPC("DPC"),
 
     JMF("JMF"),
     JMT("JMT"),
@@ -38,6 +39,8 @@ public enum InstructionsCode {
     SUB("SUB"),
     MUL("MUL"),
     DIV("DIV"),
+    IDV("IDV"),
+    MOD("MOD"),
 
     //Logica
     OR("OR"),

@@ -9,6 +9,7 @@ program{
 	execute{
 		set 10 to contb.
 		set 2 to conta.
-		set conta + contb / 2 to contc.
+		set conta + contb %% 2 to contc.
+		put {contc}. 
 	}
 }

@@ -697,7 +697,10 @@ void ValueElement(List<Integer> follow):
 }
 {
     try{
-        IdElement(follow) | ConstantsElement(follow)
+        IdElement(follow)
+        | ConstantsElement(follow)
+        | ParentesisExp(follow)
+        | Not(follow) ParentesisExp(follow) { Actions.AC50_LogicNot(semantic); }
     } catch (ParseException e){
         logAndConsume(first, follow);
     }
