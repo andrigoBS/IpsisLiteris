@@ -71,13 +71,12 @@ public class IdEst {
     }
 
     public static void main (String[] args) throws FileNotFoundException {
-        System.out.println(Double.valueOf("1"));
-//        IdEst.builder()
-//                .onError(System.err::println)
-//                .onRead(new Scanner(System.in)::nextLine)
-//                .onWrite(System.out::println)
-//                .build()
-//                .run(new FileInputStream(args[0]));
+        IdEst.builder()
+                .onError(System.err::println)
+                .onRead(new Scanner(System.in)::nextLine)
+                .onWrite(System.out::println)
+                .build()
+                .run(new FileInputStream(args[0]));
     }
 
     public static boolean parseBool (String string) {

@@ -438,7 +438,7 @@ public enum Commands implements Command {
         @Override
         public void execute (Object parameter, Executer executer) {
             int type = (Integer) parameter - 1;
-            if (type >= functionList.size()){
+            if (type >= functionList.size()) {
                 Commands.throwError(RuntimeError.CONSTANT_ERROR.getText(), executer);
                 return;
             }
@@ -447,7 +447,7 @@ public enum Commands implements Command {
                 saveValue(type, call, executer);
             } catch (Exception e) {
                 e.printStackTrace();
-                Commands.throwError("ERRO EM CHAMADA DE SISTEMA", executer);
+                Commands.throwError("ERRO EM CHAMADA DE SISTEMA PARA LEITURA", executer);
             }
         }
 
