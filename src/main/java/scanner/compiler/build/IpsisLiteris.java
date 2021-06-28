@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import lombok.Getter;
 import scanner.compiler.errors.AnalyserError;
@@ -14,6 +15,8 @@ import scanner.compiler.errors.ErrorMessage;
 import scanner.compiler.errors.Log;
 import scanner.compiler.semantic.Semantic;
 import scanner.compiler.semantic.Actions;
+import scanner.compiler.virtualMachine.commands.Commands;
+import scanner.model.dto.InstructionRowDTO;
 
 public class IpsisLiteris implements IpsisLiterisConstants {
     Semantic semantic = new Semantic();
@@ -23,27 +26,27 @@ public class IpsisLiteris implements IpsisLiterisConstants {
         parser.Program();
     }
 
-    public static String compile(InputStream inputStream) throws ParseException, IOException {
-        Log log = Log.getInstance();
-        log.clear();
-        IpsisLiteris parser = new IpsisLiteris(inputStream);
-        parser.Lexic();
-        if (log.hasError()) {
-            return log.toString();
-        }
-        inputStream.reset();
-        log.clear();
-        parser = new IpsisLiteris(inputStream);
-        parser.Program();
-        return (log.hasError()) ? log.toString() : "Programa compilado com sucesso!!! :D\n\n" + ProgramToOutput(parser.semantic);
-    }
+    public static List<InstructionRowDTO> compile(InputStream inputStream, Consumer<String> printError) {
+        try{
+            Log log = Log.getInstance();
+            log.clear();
+            IpsisLiteris parser = new IpsisLiteris(inputStream);
+            parser.Lexic();
+            if (log.hasError()) {
+                printError.accept(log.toString());
+            }
+            inputStream.reset();
+            log.clear();
+            parser = new IpsisLiteris(inputStream);
+            parser.Program();
+            printError.accept(log.hasError()? log.toString() : "Programa compilado com sucesso!!! :D");
 
-    static private String ProgramToOutput(Semantic target) {
-        StringBuilder output = new StringBuilder();
-        for (var line : target.program) {
-            output.append(line.toString()).append("\n");
+            return parser.semantic.program;
+        }catch(Exception e){
+            printError.accept(e.getMessage());
+
+            return new ArrayList<>();
         }
-        return output.toString();
     }
 
     private void skipUntil(List<Integer> type) {

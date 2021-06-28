@@ -106,10 +106,7 @@ public class TopBarController extends AbstractController{
                     dialog.saveError();
                 }
             }
-            String result = getCodeEditor().compile();
-            getResultController().setText(result);
-            //TODO: opção com callback
-            //getCodeEditor().compile(error -> getResultController().printError(error));
+            getCodeEditor().compile(error -> getResultController().printError(error));
         }
     }
 
