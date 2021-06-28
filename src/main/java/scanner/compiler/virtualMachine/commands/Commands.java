@@ -458,7 +458,7 @@ public enum Commands implements Command {
                 executer.getStack().push(param);
             }catch (NumberFormatException e) {
                 Commands.throwError(
-                        applyValues(RuntimeError.TYPE_ERROR, null, value, convert.apply("1")), executer
+                        applyValues(RuntimeError.READ_TYPE_ERROR, null, value, convert.apply("1")), executer
                 );
             }
         }
@@ -508,7 +508,10 @@ public enum Commands implements Command {
                 Boolean.class, "LÓGICO",
                 String.class, "LITERAL"
         );
-        String errorMessage = error.getText().replace("{OPERATION}", operation);
+        String errorMessage = error.getText();
+        if (operation != null) {
+            errorMessage = errorMessage.replace("{OPERATION}", operation);
+        }
         for (int i = 0; i < values.length ; i++){
             errorMessage = errorMessage.replace("{VALUE" + (i+1) + "}", values[i].toString())
                                         .replace("{TYPE" + (i+1) +"}", types.get(values[i].getClass()));

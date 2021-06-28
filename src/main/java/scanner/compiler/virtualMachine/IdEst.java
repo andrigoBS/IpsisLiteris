@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import lombok.Builder;
 import lombok.Cleanup;
 import scanner.compiler.errors.ErrorMessage;
+import scanner.compiler.errors.RuntimeError;
 import scanner.compiler.virtualMachine.commands.Commands;
 import scanner.model.dto.InstructionRowDTO;
 
@@ -11,16 +12,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.text.ParseException;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Builder(setterPrefix = "on")
 public class IdEst {
+
+    private static final Map<String, Function<String, Object>> parsers = Map.of(
+            "LDS", String::new,
+            "LDR", Double::parseDouble,
+            "LDB", IdEst::parseBool
+    );
 
     private Callable<String> read;
 
@@ -30,12 +35,16 @@ public class IdEst {
 
     public void run(List<InstructionRowDTO> instructions) {
         Executer executer = new Executer(read, error, write);
-        while (!executer.isHalt()){
-            InstructionRowDTO instruction = instructions.get(executer.getPointer());
-            Commands.valueOf(instruction.getCommand()).execute(instruction.getParameter(), executer);
-            executer.increasePointer();
+        try {
+            while (!executer.isHalt()){
+                InstructionRowDTO instruction = instructions.get(executer.getPointer());
+                Commands.valueOf(instruction.getCommand()).execute(instruction.getParameter(), executer);
+                executer.increasePointer();
+            }
+            executer.getWrite().accept("\n\nPrograma Terminado ...");
+        } catch (IndexOutOfBoundsException e) {
+            error.accept(RuntimeError.INFINITE_PROGRAM.getText());
         }
-        executer.getWrite().accept("\n\nPrograma Terminado ...");
     }
 
     public void run (InputStream inputStream) {
@@ -43,11 +52,6 @@ public class IdEst {
     }
 
     public List<InstructionRowDTO> getInstructions (InputStream inputStream) {
-        Map<String, Function<String, Object>> parsers = Map.of(
-                "LDS", String::new,
-                "LDR", Double::parseDouble,
-                "LDB", IdEst::parseBool
-        );
         List<InstructionRowDTO> instructions = new ArrayList<>();
         @Cleanup Scanner scanner = new Scanner(inputStream);
         Object param;
@@ -57,17 +61,26 @@ public class IdEst {
             if (!line.isEmpty()) {
                 String[] instruction = new String[] {
                         line.substring(0, line.indexOf(" ")),
-                        line.substring(line.indexOf(" ") + 1)
+                        line.substring(line.indexOf(" ")).trim()
                 };
-                if (parsers.containsKey(instruction[0])) {
-                    param = parsers.get(instruction[0]).apply(instruction[1]);
-                } else {
-                    param = Integer.parseInt(instruction[1]);
-                }
+                param = parseParameter(instruction, address);
                 instructions.add(new InstructionRowDTO(address++, instruction[0], param));
             }
         }
         return instructions;
+    }
+
+    private Object parseParameter (String[] instruction, int address) {
+        try {
+            if (parsers.containsKey(instruction[0])) {
+                return parsers.get(instruction[0]).apply(instruction[1]);
+            }
+            return Integer.parseInt(instruction[1]);
+        } catch (NumberFormatException e) {
+            throw new InputMismatchException("PARÂMETRO INVÁLIDO EM CÓDIGO DE MONTAGEM" +
+                    "\n\tPARÂMETRO \"" + instruction[1] + "\" NÃO APLICÁVEL AO COMANDO " + instruction[0] +
+                    "\n\tLINHA: " + address);
+        }
     }
 
     public static void main (String[] args) throws FileNotFoundException {
