@@ -16,6 +16,11 @@ public enum ErrorMessage {
     MISSING("ERRO SINTÁTICO:\n\tEsperava encontrar {TYPES} na linha {ROW} e coluna {COL}.\n\tEncontrado {TOKEN} no lugar."),
 
     // Semântico
+    VARIABLE_NOT_DECLARED("ERRO SEMÂNTICO:\n\tIdentificador '{TOKEN}' não declarado."),
+    VARIABLE_ALREADY_DECLARED("ERRO SEMÂNTICO:\n\tIdentificador '{TOKEN}' já declarado."),
+    CONSTANT_OR_NOT_INDEXABLE("ERRO SEMÂNTICO:\n\tIdentificador '{TOKEN}' é constante ou não indenxável."),
+    VARIABLE_NEEDS_INDEX("ERRO SEMÂNTICO:\n\tIdentificador de variável indexada exige índice")
+
     ;
 
     @Getter

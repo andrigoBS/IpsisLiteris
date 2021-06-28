@@ -7,9 +7,9 @@ program{
 			
 	}
 	execute{
-		set 10 to contb.
+		set 4 to contb.
 		set 2 to conta.
-		set conta + contb %% 2 to contc.
+		set 2 ** (conta + contb) to contc.
 		put {contc}. 
 	}
 }

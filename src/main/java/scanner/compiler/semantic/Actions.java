@@ -3,6 +3,9 @@ package scanner.compiler.semantic;
 import scanner.compiler.build.IpsisLiterisConstants;
 import scanner.compiler.build.Token;
 import scanner.compiler.build.TokenMgrError;
+import scanner.compiler.errors.AnalyserError;
+import scanner.compiler.errors.ErrorMessage;
+import scanner.compiler.errors.Log;
 import scanner.model.dto.InstructionRowDTO;
 
 public final class Actions {
@@ -107,7 +110,11 @@ public final class Actions {
         if(value == null) throw new TokenMgrError("Deu ruim brother", -2);
 
         var identifier_value = value.image;
-        if(target.symbolTable.containsKey(identifier_value)) throw new TokenMgrError("Identificador " + identifier_value +  " já declarado", -1);
+        if(target.symbolTable.containsKey(identifier_value)) {
+            var error = new AnalyserError(value, ErrorMessage.VARIABLE_ALREADY_DECLARED, null);
+            Log.getInstance().add(error);
+            throw new TokenMgrError("Identificador '"+value.image+"' já declarado!", -1);
+        }
 
         target.VT += 1;
         target.VP += 1;
@@ -121,8 +128,11 @@ public final class Actions {
 
         var identifier_value = value.image;
         if(target.context == Context.DEC_VAR){
-            if(target.symbolTable.containsKey(identifier_value))
-                throw new TokenMgrError("Identificador " + identifier_value +  " já declarado", -1);
+            if(target.symbolTable.containsKey(identifier_value)){
+                var error = new AnalyserError(value, ErrorMessage.VARIABLE_ALREADY_DECLARED, null);
+                Log.getInstance().add(error);
+                throw new TokenMgrError("Identificador '"+value.image+"' já declarado!", -1);
+            }
         }else{
             target.indexable_variable = false;
         }
@@ -148,9 +158,11 @@ public final class Actions {
             }
             case ATRIBUITION -> {
                 while (!target.as12.empty()) {
-                    var identifier_value =  target.as12.pop().image;
-                    if (!target.symbolTable.containsKey(identifier_value) || !isVariable(target.symbolTable.get(identifier_value).category)) {
-                        throw new TokenMgrError("Identificador não declarado ou é constante!", -3);
+                    var identifier_value =  target.as12.pop();
+                    if (!target.symbolTable.containsKey(identifier_value.image) || !isVariable(target.symbolTable.get(identifier_value.image).category)) {
+                        var error = new AnalyserError(identifier_value, ErrorMessage.VARIABLE_NOT_DECLARED, null);
+                        Log.getInstance().add(error);
+                        throw new TokenMgrError("Identificador '"+identifier_value.image+"' não declarado!", -1);
                     }
 
                     var entry = target.symbolTable.get(identifier_value);
@@ -169,7 +181,9 @@ public final class Actions {
                 for (var variable : target.as12) {
                     var identifier_value = variable.image;
                     if (!target.symbolTable.containsKey(identifier_value) || !isVariable(target.symbolTable.get(identifier_value).category)) {
-                        throw new TokenMgrError("Identificador não declarado ou é constante!", -3);
+                        var error = new AnalyserError(variable, ErrorMessage.VARIABLE_NOT_DECLARED, null);
+                        Log.getInstance().add(error);
+                        throw new TokenMgrError("Identificador '"+variable.image+"' não declarado!", -1);
                     }
 
                     var entry = target.symbolTable.get(identifier_value);
@@ -232,6 +246,8 @@ public final class Actions {
             target.as12.push(value);
             target.indexable_variable = false;
         }else{
+            var error = new AnalyserError(value, ErrorMessage.VARIABLE_NOT_DECLARED, null);
+            Log.getInstance().add(error);
             throw new TokenMgrError("Identificador '"+value.image+"' não declarado!", -1);
         }
     }
@@ -244,13 +260,17 @@ public final class Actions {
                 Instruction(target, InstructionsCode.LDV, identifier.atribute_01);
                 target.instruction_pointer += 1;
             }else{
-                throw new TokenMgrError("identificador de variável indexada exige índice", -1);
+                var error = new AnalyserError(null, ErrorMessage.VARIABLE_NEEDS_INDEX, null);
+                Log.getInstance().add(error);
+                throw new TokenMgrError("Identificador de constante ou de variável não indexada", -1);
             }
         }else{
             if (identifier.atribute_02 != -1){
                 Instruction(target, InstructionsCode.LDV, identifier.atribute_01 + target.as14 - 1);
                 target.instruction_pointer += 1;
             }else{
+                var error = new AnalyserError(null, ErrorMessage.CONSTANT_OR_NOT_INDEXABLE, null);
+                Log.getInstance().add(error);
                 throw new TokenMgrError("Identificador de constante ou de variável não indexada", -1);
             }
         }

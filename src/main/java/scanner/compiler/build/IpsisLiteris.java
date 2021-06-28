@@ -525,7 +525,7 @@ logAndConsume(first, follow);
     Token t;
     try {
       t = Identifier(idFollow);
-Actions.AC19_DataOutputIdentifierRecognition(semantic, t);
+        Actions.AC19_DataOutputIdentifierRecognition(semantic, t);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case OPEN_SQUARE:{
         OpSquare(List.of(INTEGER));

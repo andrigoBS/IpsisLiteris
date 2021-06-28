@@ -504,7 +504,8 @@ void IdPut(List<Integer> follow):
 {
     try{
         t = Identifier(idFollow)
-        { Actions.AC19_DataOutputIdentifierRecognition(semantic, t); }// AC#19
+        {
+            Actions.AC19_DataOutputIdentifierRecognition(semantic, t); }// AC#19
         (
             OpSquare(List.of(INTEGER))
             t = Integer(List.of(CLOSE_SQUARE))
