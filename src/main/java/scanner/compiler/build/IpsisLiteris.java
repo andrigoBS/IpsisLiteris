@@ -42,7 +42,7 @@ public class IpsisLiteris implements IpsisLiterisConstants {
 
             return parser.semantic.program;
         }catch(Exception e){
-            printError.accept(e.getMessage());
+            printError.accept(Log.getInstance().toString());
 
             return new ArrayList<>();
         }
