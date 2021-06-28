@@ -6,12 +6,14 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 import lombok.Getter;
 import scanner.compiler.errors.AnalyserError;
 import scanner.compiler.errors.ErrorMessage;
 import scanner.compiler.errors.Log;
 import scanner.compiler.semantic.Semantic;
 import scanner.compiler.semantic.Actions;
+import scanner.model.dto.InstructionRowDTO;
 
 /** Token Manager. */
 @SuppressWarnings ("unused")

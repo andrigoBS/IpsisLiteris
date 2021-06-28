@@ -209,6 +209,14 @@ public enum Commands implements Command {
         @Override
         public void execute (Object parameter, Executer executer) {
             String string = (String) parameter;
+            if (string.matches("\".*\"")){
+                string = string.substring(1, string.length() - 1);
+                string = string.replaceAll("\\\\\"", "\"");
+            }
+            if (string.matches("'.*'")){
+                string = string.substring(1, string.length() - 1);
+                string = string.replaceAll("\\\\'", "'");
+            }
             Commands.load(string, executer);
         }
     },

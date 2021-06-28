@@ -2,6 +2,8 @@
 
 program{
 	define{
+		not variable
+			char is hello_world 'Hello \'World'.
 		variable
 			natural is conta, contb.
 			
@@ -9,5 +11,6 @@ program{
 	execute{
 		set 2 to conta.
 		put{conta}.
+		put{hello_world}.
 	}
 }

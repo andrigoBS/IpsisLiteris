@@ -71,12 +71,12 @@ public final class Actions {
                 if(value.kind != IpsisLiterisConstants.INTEGER){
                     throw new TokenMgrError("É esperado um Inteiro!", -1);
                 }
-                Instruction(target, InstructionsCode.LDI, value.image);
+                Instruction(target, InstructionsCode.LDI, Integer.parseInt(value.image));
                 target.instruction_pointer += 1;
             }
             case CONST_REA -> {
                 if(value.kind != IpsisLiterisConstants.REAL) throw new TokenMgrError("É esperado um Real!", -1);
-                Instruction(target, InstructionsCode.LDR, value.image);
+                Instruction(target, InstructionsCode.LDR, Double.parseDouble(value.image));
                 target.instruction_pointer += 1;
             }
             case CONST_LIT -> {
@@ -257,15 +257,15 @@ public final class Actions {
     }
 
     public static void AC21_ConstantIntegerToOutputOrExpression(Semantic target, Token value){
-        Instruction(target, InstructionsCode.LDI, value);
+        Instruction(target, InstructionsCode.LDI, Integer.parseInt(value.image));
         target.instruction_pointer += 1;
     }
     public static void AC22_ConstantRealToOutputOrExpression(Semantic target, Token value){
-        Instruction(target, InstructionsCode.LDR, value);
+        Instruction(target, InstructionsCode.LDR, Double.parseDouble(value.image));
         target.instruction_pointer += 1;
     }
     public static void AC23_ConstantLiteralToOutputOrExpression(Semantic target, Token value){
-        Instruction(target, InstructionsCode.LDS, value);
+        Instruction(target, InstructionsCode.LDS, value.image);
         target.instruction_pointer += 1;
     }
     public static void AC24_EndOfSelection(Semantic target){
@@ -398,11 +398,11 @@ public final class Actions {
         target.instruction_pointer += 1;
     }
     public static void AC48_LogicalConstantTrue(Semantic target){
-        Instruction(target, InstructionsCode.LDB, "true");
+        Instruction(target, InstructionsCode.LDB, true);
         target.instruction_pointer += 1;
     }
     public static void AC49_LogicalConstantFalse(Semantic target){
-        Instruction(target, InstructionsCode.LDB, "false");
+        Instruction(target, InstructionsCode.LDB, false);
         target.instruction_pointer += 1;
     }
     public static void AC50_LogicNot(Semantic target){
