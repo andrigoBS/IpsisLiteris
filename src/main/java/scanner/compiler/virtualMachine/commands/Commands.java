@@ -4,9 +4,7 @@ import scanner.compiler.errors.RuntimeError;
 import scanner.compiler.virtualMachine.Executer;
 import scanner.compiler.virtualMachine.IdEst;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.Function;
 
 
@@ -251,16 +249,14 @@ public enum Commands implements Command {
         public void execute(Object parameter, Executer executer) {
             int range = (Integer) parameter;
             Stack<Object> stack = executer.getStack();
-            var value = stack.pop();
-            for (int i = stack.size() - range; i < stack.size(); i ++) {
-                /*
+            Object value = stack.pop();
+            for (int i = stack.size() - 1 - range; i < stack.size(); i ++) {
                 if (! stack.get(i).getClass().equals(value.getClass()) ) {
                     Commands.throwError(
                             applyValues(RuntimeError.TYPE_ERROR, null, value, stack.get(i)), executer
                     );
                     return;
                 }
-                 */
                 stack.set(i, value);
             }
         }
