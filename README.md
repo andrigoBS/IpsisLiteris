@@ -27,12 +27,11 @@ O código compilado, irá gerar um código intermediário na linguagem [Id est],
 O presente código foi implementado por:
 * [Andrigo B. Santos](https://github.com/andrigoBS)
 * [Hilson A. W. Junior](https://github.com/Hilson-Alex)
-* [Mathias]
 
 
 ## Licença
 
-Esse projeto está sob a licença [MIT](/License.md)
+Esse projeto está sob a licença [MIT](/LICENSE)
 
 
 ## Links:
