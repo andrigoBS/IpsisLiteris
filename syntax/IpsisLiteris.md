@@ -4,16 +4,17 @@ A linguagem Ipsis Literis segue um padrão de sintaxe definido para as aulas de 
 do curso de Ciência da Computação da Univali oferecido no semestre 2021-1.
 
 ### Seções:
+
 1. ***[Forma geral de um programa](#forma-geral)***
    1. *[Campo de declarações](#declaracoes)*
    2. *[Comentários](#comentarios)*
-2. Comandos
-3. Nomenclatura de variáveis
-4. Tipos e valores
+2. ***[Comandos]()***
+3. ***[Nomenclatura de variáveis]()***
+4. ***[Tipos e valores]()***
 
 ---
 
-## [Forma geral de um programa <a name="forma-geral" ></a>
+## Forma geral de um programa <a name="forma-geral" ></a>
 
 Para que um programa seja compilado pelo compilador IpsisLiteris, deve seguir o seguinte padrão:
 
@@ -57,7 +58,8 @@ declare {
 porém, dentro das seções pode-se declarar quantas constantes ou variáveis quiser, contanto que sejam separadas por ponto (.);
 - As seções podem vir em qualquer ordem, e não é obrigatório ter ambas, pode-se ter apenas a seção de constantes ou a de variáveis;
 - :{tipo}: é o tipo de dado da variável e pode ser **real**, **natural**, **char** ou **boolean**. Você pode ver mais na seção de [tipos]();
-- :{lista de identificadores}: se refere à um ou mais identificadores e deve seguir as [normas de nomenclatura]()
+- :{lista de identificadores}: se refere à um ou mais identificadores e deve seguir as [normas de nomenclatura]();
+- Caso haja mais de 1 identificador, os identificadores devem ser separados por vírgula (,)
 
 Perceba que cada declaração deve terminar com um ponto (.). 
 O ponto é usado como delimitador da linguagem e é obrigatório no fim de toda sentença.
