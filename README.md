@@ -42,6 +42,6 @@ Esse projeto está sob a licença [MIT](/LICENSE)
 - JavaFX: https://gluonhq.com/products/javafx/
 
 [Launcher]: /src/main/java/scanner/controller/Launcher.java
-[Ipsis Literis]: /sintax/IpsisLiteris.md
-[Id est]: /sintax/IdEst.md
+[Ipsis Literis]: /syntax/IpsisLiteris.md
+[Id est]: /syntax/IdEst.md
 [jar]: /src/jar
