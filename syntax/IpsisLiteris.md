@@ -6,6 +6,7 @@ do curso de Ciência da Computação da Univali oferecido no semestre 2021-1.
 ### Seções:
 1. ***[Forma geral de um programa](#forma-geral)***
    1. *[Campo de declarações](#declaracoes)*
+   2. *[Comentários](#comentarios)*
 2. Comandos
 3. Nomenclatura de variáveis
 4. Tipos e valores
@@ -60,6 +61,20 @@ porém, dentro das seções pode-se declarar quantas constantes ou variáveis qu
 
 Perceba que cada declaração deve terminar com um ponto (.). 
 O ponto é usado como delimitador da linguagem e é obrigatório no fim de toda sentença.
+
+### Comentários <a name="comentarios" ></a>
+
+Como a maioria das linguagens, há duas formas de comentar um programa Ipsis Literis:
+
+```
+:_ Isso é um comentário de linha
+:{
+Isso
+é um 
+comentário
+de bloco
+}:
+```
 
 TODO: terminar
 
