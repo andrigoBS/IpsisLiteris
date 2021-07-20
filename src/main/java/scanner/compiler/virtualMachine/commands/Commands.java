@@ -250,7 +250,7 @@ public enum Commands implements Command {
             int range = (Integer) parameter;
             Stack<Object> stack = executer.getStack();
             Object value = stack.pop();
-            for (int i = stack.size() - 1 - range; i < stack.size(); i ++) {
+            for (int i = stack.size() - range; i < stack.size(); i ++) {
                 if (! stack.get(i).getClass().equals(value.getClass()) ) {
                     Commands.throwError(
                             applyValues(RuntimeError.TYPE_ERROR, null, value, stack.get(i)), executer
