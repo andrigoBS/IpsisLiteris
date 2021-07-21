@@ -13,8 +13,8 @@ do curso de Ciência da Computação da Univali oferecido no semestre 2021-1.
    2. *[Comandos de Entrada e Saída](#io)*
    3. *[Comando de seleção](#if)*
    4. *[Loops](#loops)*
-4. ***[Nomenclatura de variáveis e constantes]()***
-5. ***[Tipos e valores]()***
+4. ***[Nomenclatura de variáveis e constantes](#nomes)***
+5. ***[Tipos e valores](#tipos)***
 6. ***[Operadores e expressões]()***
 
 ---
@@ -37,7 +37,7 @@ identificador (opcional)
 ```
 
 - O Header é uma string com informações acerca do programa;
-- O identificador segue o [padrão de nomenclatura de variáveis e constantes]();
+- O identificador segue o [padrão de nomenclatura de variáveis e constantes](#nomes);
 - A lista de comandos deve ter no mínimo um [comando](#comandos).
 
 ### Campo de declarações <a name="declaracoes" ></a>
@@ -45,7 +45,7 @@ identificador (opcional)
 O campo de declarações, possui as declarações de constantes e/ou variáveis segue a seguinte forma: 
 
 ```
-declare {
+define {
 
   :_ seção de constantes
   not variable
@@ -62,8 +62,8 @@ declare {
 - Só pode haver uma seção de cada tipo (uma de constantes e uma de variáveis), 
 porém, dentro das seções pode-se declarar quantas constantes ou variáveis quiser, contanto que sejam separadas por ponto (.);
 - As seções podem vir em qualquer ordem, e não é obrigatório ter ambas, pode-se ter apenas a seção de constantes ou a de variáveis;
-- :{tipo}: é o tipo de dado da variável e pode ser **real**, **natural**, **char** ou **boolean**. Você pode ver mais na seção de [tipos]();
-- :{lista de identificadores}: se refere à um ou mais identificadores e deve seguir as [normas de nomenclatura]();
+- :{tipo}: é o tipo de dado da variável e pode ser **real**, **natural**, **char** ou **boolean**. Você pode ver mais na seção de [tipos](#tipos);
+- :{lista de identificadores}: se refere à um ou mais identificadores e deve seguir as [normas de nomenclatura](#nomes);
 - Caso haja mais de 1 identificador, os identificadores devem ser separados por vírgula (,);
 - :{valor}: deve ser compatível com o tipo de dado declarado.
 
@@ -101,9 +101,9 @@ set :{expressão ou valor}: to :{lista de iidentificadores}: .
 ```
 
 - :{expressão ou valor}: se refere a qualquer expressão lógica, relacional ou aritimética envolvendo constantes ou identificadores.
-Você pode ver mais detalhes na [seção de tipos e valores]();
+Você pode ver mais detalhes na seção [de tipos e valores](#tipos) ou de [expressões e operadores]();
 - o resultado da expressão deve possuir o mesmo tipo das variáveis passadas na lista de identificadores.
-- :{lista de identificadores se refere à uma lista com um ou mais nomes de variáveis separados com vírgula, onde todas devem ter o mesmo tipo.
+- :{lista de identificadores se refere à uma lista com um ou mais [nomes de variáveis](#nomes) separados com vírgula, onde todas devem ter o mesmo tipo.
 
 ### Comandos de Entrada e Saída <a name="io" ></a>
 
@@ -114,6 +114,11 @@ get { :{lista de identificadores}: }.
 :_ mostrar valor para o usuário
 put { :{lista de identificadores e/ou constantes}: }. 
 ```
+- Para o comando de entrada de dados (`get`), é esperada uma lista com um ou mais identificadores separados por vírgula;
+- Os identificadores passados ao comando de entrada de dados (`get`) devem estar vinculados apenas à variáveis;
+- O comando `get` lê apenas um único valor e o passa para todas as variáveis listadas;
+- Para o comando de saída de dados (`put`), é esperada uma lista com um ou mais valores separados por vírgula,
+sendo que tais valores podem ser *[numéricos]()*, *[literais]()*, [*identificadores de variáveis* ou *identificadores de constantes*](#nomes),
 
 ### Comando de seleção <a name="if" ></a>
 
@@ -126,18 +131,81 @@ verify :{expressão}:
    }.
 ```
 
+- :{expressão}: se refere a qualquer expressão lógica ou relacional envolvendo constantes ou identificadores.
+Você pode ver mais detalhes na seção [de tipos e valores](#tipos) ou de [expressões e operadores]();
+- O resultado da expressão deve, obrigatóriamente, ser um valor [booleano]();
+- As cláusulas `is true` e `is false` podem acontecer apenas uma vez cada, em qualquer ordem, e é necessário que apenas uma delas 
+esteja presente.
+
+
 ### Loops <a name="loops" ></a>
 
 ```
-verify :{expressão}:
-   is true { 
-      :{lista de comandos}: 
-   } is false { 
-      :{lista de comandos}: 
-   }.
+:_ Loop com no mínimo uma execução (do-while)
+loop { 
+   :{lista de comandos}: 
+} while :{expressão}: is true.
+
+:_ Loop com no mínimo nenhuma execução (while)
+while :{expressão}: is true do { 
+   :{lista de comandos}: 
+}. 
+```
+- :{expressão}: se refere a qualquer expressão lógica ou relacional envolvendo constantes ou identificadores.
+- O resultado da expressão deve, obrigatóriamente, ser um valor [booleano]();
+- Os comandos da estrutura de repetição serão repetidos sempre que o resultado da avaliação da expressão for true. 
+
+---
+
+## Nomenclatura de variáveis e constantes <a name="nomes" ></a>
+
+De acordo com as especificações passadas para as aulas de compiladores, os identificadores seguem uma limitação de nome
+restritiva, que segue as seguintes regras:
+
+1. O nome dos identificadores deve começar com *letras* ou com o símbolo *" \_"*;
+2. Após o caractere inicial, pode, ou não, haver letras, dígitos ou o símbolo "\_";
+3. O identificador não pode começar nem terminar com dígitos;
+4. O identificador não pode ter dígitos consecutivos;
+5. O identificador não pode ter o símbolos "\_" consecutivos.
+
+Caso um identificador seja declarado como uma ***variável*** (e não uma constante), poderá ser acompanhado de um 
+índice para que se comporte como um vetor, como por exemplo `variavel[5]`.
+
+Quando usado em uma declaração, o índice indica a quantidade de espaços alocados para o vetor, 
+já quando usado no código, o índice passado é usado como endereço de acesso, tendo valor mínimo 1 e valor máximo o passado em sua declaração. Exemplo:
+
+```
+:- "Exemplo de vetor"
+program {
+
+  define {
+     variable
+       :_ definindo um vetor de 4 posições
+       real is vetor[4].
+   }
+  
+  execute {
+    :_ preenchendo o vetor com um valor passado pelo usuário
+    get { vetor[1], vetor[2], vetor[3], vetor[4] }.
+  }
+}
+
+exemplo_vetor
 ```
 
 ---
+
+## Tipos e valores <a name="tipos" ></a>
+
+### Numéricos
+
+### Literais
+
+### Lógicos
+
+---
+
+
 
 
 
