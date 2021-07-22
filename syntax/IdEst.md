@@ -11,7 +11,7 @@ de dados de acordo com sua função e com o parâmetro recebido.
 Os comandos da linguagem são os seguintes:
 
 | Comando | Parâmetro | Execução |
-|:-------:|:---------:|:--------:|
+|:-------:|:---------:|:---------|
 |   ADD   | QUALQUER  | Soma os dois últimos números da pilha |
 |   DIV   | QUALQUER  | Divide os dois últimos números da pilha |
 |   MUL   | QUALQUER  | Multiplica os dois últimos números da pilha |
