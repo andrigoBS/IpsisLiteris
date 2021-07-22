@@ -15,7 +15,13 @@ do curso de Ciência da Computação da Univali oferecido no semestre 2021-1.
    4. *[Loops](#loops)*
 4. ***[Nomenclatura de variáveis e constantes](#nomes)***
 5. ***[Tipos e valores](#tipos)***
-6. ***[Operadores e expressões]()***
+   1. *[Valores Numéricos](#numericos)*
+   2. *[Literais](#char)*
+   3. *[Lógicos](#bool)*
+7. ***[Operadores e expressões](#operadores)***
+   1. *[Operadores Lógicos](#logico)*
+   2. *[Operadores Relacionais](#relacional)*
+   3. *[Operadores Aritméticos](#aritmetico)*
 
 ---
 
@@ -62,7 +68,8 @@ define {
 - Só pode haver uma seção de cada tipo (uma de constantes e uma de variáveis), 
 porém, dentro das seções pode-se declarar quantas constantes ou variáveis quiser, contanto que sejam separadas por ponto (.);
 - As seções podem vir em qualquer ordem, e não é obrigatório ter ambas, pode-se ter apenas a seção de constantes ou a de variáveis;
-- :{tipo}: é o tipo de dado da variável e pode ser **real**, **natural**, **char** ou **boolean**. Você pode ver mais na seção de [tipos](#tipos);
+- :{tipo}: é o tipo de dado da variável e pode ser [**real**](#real), [**natural**](#natural), [**char**](#char) ou [**boolean**](#bool).
+Você pode ver mais na seção de [tipos](#tipos);
 - :{lista de identificadores}: se refere à um ou mais identificadores e deve seguir as [normas de nomenclatura](#nomes);
 - Caso haja mais de 1 identificador, os identificadores devem ser separados por vírgula (,);
 - :{valor}: deve ser compatível com o tipo de dado declarado.
@@ -100,8 +107,8 @@ O comando de atribuicao segue da seguinte forma:
 set :{expressão ou valor}: to :{lista de iidentificadores}: .
 ```
 
-- :{expressão ou valor}: se refere a qualquer expressão lógica, relacional ou aritimética envolvendo constantes ou identificadores.
-Você pode ver mais detalhes na seção [de tipos e valores](#tipos) ou de [expressões e operadores]();
+- :{expressão ou valor}: se refere a qualquer expressão lógica, relacional ou aritmética envolvendo constantes ou identificadores.
+Você pode ver mais detalhes na seção [de tipos e valores](#tipos) ou de [expressões e operadores](#operadores);
 - o resultado da expressão deve possuir o mesmo tipo das variáveis passadas na lista de identificadores.
 - :{lista de identificadores se refere à uma lista com um ou mais [nomes de variáveis](#nomes) separados com vírgula, onde todas devem ter o mesmo tipo.
 
@@ -118,7 +125,7 @@ put { :{lista de identificadores e/ou constantes}: }.
 - Os identificadores passados ao comando de entrada de dados (`get`) devem estar vinculados apenas à variáveis;
 - O comando `get` lê apenas um único valor e o passa para todas as variáveis listadas;
 - Para o comando de saída de dados (`put`), é esperada uma lista com um ou mais valores separados por vírgula,
-sendo que tais valores podem ser *[numéricos]()*, *[literais]()*, [*identificadores de variáveis* ou *identificadores de constantes*](#nomes),
+sendo que tais valores podem ser *[numéricos](#numericos)*, *[literais](#char)*, [*identificadores de variáveis* ou *identificadores de constantes*](#nomes),
 
 ### Comando de seleção <a name="if" ></a>
 
@@ -131,9 +138,9 @@ verify :{expressão}:
    }.
 ```
 
-- :{expressão}: se refere a qualquer expressão lógica ou relacional envolvendo constantes ou identificadores.
-Você pode ver mais detalhes na seção [de tipos e valores](#tipos) ou de [expressões e operadores]();
-- O resultado da expressão deve, obrigatóriamente, ser um valor [booleano]();
+- :{expressão}: se refere a qualquer expressão [lógica](#logico) ou [relacional](#relacional) envolvendo constantes ou identificadores.
+Você pode ver mais detalhes na seção [de tipos e valores](#tipos) ou de [expressões e operadores](#operadores);
+- O resultado da expressão deve, obrigatóriamente, ser um valor [booleano](#bool);
 - As cláusulas `is true` e `is false` podem acontecer apenas uma vez cada, em qualquer ordem, e é necessário que apenas uma delas 
 esteja presente.
 
@@ -151,8 +158,8 @@ while :{expressão}: is true do {
    :{lista de comandos}: 
 }. 
 ```
-- :{expressão}: se refere a qualquer expressão lógica ou relacional envolvendo constantes ou identificadores.
-- O resultado da expressão deve, obrigatóriamente, ser um valor [booleano]();
+- :{expressão}: se refere a qualquer expressão [lógica](#logico) ou [relacional](#relacional) envolvendo constantes ou identificadores.
+- O resultado da expressão deve, obrigatóriamente, ser um valor [booleano](#bool);
 - Os comandos da estrutura de repetição serão repetidos sempre que o resultado da avaliação da expressão for true. 
 
 ---
@@ -172,7 +179,8 @@ Caso um identificador seja declarado como uma ***variável*** (e não uma consta
 índice para que se comporte como um vetor, como por exemplo `variavel[5]`.
 
 Quando usado em uma declaração, o índice indica a quantidade de espaços alocados para o vetor, 
-já quando usado no código, o índice passado é usado como endereço de acesso, tendo valor mínimo 1 e valor máximo o passado em sua declaração. Exemplo:
+já quando usado no código, o índice passado é usado como endereço de acesso, tendo valor mínimo 1 e valor máximo o passado em sua declaração. 
+Exemplo:
 
 ```
 :- "Exemplo de vetor"
@@ -197,17 +205,90 @@ exemplo_vetor
 
 ## Tipos e valores <a name="tipos" ></a>
 
-### Numéricos
+A linguagem IpsisLiteris não oferece suporte a funções ou tipos abstratos de dados, apenas aos tipos primitivos
+[real](#real), [natural](#natural), [boolean](#bool), ou [char](#char) (Apesar do nome, contra intuitivo, char é usada para strings).
 
-### Literais
+### Valores Numéricos <a name="numericos" ></a>
 
-### Lógicos
+Na linguagem ipsis literis, valores numéricos são sempre positivos, mas, isso não significa que a linguagem não
+tenha suporte a valores negativos, basta iniciar com 0 e subtrair o valor desejado. 
+
+Para operações [aritméticas](#aritmetico) ou [relacionais](#relacional), valores numéricos podem ser usados idependentemente de seus tipos,
+mas, caso se misture natural e real, o resultado sempre será real.
+
+> Vale ressaltar que, valores numéricos ***não*** são concatenáveis, logo não se deve misturá-los com strings.
+
+Os tipos de dados numéricos se resumem à:
+
+- ***Naturais:*** <a name="natural"></a>
+Naturais são números inteiros, que, em atribuições, são aceitos números de 0 a 999, e, para operações aritméticas,
+pode assumir valores de -2147483648 até 2147483647.
+
+- ***Reais:*** <a name="reais"></a>
+Reais são números que podem ser decimais. Em atribuições, são aceitos números de 0 a 99999.99, sendo que números com
+ou sem casas decimais, tendo no máximmo duas casas decimais. Em operações aritméticas é possível assumir valores desde
+1.7976931348623157 x 10^308 até 4.9406564584124654 x 10^-324 (valores positivos e negativos).
+
+### Literais <a name="char"></a>
+
+Literais são valores textuais que, na linguagem IpsisLiteris, são do tipo `char`. Valores literais não possuem limitações,
+ou seja, qualquer valor entre aspas duplas ou simples pode ser uma literal.
+
+Aspas também são aceitas caso escapadas, mas aspas duplas só podem ser escapadas entre aspas duplas e aspas simples só podem
+ser escapadas entre aspas simples. Aspas duplas não necessitam ser escapadas entre aspas simples e vice-versa.
+
+Exemplos de valores literais válidos:
+
+- "Abobora";
+- 'Andorinha';
+- "123534";
+- "Então ele disse: \\"Olá, tudo bem?\\"";
+
+### Lógicos <a name="bool"></a>
+
+Lógicos se limitam a valores booleanos que assumem os valores `true` ou `false` e possuem o tipo `boolean`.
 
 ---
 
+## Operadores e expressões <a name="operadores"></a>
 
+### Operadores Lógicos <a name="logico"></a>
 
+Operadores lógicos operam sobre valores booleanos e retornam resultados booleanos. 
 
+Os operadores lógicos da linguagem são:
 
+| **Operador** |    **Função**   |    **Uso**    |
+|:------------:|:---------------:|:-------------:|
+|      _&_     |    "E" lógico   |  true & true  |
+|     _\|_     |   "Ou" lógico   | true \| false |
+|      _!_     | Inversor lógico |    !(false)   |
 
+### Operadores Relacionais <a name="relacional"></a>
+
+Operadores relacionais recebem valores numéricos e devolvem valores booleanos, exceto pelo operador de igualdade, que funciona
+para qualquer tipo de dado.
+
+Os operadores relacionais da linguagem são:
+
+| **Operador** |   **Função**   |    **Uso**    |
+|:------------:|:--------------:|:-------------:|
+|     _==_     |   Igualdade    |     1 == 1    |
+|     _!=_     |   Diferença    | true != false |
+|      _<_     |   Menor que    |     1 < 2     |
+|      _>_     |   Maior que    |     2 > 1     |
+|     _<=_     | Menor ou igual |    1 <= 2     |
+|     _>=_     | Maior ou igual |    2 >= 1     |
+
+### Operadores Aritméticos <a name="aritmetico"></a>
+
+| **Operador** |   **Função**    |    **Uso**    |
+|:------------:|:---------------:|:-------------:|
+|      _+_     |      Soma       |     1 + 1     |
+|      _-_     |    Subtração    |     1 - 1     |
+|      _*_     |  Multiplicação  |     1 * 2     |
+|      _/_     |     Divisão     |     2 / 1     |
+|     _**_     |   Potenciação   |    2 ** 4     |
+|      _%_     | Divisão Inteira |    10 % 3     |
+|     _%%_     |      Resto      |    10 %% 3    |
 
