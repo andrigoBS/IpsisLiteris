@@ -43,7 +43,7 @@ Os comandos da linguagem são os seguintes:
 |   JMT   |  Integer  | Pula para o endereço passado caso o valor no topo seja true |
 |   JMP   |  Integer  | Pula para o endereço passado |
 |   REA   |  Integer  | Lê a entrada do usuário, fazendo um Typecast para o tipo selecionado (1 - Integer; 2 - Double; 3 - String; 4 -Boolean) |
-|   WRT   | QUALQUER  | Escreve o valor no topo |
+|   WRT   | QUALQUER  | Escreve na tela o valor do topo |
 |   STP   | QUALQUER  | Para o programa |
 
 
