@@ -282,6 +282,14 @@ Os operadores relacionais da linguagem são:
 
 ### Operadores Aritméticos <a name="aritmetico"></a>
 
+Operadores aritméticos são aplicados sobre números, com exceção da soma que pode ser usada para concatenar textos, e devolvem
+valores numéricos.
+
+Geralmente é devolvido um valor inteiro caso ambos os parâmetros sejam naturais, e um real caso contrário, mas a operação de
+divisão sempre retornará um real.
+
+As operações de potenciação, divisão inteira e resto so são aplicáveis à parâmetros naturais
+
 | **Operador** |   **Função**    |    **Uso**    |
 |:------------:|:---------------:|:-------------:|
 |      _+_     |      Soma       |     1 + 1     |
